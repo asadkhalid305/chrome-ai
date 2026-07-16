@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chrome AI Engineering"
+  short_description: "Build clear teaching-first Chrome AI features"
+  default_prompt: "Use $chrome-ai-engineering to implement the next Chrome AI or WebMCP lesson with strict separation of concerns."

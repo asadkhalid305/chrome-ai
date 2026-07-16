@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-16",
+  "skills": [
+    {
+      "name": "vercel-react-best-practices",
+      "path": ".agents/skills/react-best-practices",
+      "source": "https://github.com/vercel-labs/agent-skills/tree/f8a72b9603728bb92a217a879b7e62e43ad76c81/skills/react-best-practices",
+      "revision": "f8a72b9603728bb92a217a879b7e62e43ad76c81"
+    },
+    {
+      "name": "vercel-composition-patterns",
+      "path": ".agents/skills/composition-patterns",
+      "source": "https://github.com/vercel-labs/agent-skills/tree/f8a72b9603728bb92a217a879b7e62e43ad76c81/skills/composition-patterns",
+      "revision": "f8a72b9603728bb92a217a879b7e62e43ad76c81"
+    },
+    {
+      "name": "chrome-ai-engineering",
+      "path": ".agents/skills/chrome-ai-engineering",
+      "source": "project-local"
+    },
+    {
+      "name": "chrome-ai-testing",
+      "path": ".agents/skills/chrome-ai-testing",
+      "source": "project-local"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chrome AI Testing"
+  short_description: "Verify Chrome AI demos and browser states"
+  default_prompt: "Use $chrome-ai-testing to verify a Chrome AI or WebMCP demo from deterministic tests through a supported-browser smoke test."
