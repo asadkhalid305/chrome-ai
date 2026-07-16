@@ -17,6 +17,7 @@ export function PromptDemo() {
 
   return (
     <DemoSection
+      accent="blue"
       eyebrow="Lesson 4 · Stable from Chrome 148 on the web"
       title="Prompt / LanguageModel"
       description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
@@ -38,14 +39,14 @@ export function PromptDemo() {
         <label className="grid gap-2 text-sm font-semibold text-slate-800">
           English prompt
           <textarea
-            className="min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal"
+            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="bg-brand-blue hover:bg-brand-blue/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -55,7 +56,7 @@ export function PromptDemo() {
           </button>
           {promptModel.request === 'running' ? (
             <button
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800"
+              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
               type="button"
               onClick={promptModel.cancel}
             >
@@ -67,6 +68,7 @@ export function PromptDemo() {
 
       <div className="mt-5">
         <LessonOutput
+          accent="blue"
           request={promptModel.request}
           output={promptModel.output}
           error={promptModel.error}

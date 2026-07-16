@@ -1,6 +1,35 @@
 import type { ReactNode } from 'react'
 
+export type LessonAccent = 'yellow' | 'red' | 'green' | 'blue'
+
+const accentClassNames: Record<
+  LessonAccent,
+  { section: string; eyebrow: string; divider: string }
+> = {
+  yellow: {
+    section: 'border-brand-yellow/30 border-t-brand-yellow',
+    eyebrow: 'text-brand-yellow',
+    divider: 'border-brand-yellow',
+  },
+  red: {
+    section: 'border-brand-red/30 border-t-brand-red',
+    eyebrow: 'text-brand-red',
+    divider: 'border-brand-red',
+  },
+  green: {
+    section: 'border-brand-green/30 border-t-brand-green',
+    eyebrow: 'text-brand-green',
+    divider: 'border-brand-green',
+  },
+  blue: {
+    section: 'border-brand-blue/30 border-t-brand-blue',
+    eyebrow: 'text-brand-blue',
+    divider: 'border-brand-blue',
+  },
+}
+
 interface DemoSectionProps {
+  accent: LessonAccent
   eyebrow: string
   title: string
   description: string
@@ -10,6 +39,7 @@ interface DemoSectionProps {
 }
 
 export function DemoSection({
+  accent,
   eyebrow,
   title,
   description,
@@ -17,10 +47,16 @@ export function DemoSection({
   codePath,
   lifecycleNote,
 }: DemoSectionProps) {
+  const accentClasses = accentClassNames[accent]
+
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <section
+      className={`bg-brand-white rounded-3xl border border-t-4 p-6 shadow-sm sm:p-8 ${accentClasses.section}`}
+    >
       <div className="mb-6">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">
+        <p
+          className={`text-sm font-bold uppercase tracking-[0.18em] ${accentClasses.eyebrow}`}
+        >
           {eyebrow}
         </p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
@@ -31,7 +67,9 @@ export function DemoSection({
 
       {children}
 
-      <dl className="mt-8 grid gap-4 border-t border-slate-200 pt-5 text-sm text-slate-600 lg:grid-cols-2">
+      <dl
+        className={`mt-8 grid gap-4 border-t pt-5 text-sm text-slate-600 lg:grid-cols-2 ${accentClasses.divider}`}
+      >
         <div>
           <dt className="font-semibold text-slate-900">Code path</dt>
           <dd className="mt-1 font-mono text-xs leading-5">{codePath}</dd>

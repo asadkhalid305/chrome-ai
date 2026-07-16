@@ -17,6 +17,7 @@ export function SummarizerDemo() {
 
   return (
     <DemoSection
+      accent="green"
       eyebrow="Lesson 3 · Stable"
       title="Summarizer"
       description="Turn a longer English passage into short, plain-text key points with a reusable task session."
@@ -38,14 +39,14 @@ export function SummarizerDemo() {
         <label className="grid gap-2 text-sm font-semibold text-slate-800">
           English article
           <textarea
-            className="min-h-48 rounded-xl border border-slate-300 px-3 py-2 font-normal"
+            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-48 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="bg-brand-green hover:bg-brand-green/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -55,7 +56,7 @@ export function SummarizerDemo() {
           </button>
           {summarizer.request === 'running' ? (
             <button
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800"
+              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
               type="button"
               onClick={summarizer.cancel}
             >
@@ -67,6 +68,7 @@ export function SummarizerDemo() {
 
       <div className="mt-5">
         <LessonOutput
+          accent="green"
           request={summarizer.request}
           output={summarizer.output}
           error={summarizer.error}

@@ -26,6 +26,7 @@ export function TranslatorDemo() {
 
   return (
     <DemoSection
+      accent="yellow"
       eyebrow="Lesson 1 · Stable"
       title="Translator"
       description="Translate one string with a language-pair-specific model that stays on the device."
@@ -48,7 +49,7 @@ export function TranslatorDemo() {
           <label className="grid gap-2 text-sm font-semibold text-slate-800">
             Source language
             <select
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal"
+              className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               value={sourceLanguage}
               onChange={(event) => setSourceLanguage(event.target.value)}
             >
@@ -62,7 +63,7 @@ export function TranslatorDemo() {
           <label className="grid gap-2 text-sm font-semibold text-slate-800">
             Target language
             <select
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal"
+              className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               value={targetLanguage}
               onChange={(event) => setTargetLanguage(event.target.value)}
             >
@@ -77,14 +78,14 @@ export function TranslatorDemo() {
         <label className="grid gap-2 text-sm font-semibold text-slate-800">
           Text to translate
           <textarea
-            className="min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal"
+            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="bg-brand-yellow hover:bg-brand-yellow/80 rounded-xl px-4 py-2 text-sm font-bold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-300"
             disabled={!canRun || !input.trim() || sourceLanguage === targetLanguage}
             type="submit"
           >
@@ -94,7 +95,7 @@ export function TranslatorDemo() {
           </button>
           {translator.request === 'running' ? (
             <button
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800"
+              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
               type="button"
               onClick={translator.cancel}
             >
@@ -106,6 +107,7 @@ export function TranslatorDemo() {
 
       <div className="mt-5">
         <LessonOutput
+          accent="yellow"
           request={translator.request}
           output={translator.output}
           error={translator.error}

@@ -25,7 +25,7 @@ export function CapabilityStatus({
 
   return (
     <p
-      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
+      className="border-brand-blue/20 bg-brand-blue/5 rounded-xl border px-4 py-3 text-sm text-slate-700"
       role="status"
     >
       <span className="font-semibold">Browser status:</span>{' '}
