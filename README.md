@@ -16,6 +16,8 @@ The project currently contains seven independently runnable lessons:
 
 The sticky tab bar mounts one lesson at a time for presentation-friendly navigation. Each lesson keeps the native browser call in an adapter, owns its session and cancellation lifecycle in a React hook, and presents capability, download, running, canceled, success, and error states in an accessible UI.
 
+A separate WebMCP track (website tools for browser agents, not on-device inference) is hidden by default so the one-hour demo stays focused. Set `VITE_WEBMCP=true` in a local `.env` file to append it after the core lessons for a longer talk; see `.env.example`. It is currently a static overview that frames the origin-trial boundary — the concrete WebMCP lessons come later.
+
 Start with [the architecture](docs/architecture.md), then read [the teaching plan](docs/teaching-plan.md) and [the API scope](docs/api-scope.md).
 
 ## Intended stack

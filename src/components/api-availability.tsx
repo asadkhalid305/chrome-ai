@@ -1,4 +1,4 @@
-// Presents each lesson's Chrome release status and, when the API is still behind
+// Presents each demo's Chrome release status and, when the API is still behind
 // experimental flags, the exact steps to enable it. Detail stays collapsed so a
 // learner only reads setup instructions when they choose to.
 
@@ -10,8 +10,10 @@ export interface ChromeFlag {
 }
 
 export interface ApiAvailability {
-  // Release channel status; controls the badge tone and label.
-  status: 'stable' | 'developer-trial'
+  // Release channel status; controls the badge tone and label. `origin-trial`
+  // covers agentic-web APIs (WebMCP) that ship behind a per-origin trial token
+  // rather than the on-device model developer trials.
+  status: 'stable' | 'developer-trial' | 'origin-trial'
   // Short human summary, e.g. "Stable since Chrome 138".
   summary: string
   // Flags required on localhost. Omit or leave empty when none are needed.
@@ -19,7 +21,7 @@ export interface ApiAvailability {
 }
 
 // Writer and Rewriter ship together as a joint developer trial and share the
-// same localhost flags, so both lessons reference this one source.
+// same localhost flags, so both demos reference this one source.
 export const writingAssistanceFlags: ChromeFlag[] = [
   { id: 'optimization-guide-on-device-model', value: 'Enabled' },
   {
@@ -36,6 +38,13 @@ export const proofreaderFlags: ChromeFlag[] = [
   { id: 'proofreader-api', value: 'Enabled' },
 ]
 
+// WebMCP ships as an origin trial from Chrome 149. For local development it is
+// gated behind a single testing flag instead of a trial token. Verified against
+// https://developer.chrome.com/docs/ai/webmcp on 2026-07-23.
+export const webmcpFlags: ChromeFlag[] = [
+  { id: 'enable-webmcp-testing', value: 'Enabled' },
+]
+
 const statusStyles: Record<
   ApiAvailability['status'],
   { badge: string; label: string }
@@ -47,6 +56,10 @@ const statusStyles: Record<
   'developer-trial': {
     badge: 'border-amber-300 bg-amber-50 text-amber-900',
     label: 'Developer trial',
+  },
+  'origin-trial': {
+    badge: 'border-brand-blue/40 bg-brand-blue/10 text-brand-blue',
+    label: 'Origin trial',
   },
 }
 

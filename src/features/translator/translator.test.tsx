@@ -12,7 +12,7 @@ import { useTranslator } from './use-translator'
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe('Translator lesson', () => {
+describe('Translator demo', () => {
   it('uses the native Translator factory with the selected language pair', async () => {
     const session = { translate: vi.fn(), destroy: vi.fn() }
     const create = vi.fn().mockResolvedValue(session)

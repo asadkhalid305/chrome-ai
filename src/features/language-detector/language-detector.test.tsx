@@ -12,7 +12,7 @@ import { useLanguageDetector } from './use-language-detector'
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe('Language Detector lesson', () => {
+describe('Language Detector demo', () => {
   it('reports unavailable when the native API is absent', async () => {
     expect(await languageDetectorApi.availability()).toBe('unavailable')
   })

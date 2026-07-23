@@ -22,7 +22,7 @@ export function WriterDemo() {
   return (
     <DemoSection
       accent="blue"
-      eyebrow="Lesson 5"
+      eyebrow="API 5"
       title="Writer"
       description="Create a new, editable English draft from one focused idea and optional context."
       availability={{
@@ -31,7 +31,7 @@ export function WriterDemo() {
         flags: writingAssistanceFlags,
       }}
       codePath="writer-api.ts → use-writer.ts → writer-demo.tsx"
-      lifecycleNote="The hook reuses one writer with fixed teaching options, aborts unwanted work, and destroys the session when this lesson unmounts."
+      lifecycleNote="The hook reuses one writer with fixed demo options, aborts unwanted work, and destroys the session when this demo unmounts."
     >
       <CapabilityStatus
         capability={writer.capability}

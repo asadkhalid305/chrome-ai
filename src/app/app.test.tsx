@@ -9,8 +9,8 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Chrome AI lesson tabs', () => {
-  it('shows one selected lesson at a time', async () => {
+describe('Chrome AI demo tabs', () => {
+  it('shows one selected demo at a time', async () => {
     const user = userEvent.setup()
     render(<App />)
 
@@ -58,7 +58,7 @@ describe('Chrome AI lesson tabs', () => {
     expect(screen.getByRole('heading', { name: 'Translator' })).toBeVisible()
   })
 
-  it('destroys the active lesson session when switching tabs', async () => {
+  it('destroys the active demo session when switching tabs', async () => {
     const destroy = vi.fn()
     vi.stubGlobal('Translator', {
       availability: vi.fn().mockResolvedValue('available'),

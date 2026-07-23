@@ -13,7 +13,7 @@ export type RequestState =
   | 'success'
   | 'error'
 
-export interface LessonState {
+export interface DemoState {
   capability: CapabilityState
   request: RequestState
   downloadProgress: number | null

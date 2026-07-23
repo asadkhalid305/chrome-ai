@@ -1,7 +1,7 @@
 import type { RequestState } from '../chrome-ai/shared-types'
 import { OutputPanel, type OutputAccent } from './output-panel'
 
-interface LessonOutputProps {
+interface DemoOutputProps {
   request: RequestState
   output: string
   error: string | null
@@ -9,13 +9,13 @@ interface LessonOutputProps {
   accent: OutputAccent
 }
 
-export function LessonOutput({
+export function DemoOutput({
   request,
   output,
   error,
   emptyMessage,
   accent,
-}: LessonOutputProps) {
+}: DemoOutputProps) {
   return (
     <OutputPanel accent={accent}>
       {request === 'running' ? <p>Running on your device…</p> : null}

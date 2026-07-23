@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { LessonOutput } from '../../components/lesson-output'
+import { DemoOutput } from '../../components/demo-output'
 import { useSummarizer } from './use-summarizer'
 
 const sampleArticle = `Built-in browser AI APIs let websites use models supplied by the browser. The work happens on the user's device, so short-lived input does not need to be sent to an application server. Before a site can use an API, it checks availability and may need to ask the browser to download a model. Downloads can take time, so the interface should show progress and wait for clear user intent. Each API session also consumes resources. Applications should reuse a session when appropriate, cancel work the user no longer wants, and destroy the session during cleanup.`
@@ -18,7 +18,7 @@ export function SummarizerDemo() {
   return (
     <DemoSection
       accent="green"
-      eyebrow="Lesson 3"
+      eyebrow="API 3"
       title="Summarizer"
       description="Turn a longer English passage into short, plain-text key points with a reusable task session."
       availability={{
@@ -26,7 +26,7 @@ export function SummarizerDemo() {
         summary: 'Stable since Chrome 138 on desktop.',
       }}
       codePath="summarizer-api.ts → use-summarizer.ts → summarizer-demo.tsx"
-      lifecycleNote="The options are fixed in the adapter for this lesson. The hook reuses one summarizer and destroys it when the lesson unmounts."
+      lifecycleNote="The options are fixed in the adapter for this demo. The hook reuses one summarizer and destroys it when the demo unmounts."
     >
       <CapabilityStatus
         capability={summarizer.capability}
@@ -71,7 +71,7 @@ export function SummarizerDemo() {
       </form>
 
       <div className="mt-5">
-        <LessonOutput
+        <DemoOutput
           accent="green"
           request={summarizer.request}
           output={summarizer.output}

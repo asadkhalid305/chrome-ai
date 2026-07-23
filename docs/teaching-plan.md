@@ -54,6 +54,21 @@ Teach how semantic HTML forms can become agent tools through annotations. Keep t
 
 Teach `document.modelContext`, explicit tool schemas, execution, cleanup, permissions, and user-visible side effects. Keep this track separate from built-in model inference: WebMCP exposes website capabilities to browser agents; it does not itself run a Chrome AI model.
 
+#### WebMCP track visibility (feature flag)
+
+The WebMCP track (Lessons 8 and 9) is hidden by default so the one-hour
+built-in-AI demo stays focused on on-device inference. It lives behind the
+`VITE_WEBMCP` app-level flag, which defaults off: an unset value on a fresh
+clone keeps the seven built-in-AI lessons unchanged and prevents any accidental
+origin-trial activation.
+
+To reveal the track for a longer talk, set `VITE_WEBMCP=true` in a local `.env`
+file (see `.env.example`) and restart the dev server. When enabled, the WebMCP
+tab is appended after the core lessons — existing lesson numbers stay stable —
+and a divider plus group label separate it from the built-in-AI lessons to make
+clear that WebMCP exposes website tools to browser agents rather than running a
+Chrome model.
+
 ### Lesson 10: Production patterns
 
 After the four APIs are understandable independently, add focused examples for:

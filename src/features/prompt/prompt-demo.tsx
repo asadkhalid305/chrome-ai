@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { LessonOutput } from '../../components/lesson-output'
+import { DemoOutput } from '../../components/demo-output'
 import { usePrompt } from './use-prompt'
 
 export function PromptDemo() {
@@ -18,7 +18,7 @@ export function PromptDemo() {
   return (
     <DemoSection
       accent="blue"
-      eyebrow="Lesson 4"
+      eyebrow="API 4"
       title="Prompt"
       description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
       availability={{
@@ -26,7 +26,7 @@ export function PromptDemo() {
         summary: 'Stable on the web since Chrome 148.',
       }}
       codePath="prompt-api.ts → use-prompt.ts → prompt-demo.tsx"
-      lifecycleNote="The system instruction is set at session creation. The hook keeps conversational context during this lesson and destroys the session on cleanup."
+      lifecycleNote="The system instruction is set at session creation. The hook keeps conversational context during this demo and destroys the session on cleanup."
     >
       <CapabilityStatus
         capability={promptModel.capability}
@@ -71,7 +71,7 @@ export function PromptDemo() {
       </form>
 
       <div className="mt-5">
-        <LessonOutput
+        <DemoOutput
           accent="blue"
           request={promptModel.request}
           output={promptModel.output}

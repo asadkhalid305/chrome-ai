@@ -23,7 +23,7 @@ export function ProofreaderDemo() {
   return (
     <DemoSection
       accent="red"
-      eyebrow="Lesson 7"
+      eyebrow="API 7"
       title="Proofreader"
       description="Inspect English grammar, spelling, and punctuation suggestions without silently changing the original text."
       availability={{
@@ -32,7 +32,7 @@ export function ProofreaderDemo() {
         flags: proofreaderFlags,
       }}
       codePath="proofreader-api.ts → use-proofreader.ts → proofreader-demo.tsx"
-      lifecycleNote="The hook owns one proofreader, aborts the active request, and destroys the session when the lesson unmounts."
+      lifecycleNote="The hook owns one proofreader, aborts the active request, and destroys the session when the demo unmounts."
     >
       <CapabilityStatus
         capability={proofreader.capability}
