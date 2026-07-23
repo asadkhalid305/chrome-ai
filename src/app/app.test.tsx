@@ -9,7 +9,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Phase 1 lesson tabs', () => {
+describe('Chrome AI lesson tabs', () => {
   it('shows one selected lesson at a time', async () => {
     const user = userEvent.setup()
     render(<App />)
@@ -48,9 +48,9 @@ describe('Phase 1 lesson tabs', () => {
     ).toBeVisible()
 
     await user.keyboard('{End}')
-    expect(screen.getByRole('tab', { name: '4. Prompt' })).toHaveFocus()
+    expect(screen.getByRole('tab', { name: '7. Proofreader' })).toHaveFocus()
     expect(
-      screen.getByRole('heading', { name: 'Prompt / LanguageModel' }),
+      screen.getByRole('heading', { name: 'Proofreader' }),
     ).toBeVisible()
 
     await user.keyboard('{Home}')

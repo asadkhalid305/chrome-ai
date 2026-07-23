@@ -27,9 +27,13 @@ export function TranslatorDemo() {
   return (
     <DemoSection
       accent="yellow"
-      eyebrow="Lesson 1 · Stable"
+      eyebrow="Lesson 1"
       title="Translator"
       description="Translate one string with a language-pair-specific model that stays on the device."
+      availability={{
+        status: 'stable',
+        summary: 'Stable since Chrome 138 on desktop.',
+      }}
       codePath="translator-api.ts → use-translator.ts → translator-demo.tsx"
       lifecycleNote="Changing the language pair destroys the old translator. Unmounting cancels work and destroys the current session."
     >

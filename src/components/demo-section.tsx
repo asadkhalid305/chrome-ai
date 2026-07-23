@@ -1,4 +1,7 @@
-import type { ReactNode } from 'react'
+import { use, type ReactNode } from 'react'
+
+import { RevealContext } from '../app/reveal-context'
+import { ApiAvailabilityInfo, type ApiAvailability } from './api-availability'
 
 export type LessonAccent = 'yellow' | 'red' | 'green' | 'blue'
 
@@ -33,6 +36,7 @@ interface DemoSectionProps {
   eyebrow: string
   title: string
   description: string
+  availability: ApiAvailability
   children: ReactNode
   codePath: string
   lifecycleNote: string
@@ -43,11 +47,15 @@ export function DemoSection({
   eyebrow,
   title,
   description,
+  availability,
   children,
   codePath,
   lifecycleNote,
 }: DemoSectionProps) {
   const accentClasses = accentClassNames[accent]
+  // The availability block names Chrome versions and flags, so it is part of
+  // the reveal rather than shown by default.
+  const revealed = use(RevealContext)
 
   return (
     <section
@@ -63,6 +71,7 @@ export function DemoSection({
           {title}
         </h2>
         <p className="mt-3 max-w-3xl text-slate-600">{description}</p>
+        {revealed ? <ApiAvailabilityInfo availability={availability} /> : null}
       </div>
 
       {children}

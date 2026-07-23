@@ -1,6 +1,6 @@
 # Chrome AI API Scope
 
-Last reviewed: 2026-07-16.
+Last reviewed: 2026-07-22.
 
 Chrome built-in AI availability changes across browser versions, operating systems, hardware, language combinations, policies, and experimental programs. Treat this document as a curriculum boundary, not as a permanent compatibility matrix.
 

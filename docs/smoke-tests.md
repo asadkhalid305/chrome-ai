@@ -31,3 +31,17 @@ The same browser environment was used after replacing the long page with tabs. V
 - clicking Summarizer or Prompt replaces the lesson panel without changing the page's scroll position;
 - the sticky tab bar remains available after scrolling within a lesson;
 - no Vite error overlay appears.
+
+## 2026-07-22 — Experimental lessons awaiting enabled Chrome access
+
+Writer, Rewriter, and Proofreader were implemented against the current official
+Chrome developer-trial contracts. Deterministic fixtures collectively cover
+absent and in-progress capability states, user-triggered download progress,
+session reuse and replacement, cancellation, output, errors, and cleanup.
+Feature-specific tests also cover editable Writer output, immutable Rewriter
+options, and structured Proofreader corrections.
+
+A real enabled-Chrome smoke test remains intentionally pending. When suitable
+trial or Early Preview Program access is available, record the Chrome version,
+operating system, enabled flags or trial token, initial capability state, and a
+non-empty or structured result for each production adapter here.

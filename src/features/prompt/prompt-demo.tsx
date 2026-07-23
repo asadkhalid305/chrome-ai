@@ -18,9 +18,13 @@ export function PromptDemo() {
   return (
     <DemoSection
       accent="blue"
-      eyebrow="Lesson 4 · Stable from Chrome 148 on the web"
-      title="Prompt / LanguageModel"
+      eyebrow="Lesson 4"
+      title="Prompt"
       description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
+      availability={{
+        status: 'stable',
+        summary: 'Stable on the web since Chrome 148.',
+      }}
       codePath="prompt-api.ts → use-prompt.ts → prompt-demo.tsx"
       lifecycleNote="The system instruction is set at session creation. The hook keeps conversational context during this lesson and destroys the session on cleanup."
     >

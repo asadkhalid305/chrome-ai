@@ -4,12 +4,15 @@ A teaching-first React project for learning Chrome built-in AI APIs through smal
 
 ## Current status
 
-Phase 1 contains four independently runnable lessons:
+The project currently contains seven independently runnable lessons:
 
 - Translator;
 - Language Detector;
 - Summarizer;
-- Prompt / `LanguageModel`.
+- Prompt / `LanguageModel`;
+- Writer (experimental developer trial);
+- Rewriter (experimental developer trial);
+- Proofreader (experimental developer trial).
 
 The sticky tab bar mounts one lesson at a time for presentation-friendly navigation. Each lesson keeps the native browser call in an adapter, owns its session and cancellation lifecycle in a React hook, and presents capability, download, running, canceled, success, and error states in an accessible UI.
 

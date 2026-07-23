@@ -19,9 +19,13 @@ export function LanguageDetectorDemo() {
   return (
     <DemoSection
       accent="red"
-      eyebrow="Lesson 2 · Stable"
+      eyebrow="Lesson 2"
       title="Language Detector"
       description="Inspect ranked language candidates and their confidence before deciding what to do with user text."
+      availability={{
+        status: 'stable',
+        summary: 'Stable since Chrome 138 on desktop.',
+      }}
       codePath="language-detector-api.ts → use-language-detector.ts → language-detector-demo.tsx"
       lifecycleNote="The hook reuses one detector for repeated checks, aborts the active request on cancel, and destroys the detector on cleanup."
     >
