@@ -15,9 +15,10 @@ import { WriterDemo } from "../features/writer/writer-demo";
 import type { LessonAccent } from "../components/demo-section";
 import { RevealContext } from "./reveal-context";
 
-// Show the Chrome intro and API details from the start only when explicitly
-// enabled. Any other value (including unset) keeps them hidden until revealed.
-const revealChromeByDefault = import.meta.env.VITE_REVEAL_CHROME === "true";
+// Show the Chrome intro and API details from the start unless explicitly
+// disabled. Unset (e.g. a fresh clone) defaults to shown; set to "false" in a
+// local env file to keep them hidden.
+const revealChromeByDefault = import.meta.env.VITE_REVEAL_CHROME !== "false";
 
 type LessonId =
   | "translator"
