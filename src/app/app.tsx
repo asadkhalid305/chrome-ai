@@ -12,6 +12,7 @@ import { ProofreaderDemo } from "../features/proofreader/proofreader-demo";
 import { RewriterDemo } from "../features/rewriter/rewriter-demo";
 import { SummarizerDemo } from "../features/summarizer/summarizer-demo";
 import { TranslatorDemo } from "../features/translator/translator-demo";
+import { WebmcpDeclarativeDemo } from "../features/webmcp-declarative/webmcp-declarative-demo";
 import { WebMcpIntro } from "../features/webmcp/webmcp-intro";
 import { WriterDemo } from "../features/writer/writer-demo";
 import type { DemoAccent } from "../components/demo-section";
@@ -37,7 +38,8 @@ type DemoId =
   | "writer"
   | "rewriter"
   | "proofreader"
-  | "webmcp";
+  | "webmcp"
+  | "webmcp-declarative";
 
 interface Demo {
   id: DemoId;
@@ -120,20 +122,31 @@ const apiDemos: Demo[] = [
   },
 ];
 
-// The WebMCP intro is a static overview, not a runnable inference demo. It is
+// The WebMCP track. The intro is a static overview; the Declarative demo is the
+// first runnable WebMCP lesson. Both carry `track: "webmcp"` so the nav groups
+// and labels them apart from the numbered built-in-AI APIs. The track is
 // appended after the core APIs so the built-in-AI tab numbers stay stable.
-const webmcpDemo: Demo = {
-  id: "webmcp",
-  label: "Introduction",
-  component: WebMcpIntro,
-  accent: "blue",
-  track: "webmcp",
-};
+const webmcpDemos: Demo[] = [
+  {
+    id: "webmcp",
+    label: "Introduction",
+    component: WebMcpIntro,
+    accent: "blue",
+    track: "webmcp",
+  },
+  {
+    id: "webmcp-declarative",
+    label: "Declarative API",
+    component: WebmcpDeclarativeDemo,
+    accent: "blue",
+    track: "webmcp",
+  },
+];
 
 // When the flag is off this is exactly the seven built-in-AI APIs, so that
 // experience is unchanged. When on, the WebMCP track is appended at the end.
 const visibleDemos: Demo[] = webmcpTrackEnabled
-  ? [...apiDemos, webmcpDemo]
+  ? [...apiDemos, ...webmcpDemos]
   : apiDemos;
 
 // A small decorative heading that groups tabs in the sidebar (e.g. "APIs",

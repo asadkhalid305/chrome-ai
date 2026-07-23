@@ -38,11 +38,15 @@ describe('WebMCP track feature flag', () => {
     vi.stubEnv('VITE_WEBMCP', 'true')
     await renderApp()
 
-    const webmcpTab = screen.getByRole('tab', { name: 'WebMCP track: Introduction' })
-    expect(webmcpTab).toBeInTheDocument()
+    expect(
+      screen.getByRole('tab', { name: 'WebMCP track: Introduction' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('tab', { name: 'WebMCP track: Declarative API' }),
+    ).toBeInTheDocument()
 
-    // The built-in-AI APIs keep their labels and numbers.
-    expect(screen.getAllByRole('tab')).toHaveLength(8)
+    // The seven built-in-AI APIs plus the two WebMCP track tabs.
+    expect(screen.getAllByRole('tab')).toHaveLength(9)
     expect(
       screen.getByRole('tab', { name: '1. Translator' }),
     ).toBeInTheDocument()
@@ -79,7 +83,7 @@ describe('WebMCP track feature flag', () => {
 
     await user.keyboard('{End}')
     expect(
-      screen.getByRole('tab', { name: 'WebMCP track: Introduction' }),
+      screen.getByRole('tab', { name: 'WebMCP track: Declarative API' }),
     ).toHaveFocus()
 
     await user.keyboard('{Home}')

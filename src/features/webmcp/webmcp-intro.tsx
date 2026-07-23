@@ -36,7 +36,7 @@ export function WebMcpIntro() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <h3 className="text-sm font-bold text-slate-900">
-            Two demos are coming
+            Two demos in this track
           </h3>
           <ul className="mt-2 grid gap-2 text-sm leading-6 text-slate-600">
             <li>
@@ -44,6 +44,7 @@ export function WebMcpIntro() {
                 Declarative API
               </span>{' '}
               — annotate a visible HTML form so an agent can fill and submit it.
+              Available now in the next tab.
             </li>
             <li>
               <span className="font-semibold text-slate-900">
@@ -51,12 +52,13 @@ export function WebMcpIntro() {
               </span>{' '}
               — register schema-driven JavaScript tools through{' '}
               <code className="font-mono text-xs">document.modelContext</code>{' '}
-              with explicit inputs, permissions, and user-visible state.
+              with explicit inputs, permissions, and user-visible state. Coming
+              next.
             </li>
           </ul>
           <p className="mt-3 text-sm leading-6 text-slate-500">
-            These demos are placeholders for now. This entry point only frames
-            the boundary so the one-hour built-in-AI demo stays focused.
+            This entry point frames the boundary so the one-hour built-in-AI
+            demo stays focused.
           </p>
         </div>
       </div>

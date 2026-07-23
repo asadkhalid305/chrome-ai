@@ -42,3 +42,23 @@
     outline-offset: 3px;
   }
 }
+
+/*
+ * WebMCP Declarative API focus indicators (origin trial, Chrome 149+). Chrome
+ * applies these pseudo-classes when an agent activates a form tool and while its
+ * submit button is the active target. Tailwind cannot express these
+ * experimental pseudo-classes, so they live here. Browsers without WebMCP treat
+ * the selectors as invalid and ignore these rules, so there is no effect until
+ * the API is enabled. Verified against
+ * https://developer.chrome.com/docs/ai/webmcp/declarative-api on 2026-07-23.
+ */
+form:tool-form-active {
+  outline: 2px dashed var(--color-brand-blue);
+  outline-offset: 2px;
+}
+
+button:tool-submit-active,
+input:tool-submit-active {
+  outline: 2px dashed var(--color-brand-red);
+  outline-offset: 2px;
+}
