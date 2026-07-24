@@ -155,6 +155,38 @@ describe('Chrome AI demo tabs', () => {
     ).toBeVisible()
   })
 
+  it('maps documentation links to the playground accent cycle', async () => {
+    window.history.replaceState(null, '', '/#docs/overview')
+    await renderApp()
+
+    expect(
+      screen.getByRole('link', { name: 'Overview' }),
+    ).toHaveClass('bg-brand-yellow')
+
+    const expectedHoverAccents = [
+      ['Browser requirements', 'red'],
+      ['Choosing an API', 'green'],
+      ['Translator', 'yellow'],
+      ['Language Detector', 'red'],
+      ['Summarizer', 'green'],
+      ['Prompt', 'blue'],
+      ['Writer', 'yellow'],
+      ['Rewriter', 'red'],
+      ['Proofreader', 'green'],
+      ['WebMCP overview', 'blue'],
+      ['Declarative API', 'yellow'],
+      ['Imperative API', 'red'],
+      ['Sources', 'blue'],
+      ['Terminology', 'blue'],
+    ] as const
+
+    for (const [label, accent] of expectedHoverAccents) {
+      expect(
+        screen.getByRole('link', { name: label }),
+      ).toHaveClass(`hover:border-brand-${accent}`)
+    }
+  })
+
   it('falls back to the documentation overview for an unknown docs section', async () => {
     window.history.replaceState(null, '', '/#docs/not-real')
     await renderApp()

@@ -106,11 +106,39 @@ const webmcpDemos: DemoDefinition[] = [
   },
 ]
 
+const allDemoDefinitions = [...apiDemos, ...webmcpDemos]
+const demoAccentById = new Map<DemoId, DemoAccent>(
+  allDemoDefinitions.map((demo, index) => [
+    demo.id,
+    accentForPosition(index),
+  ]),
+)
+
 const visibleDemos: Demo[] = (
   webmcpTrackEnabled ? [...apiDemos, ...webmcpDemos] : apiDemos
 ).map((demo, index) => ({ ...demo, accent: accentForPosition(index) }))
 
 const visibleDemoIds = new Set<string>(visibleDemos.map((demo) => demo.id))
+
+const standaloneDocumentationAccents: Partial<
+  Record<DocumentationSectionId, DemoAccent>
+> = {
+  overview: 'yellow',
+  requirements: 'red',
+  'choosing-an-api': 'green',
+  sources: 'blue',
+  terminology: 'blue',
+}
+
+function accentForDocumentationSection(
+  sectionId: DocumentationSectionId,
+): DemoAccent {
+  return (
+    standaloneDocumentationAccents[sectionId] ??
+    demoAccentById.get(sectionId as DemoId) ??
+    'blue'
+  )
+}
 
 function NavGroupLabel({ label }: { label: string }) {
   return (
@@ -153,18 +181,25 @@ function DocumentationSidebar({
           <NavGroupLabel label={group.label} />
           {group.items.map((item) => {
             const selected = item.id === selectedSectionId
+            const accent = accentClassNames[
+              accentForDocumentationSection(item.id)
+            ]
             return (
               <a
                 aria-current={selected ? 'page' : undefined}
                 className={
                   selected
-                    ? 'flex w-full items-center rounded-lg border border-brand-blue bg-brand-blue px-3 py-2 text-left text-sm font-bold text-white shadow-sm'
-                    : 'flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:border-brand-blue hover:text-brand-blue'
+                    ? `flex w-full items-center rounded-lg border px-3 py-2 text-left text-sm font-bold shadow-sm ${accent.active}`
+                    : `${accent.hover} flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700`
                 }
                 href={documentationHash(item.id)}
                 key={item.id}
                 onClick={onNavigate}
               >
+                <span
+                  aria-hidden="true"
+                  className="mr-2 inline-block size-2 shrink-0 rounded-full bg-current"
+                />
                 {item.label}
               </a>
             )
