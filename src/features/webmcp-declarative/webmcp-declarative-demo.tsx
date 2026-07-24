@@ -83,9 +83,17 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
     const native = event.nativeEvent as SubmitEvent
     const agentInvoked = native.agentInvoked === true
 
-    const trimmedName = fullName.trim()
-    const trimmedEmail = email.trim()
-    const trimmedDetails = details.trim()
+    // Read the values the browser actually submitted, not component state.
+    // The Declarative API fills these fields directly on the form elements;
+    // that fill isn't guaranteed to go through React's onChange, so state can
+    // lag behind what the person (or agent) sees on screen. FormData always
+    // reflects the live DOM, so validation and respondWith() stay correct
+    // even when state is stale.
+    const submitted = new FormData(event.currentTarget)
+    const trimmedName = String(submitted.get('fullName') ?? '').trim()
+    const trimmedEmail = String(submitted.get('email') ?? '').trim()
+    const submittedTopic = String(submitted.get('topic') ?? topic)
+    const trimmedDetails = String(submitted.get('details') ?? '').trim()
 
     if (!trimmedName || !trimmedEmail.includes('@') || !trimmedDetails) {
       const message =
@@ -99,7 +107,8 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
     }
 
     const topicLabel =
-      topicOptions.find((option) => option.value === topic)?.label ?? topic
+      topicOptions.find((option) => option.value === submittedTopic)?.label ??
+      submittedTopic
     const confirmation = `Support request routed to the ${topicLabel} team for ${trimmedName} (${trimmedEmail}).`
     declarative.reportSuccess(confirmation, { agentInvoked })
     // The same text the person sees is serialized back to the agent as output.
