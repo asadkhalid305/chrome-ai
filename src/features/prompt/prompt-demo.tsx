@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { usePrompt } from './use-prompt'
 
-export function PromptDemo() {
+export function PromptDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(
     'Why should a web app destroy a browser AI session when it is finished?',
   )
@@ -17,7 +18,7 @@ export function PromptDemo() {
 
   return (
     <DemoSection
-      accent="blue"
+      accent={accent}
       eyebrow="API 4"
       title="Prompt"
       description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
@@ -50,7 +51,7 @@ export function PromptDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-blue hover:bg-brand-blue/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -72,7 +73,7 @@ export function PromptDemo() {
 
       <div className="mt-5">
         <DemoOutput
-          accent="blue"
+          accent={accent}
           request={promptModel.request}
           output={promptModel.output}
           error={promptModel.error}

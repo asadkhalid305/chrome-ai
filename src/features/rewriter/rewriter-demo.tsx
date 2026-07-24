@@ -1,8 +1,9 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { writingAssistanceFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { type RewriteChange } from './rewriter-api'
 import { useRewriter } from './use-rewriter'
@@ -10,7 +11,7 @@ import { useRewriter } from './use-rewriter'
 const sampleText =
   'Hey everyone, we are doing a browser AI workshop next week and it would be really great if you could come along.'
 
-export function RewriterDemo() {
+export function RewriterDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)
   const [change, setChange] = useState<RewriteChange>('more-formal')
   const rewriter = useRewriter()
@@ -22,7 +23,7 @@ export function RewriterDemo() {
 
   return (
     <DemoSection
-      accent="yellow"
+      accent={accent}
       eyebrow="API 6"
       title="Rewriter"
       description="Transform existing English text by one visible tone or length choice while preserving the original."
@@ -71,7 +72,7 @@ export function RewriterDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-yellow hover:bg-brand-yellow/85 rounded-xl px-4 py-2 text-sm font-bold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -94,7 +95,7 @@ export function RewriterDemo() {
 
       <div className="mt-5">
         <DemoOutput
-          accent="yellow"
+          accent={accent}
           request={rewriter.request}
           output={rewriter.output}
           error={rewriter.error}

@@ -53,7 +53,7 @@ describe('Language Detector demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<LanguageDetectorDemo />)
+    render(<LanguageDetectorDemo accent="red" />)
 
     await user.click(
       await screen.findByRole('button', { name: 'Detect language' }),

@@ -72,7 +72,7 @@ describe('Prompt demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<PromptDemo />)
+    render(<PromptDemo accent="blue" />)
 
     await user.click(await screen.findByRole('button', { name: 'Ask the model' }))
 

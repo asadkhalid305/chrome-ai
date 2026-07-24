@@ -82,7 +82,7 @@ describe('useWebmcpDeclarative', () => {
 describe('WebmcpDeclarativeDemo', () => {
   it('keeps the form usable for people without an agent', async () => {
     const user = userEvent.setup()
-    render(<WebmcpDeclarativeDemo />)
+    render(<WebmcpDeclarativeDemo accent="yellow" />)
 
     await user.type(
       screen.getByRole('textbox', { name: 'Full name' }),
@@ -109,7 +109,7 @@ describe('WebmcpDeclarativeDemo', () => {
 
   it('shows a validation error instead of submitting empty fields', async () => {
     const user = userEvent.setup()
-    render(<WebmcpDeclarativeDemo />)
+    render(<WebmcpDeclarativeDemo accent="yellow" />)
 
     await user.click(screen.getByRole('button', { name: 'Submit request' }))
 
@@ -120,14 +120,14 @@ describe('WebmcpDeclarativeDemo', () => {
   })
 
   it('never sets toolautosubmit, keeping the human-review default', () => {
-    const { container } = render(<WebmcpDeclarativeDemo />)
+    const { container } = render(<WebmcpDeclarativeDemo accent="yellow" />)
     const form = container.querySelector('form')
 
     expect(form).not.toHaveAttribute('toolautosubmit')
   })
 
   it('exposes the tool name, purpose, and typed parameters to the reader', () => {
-    render(<WebmcpDeclarativeDemo />)
+    render(<WebmcpDeclarativeDemo accent="yellow" />)
 
     expect(screen.getByText('submitSupportRequest')).toBeVisible()
     expect(

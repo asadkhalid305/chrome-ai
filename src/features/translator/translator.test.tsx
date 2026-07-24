@@ -91,7 +91,7 @@ describe('Translator demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<TranslatorDemo />)
+    render(<TranslatorDemo accent="yellow" />)
 
     await user.click(await screen.findByRole('button', { name: 'Translate' }))
 

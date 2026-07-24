@@ -45,24 +45,46 @@ type DemoId =
 interface Demo {
   id: DemoId;
   label: string;
-  component: ComponentType;
+  component: ComponentType<{ accent: DemoAccent }>;
   accent: DemoAccent;
   // Present only on demos that belong to the separate WebMCP track, which the
   // nav sets apart from the built-in-AI APIs.
   track?: "webmcp";
 }
 
+// A demo before it has been assigned a position in the tab order. `accent`
+// is deliberately absent here: color is a function of a tab's index in
+// `visibleDemos`, never a per-demo choice, so it can't drift out of sync the
+// way it did when each entry picked its own color by hand.
+type DemoDefinition = Omit<Demo, "accent">;
+
+// Chrome's four brand colors, in the same order the first four tabs
+// (Translator, Language Detector, Summarizer, Prompt) already used them.
+// Every tab after the fourth cycles through this same order by position, so
+// adding, removing, or reordering tabs can never leave a color unassigned or
+// repeated out of sequence.
+const ACCENT_CYCLE: DemoAccent[] = ["yellow", "red", "green", "blue"];
+
+function accentForPosition(index: number): DemoAccent {
+  return ACCENT_CYCLE[index % ACCENT_CYCLE.length];
+}
+
 // One coherent treatment per accent so every tab shares the same state logic.
 // The dot inherits the text color (`bg-current`), which keeps text and dot
 // aligned across the default, hover, and selected states automatically.
-// Yellow uses dark foregrounds because brand yellow is too light for white text.
+// Yellow's *active* (filled) state uses a dark foreground because brand
+// yellow is too light for white text on a solid yellow background. The
+// unselected hover state has a white background instead, so it uses
+// brand-yellow directly, just like every other accent's hover treatment —
+// an earlier "amber-700" substitute here read as orange/red rather than
+// yellow, since Tailwind's amber hue sits much closer to red than yellow.
 const accentClassNames: Record<
   DemoAccent,
   { active: string; hover: string }
 > = {
   yellow: {
     active: "border-brand-yellow bg-brand-yellow text-slate-950",
-    hover: "hover:border-brand-yellow hover:text-amber-700",
+    hover: "hover:border-brand-yellow hover:text-brand-yellow",
   },
   red: {
     active: "border-brand-red bg-brand-red text-white",
@@ -78,48 +100,41 @@ const accentClassNames: Record<
   },
 };
 
-const apiDemos: Demo[] = [
+const apiDemos: DemoDefinition[] = [
   {
     id: "translator",
     label: "Translator",
     component: TranslatorDemo,
-    accent: "yellow",
   },
   {
     id: "language-detector",
     label: "Language Detector",
     component: LanguageDetectorDemo,
-    accent: "red",
   },
   {
     id: "summarizer",
     label: "Summarizer",
     component: SummarizerDemo,
-    accent: "green",
   },
   {
     id: "prompt",
     label: "Prompt",
     component: PromptDemo,
-    accent: "blue",
   },
   {
     id: "writer",
     label: "Writer",
     component: WriterDemo,
-    accent: "blue",
   },
   {
     id: "rewriter",
     label: "Rewriter",
     component: RewriterDemo,
-    accent: "yellow",
   },
   {
     id: "proofreader",
     label: "Proofreader",
     component: ProofreaderDemo,
-    accent: "red",
   },
 ];
 
@@ -128,35 +143,35 @@ const apiDemos: Demo[] = [
 // they are taught. All three carry `track: "webmcp"` so the nav groups and
 // labels them apart from the numbered built-in-AI APIs. The track is appended
 // after the core APIs so the built-in-AI tab numbers stay stable.
-const webmcpDemos: Demo[] = [
+const webmcpDemos: DemoDefinition[] = [
   {
     id: "webmcp",
     label: "Introduction",
     component: WebMcpIntro,
-    accent: "blue",
     track: "webmcp",
   },
   {
     id: "webmcp-declarative",
     label: "Declarative API",
     component: WebmcpDeclarativeDemo,
-    accent: "blue",
     track: "webmcp",
   },
   {
     id: "webmcp-imperative",
     label: "Imperative API",
     component: WebmcpImperativeDemo,
-    accent: "blue",
     track: "webmcp",
   },
 ];
 
 // When the flag is off this is exactly the seven built-in-AI APIs, so that
 // experience is unchanged. When on, the WebMCP track is appended at the end.
-const visibleDemos: Demo[] = webmcpTrackEnabled
-  ? [...apiDemos, ...webmcpDemos]
-  : apiDemos;
+// Accent is assigned here, once, by each demo's final position in this list
+// (round-robin over the four brand colors), so the nav tab and that tab's
+// body always agree without every feature needing to pick its own color.
+const visibleDemos: Demo[] = (
+  webmcpTrackEnabled ? [...apiDemos, ...webmcpDemos] : apiDemos
+).map((demo, index) => ({ ...demo, accent: accentForPosition(index) }));
 
 const visibleDemoIds = new Set<string>(visibleDemos.map((demo) => demo.id));
 
@@ -355,7 +370,7 @@ export function App() {
                 role="tabpanel"
                 tabIndex={0}
               >
-                <SelectedDemo />
+                <SelectedDemo accent={selectedDemo.accent} />
               </div>
             </div>
           </main>

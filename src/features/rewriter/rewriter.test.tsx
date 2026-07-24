@@ -76,7 +76,7 @@ describe('Rewriter demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<RewriterDemo />)
+    render(<RewriterDemo accent="red" />)
     const original = screen.getByRole('textbox', { name: 'Original text' })
     const originalValue = (original as HTMLTextAreaElement).value
 
@@ -96,7 +96,7 @@ describe('Rewriter demo', () => {
       create: vi.fn().mockRejectedValue(new Error('Trial access was rejected.')),
     })
     const user = userEvent.setup()
-    render(<RewriterDemo />)
+    render(<RewriterDemo accent="red" />)
 
     await user.click(
       await screen.findByRole('button', { name: 'Rewrite separately' }),
@@ -114,7 +114,7 @@ describe('Rewriter demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<RewriterDemo />)
+    render(<RewriterDemo accent="red" />)
 
     const action = await screen.findByRole('button', {
       name: 'Download model and rewrite',

@@ -1,15 +1,16 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { proofreaderFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { OutputPanel } from '../../components/output-panel'
 import { useProofreader } from './use-proofreader'
 
 const sampleText =
   'I seen the new browser APIs yesterday, and they was very interesting.'
 
-export function ProofreaderDemo() {
+export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)
   const proofreader = useProofreader()
   const canRun =
@@ -22,7 +23,7 @@ export function ProofreaderDemo() {
 
   return (
     <DemoSection
-      accent="red"
+      accent={accent}
       eyebrow="API 7"
       title="Proofreader"
       description="Inspect English grammar, spelling, and punctuation suggestions without silently changing the original text."
@@ -56,7 +57,7 @@ export function ProofreaderDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-red hover:bg-brand-red/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -78,7 +79,7 @@ export function ProofreaderDemo() {
       </form>
 
       <div className="mt-5">
-        <OutputPanel accent="red">
+        <OutputPanel accent={accent}>
           {proofreader.request === 'idle' ? (
             <p className="text-slate-400">
               Suggested corrections will appear here.

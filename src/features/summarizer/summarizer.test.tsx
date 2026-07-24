@@ -53,7 +53,7 @@ describe('Summarizer demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<SummarizerDemo />)
+    render(<SummarizerDemo accent="green" />)
 
     await user.click(await screen.findByRole('button', { name: 'Summarize' }))
 

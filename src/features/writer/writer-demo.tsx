@@ -1,15 +1,19 @@
 import { useState } from 'react'
 
+import {
+  primaryButtonClassNames,
+  softBoxClassNames,
+} from '../../components/accent-styles'
 import { writingAssistanceFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { useWriter } from './use-writer'
 
 const sampleIdea = 'Invite the local web community to a hands-on AI study session.'
 const sampleContext =
   'The event is next Thursday at 18:30. It is free, beginner-friendly, and lasts 90 minutes.'
 
-export function WriterDemo() {
+export function WriterDemo({ accent }: { accent: DemoAccent }) {
   const [idea, setIdea] = useState(sampleIdea)
   const [context, setContext] = useState(sampleContext)
   const writer = useWriter()
@@ -21,7 +25,7 @@ export function WriterDemo() {
 
   return (
     <DemoSection
-      accent="blue"
+      accent={accent}
       eyebrow="API 5"
       title="Writer"
       description="Create a new, editable English draft from one focused idea and optional context."
@@ -63,7 +67,7 @@ export function WriterDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-blue hover:bg-brand-blue/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !idea.trim()}
             type="submit"
           >
@@ -84,7 +88,7 @@ export function WriterDemo() {
         </div>
       </form>
 
-      <div className="mt-5 rounded-2xl border border-brand-blue/25 bg-brand-blue/5 p-4">
+      <div className={`mt-5 rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
         <label className="grid gap-2 text-sm font-semibold text-slate-800">
           Editable generated draft
           <textarea

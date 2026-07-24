@@ -1,7 +1,12 @@
 import { useState, type FormEvent } from 'react'
 
+import {
+  accentTextClassNames,
+  primaryButtonClassNames,
+  softBoxClassNames,
+} from '../../components/accent-styles'
 import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { useWebmcpDeclarative } from './use-webmcp-declarative'
 
 // The tool identity. `toolname` + `tooldescription` on the <form> are what
@@ -58,7 +63,7 @@ const supportBanner: Record<
   },
 }
 
-export function WebmcpDeclarativeDemo() {
+export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
   const declarative = useWebmcpDeclarative()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -109,7 +114,7 @@ export function WebmcpDeclarativeDemo() {
 
   return (
     <DemoSection
-      accent="blue"
+      accent={accent}
       eyebrow="WebMCP · Declarative"
       title="Declarative API: turn a form into an agent tool"
       description="Annotate a normal support form with toolname and tooldescription, and each field becomes a typed tool parameter. The form stays fully usable by people, while an agent can fill and submit the same fields."
@@ -218,7 +223,7 @@ export function WebmcpDeclarativeDemo() {
           </label>
           <div className="flex flex-wrap gap-3">
             <button
-              className="bg-brand-blue hover:bg-brand-blue/85 rounded-xl px-4 py-2 text-sm font-bold text-white"
+              className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold`}
               type="submit"
             >
               Submit request
@@ -236,7 +241,7 @@ export function WebmcpDeclarativeDemo() {
         {/* What the agent sees: the annotations above, translated into a tool
             name, description, and typed parameters. */}
         <div className="grid content-start gap-4">
-          <div className="border-brand-blue/25 bg-brand-blue/5 rounded-2xl border p-4">
+          <div className={`rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
             <h3 className="text-sm font-bold text-slate-900">
               What the agent sees
             </h3>
@@ -283,7 +288,7 @@ export function WebmcpDeclarativeDemo() {
                 </p>
               ) : null}
               {declarative.activity === 'activated' ? (
-                <p className="text-brand-blue">
+                <p className={accentTextClassNames[accent]}>
                   An agent activated{' '}
                   <span className="font-mono text-xs">
                     {declarative.toolName}

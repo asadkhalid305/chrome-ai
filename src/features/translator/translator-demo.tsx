@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { useTranslator } from './use-translator'
 
@@ -12,7 +13,7 @@ const languages = [
   { code: 'fr', name: 'French' },
 ]
 
-export function TranslatorDemo() {
+export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
   const [sourceLanguage, setSourceLanguage] = useState('de')
   const [targetLanguage, setTargetLanguage] = useState('en')
   const [input, setInput] = useState(
@@ -26,7 +27,7 @@ export function TranslatorDemo() {
 
   return (
     <DemoSection
-      accent="yellow"
+      accent={accent}
       eyebrow="API 1"
       title="Translator"
       description="Translate one string with a language-pair-specific model that stays on the device."
@@ -89,7 +90,7 @@ export function TranslatorDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-yellow hover:bg-brand-yellow/80 rounded-xl px-4 py-2 text-sm font-bold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim() || sourceLanguage === targetLanguage}
             type="submit"
           >
@@ -111,7 +112,7 @@ export function TranslatorDemo() {
 
       <div className="mt-5">
         <DemoOutput
-          accent="yellow"
+          accent={accent}
           request={translator.request}
           output={translator.output}
           error={translator.error}

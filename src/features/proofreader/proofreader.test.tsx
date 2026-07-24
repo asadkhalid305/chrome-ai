@@ -71,7 +71,7 @@ describe('Proofreader demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<ProofreaderDemo />)
+    render(<ProofreaderDemo accent="green" />)
     const original = screen.getByRole('textbox', { name: 'Original text' })
     const originalValue = (original as HTMLTextAreaElement).value
 
@@ -102,7 +102,7 @@ describe('Proofreader demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<ProofreaderDemo />)
+    render(<ProofreaderDemo accent="green" />)
 
     await user.click(
       await screen.findByRole('button', { name: 'Inspect corrections' }),
@@ -154,7 +154,7 @@ describe('Proofreader demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<ProofreaderDemo />)
+    render(<ProofreaderDemo accent="green" />)
 
     const action = await screen.findByRole('button', {
       name: 'Download model and proofread',
