@@ -129,8 +129,10 @@ function NavGroupLabel({ label }: { label: string }) {
 }
 
 function DocumentationSidebar({
+  onNavigate,
   selectedSectionId,
 }: {
+  onNavigate: () => void
   selectedSectionId: DocumentationSectionId
 }) {
   return (
@@ -138,6 +140,7 @@ function DocumentationSidebar({
       <a
         className="mb-2 flex items-center rounded-lg border border-brand-blue/25 bg-brand-blue/5 px-3 py-2 text-sm font-bold text-brand-blue hover:bg-brand-blue/10"
         href={playgroundHash('translator')}
+        onClick={onNavigate}
       >
         <span aria-hidden="true" className="mr-2">
           ←
@@ -160,6 +163,7 @@ function DocumentationSidebar({
                 }
                 href={documentationHash(item.id)}
                 key={item.id}
+                onClick={onNavigate}
               >
                 {item.label}
               </a>
@@ -175,6 +179,7 @@ export function App() {
   const [route, setRoute] = useState<AppRoute>(() =>
     parseAppRoute(window.location.hash, visibleDemoIds),
   )
+  const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false)
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const mainRef = useRef<HTMLElement | null>(null)
   const previousSurfaceRef = useRef(route.surface)
@@ -212,9 +217,20 @@ export function App() {
   const selectedDemo =
     visibleDemos.find((demo) => demo.id === selectedDemoId) ?? visibleDemos[0]
   const SelectedDemo = selectedDemo.component
+  const selectedDocumentationLabel =
+    route.surface === 'docs'
+      ? documentationNavGroups
+          .flatMap((group) => group.items)
+          .find((item) => item.id === route.sectionId)?.label
+      : undefined
+  const selectedNavigationLabel =
+    route.surface === 'docs'
+      ? (selectedDocumentationLabel ?? 'Overview')
+      : selectedDemo.label
 
   function navigateToDemo(id: DemoId) {
     if (!visibleDemoIds.has(id)) return
+    setIsMobileNavigationOpen(false)
     const hash = playgroundHash(id)
     if (window.location.hash === hash) {
       setRoute({ surface: 'playground', demoId: id })
@@ -266,82 +282,127 @@ export function App() {
                 ? 'Playground'
                 : 'Documentation'
             }
-            className="bg-brand-white/95 flex max-h-52 w-full shrink-0 flex-col overflow-y-auto border-b border-brand-blue/15 shadow-sm md:max-h-none md:w-64 md:border-r md:border-b-0"
+            className={`bg-brand-white/95 flex w-full flex-col border-b border-brand-blue/15 shadow-sm md:min-h-0 md:w-64 md:shrink-0 md:border-r md:border-b-0 ${
+              isMobileNavigationOpen
+                ? 'min-h-0 flex-1'
+                : 'shrink-0'
+            }`}
           >
-            {route.surface === 'playground' ? (
-              <div
-                aria-label="Playground"
-                aria-orientation="vertical"
-                className="flex flex-col gap-1 px-3 py-4"
-                role="tablist"
-              >
-                <NavGroupLabel label="APIs" />
-                {visibleDemos.map((demo, index) => {
-                  const isSelected = demo.id === selectedDemoId
-                  const accent = accentClassNames[demo.accent]
-                  const startsWebmcpGroup =
-                    demo.track === 'webmcp' &&
-                    visibleDemos[index - 1]?.track !== 'webmcp'
-
-                  return (
-                    <Fragment key={demo.id}>
-                      {startsWebmcpGroup ? (
-                        <NavGroupLabel label="WebMCP" />
-                      ) : null}
-                      <button
-                        aria-controls="demo-panel"
-                        aria-label={
-                          demo.track === 'webmcp'
-                            ? `WebMCP track: ${demo.label}`
-                            : undefined
-                        }
-                        aria-selected={isSelected}
-                        className={
-                          isSelected
-                            ? `flex w-full items-center rounded-lg border px-3 py-2 text-left text-sm font-bold shadow-sm ${accent.active}`
-                            : `${accent.hover} flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700`
-                        }
-                        id={`demo-tab-${demo.id}`}
-                        onClick={() => navigateToDemo(demo.id)}
-                        onKeyDown={(event) =>
-                          handleTabKeyDown(event, index)
-                        }
-                        ref={(element) => {
-                          tabRefs.current[index] = element
-                        }}
-                        role="tab"
-                        tabIndex={isSelected ? 0 : -1}
-                        type="button"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="mr-2 inline-block size-2 shrink-0 rounded-full bg-current"
-                        />
-                        {demo.track === 'webmcp' ? (
-                          demo.label
-                        ) : (
-                          <>
-                            {index + 1}. {demo.label}
-                          </>
-                        )}
-                      </button>
-                    </Fragment>
-                  )
-                })}
-                <NavGroupLabel label="Learn" />
-                <a
-                  className="flex w-full items-center rounded-lg border border-brand-blue/30 bg-white px-3 py-2 text-left text-sm font-bold text-brand-blue hover:bg-brand-blue/5"
-                  href={documentationHash('overview')}
-                >
-                  <span aria-hidden="true" className="mr-2">
-                    ◫
-                  </span>
-                  Documentation
-                </a>
+            <div className="flex items-center justify-between gap-4 px-4 py-3 md:hidden">
+              <div className="min-w-0">
+                <p className="text-brand-blue text-xs font-black uppercase tracking-[0.16em]">
+                  {route.surface === 'docs' ? 'Documentation' : 'Playground'}
+                </p>
+                <p className="truncate text-sm font-bold text-slate-900">
+                  {selectedNavigationLabel}
+                </p>
               </div>
-            ) : (
-              <DocumentationSidebar selectedSectionId={route.sectionId} />
-            )}
+              <button
+                aria-controls="primary-navigation-items"
+                aria-expanded={isMobileNavigationOpen}
+                aria-label={
+                  isMobileNavigationOpen
+                    ? 'Close navigation menu'
+                    : 'Open navigation menu'
+                }
+                className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-brand-blue/30 bg-white px-3 py-2 text-sm font-bold text-brand-blue shadow-sm hover:bg-brand-blue/5"
+                onClick={() =>
+                  setIsMobileNavigationOpen((isOpen) => !isOpen)
+                }
+                type="button"
+              >
+                <span>{isMobileNavigationOpen ? 'Close' : 'Menu'}</span>
+                <span aria-hidden="true" className="text-lg leading-none">
+                  {isMobileNavigationOpen ? '×' : '☰'}
+                </span>
+              </button>
+            </div>
+
+            <div
+              className={`min-h-0 flex-1 overflow-y-auto md:block ${
+                isMobileNavigationOpen ? 'block' : 'hidden'
+              }`}
+              id="primary-navigation-items"
+            >
+              {route.surface === 'playground' ? (
+                <div
+                  aria-label="Playground"
+                  aria-orientation="vertical"
+                  className="flex flex-col gap-1 px-3 py-4"
+                  role="tablist"
+                >
+                  <NavGroupLabel label="APIs" />
+                  {visibleDemos.map((demo, index) => {
+                    const isSelected = demo.id === selectedDemoId
+                    const accent = accentClassNames[demo.accent]
+                    const startsWebmcpGroup =
+                      demo.track === 'webmcp' &&
+                      visibleDemos[index - 1]?.track !== 'webmcp'
+
+                    return (
+                      <Fragment key={demo.id}>
+                        {startsWebmcpGroup ? (
+                          <NavGroupLabel label="WebMCP" />
+                        ) : null}
+                        <button
+                          aria-controls="demo-panel"
+                          aria-label={
+                            demo.track === 'webmcp'
+                              ? `WebMCP track: ${demo.label}`
+                              : undefined
+                          }
+                          aria-selected={isSelected}
+                          className={
+                            isSelected
+                              ? `flex w-full items-center rounded-lg border px-3 py-2 text-left text-sm font-bold shadow-sm ${accent.active}`
+                              : `${accent.hover} flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700`
+                          }
+                          id={`demo-tab-${demo.id}`}
+                          onClick={() => navigateToDemo(demo.id)}
+                          onKeyDown={(event) =>
+                            handleTabKeyDown(event, index)
+                          }
+                          ref={(element) => {
+                            tabRefs.current[index] = element
+                          }}
+                          role="tab"
+                          tabIndex={isSelected ? 0 : -1}
+                          type="button"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="mr-2 inline-block size-2 shrink-0 rounded-full bg-current"
+                          />
+                          {demo.track === 'webmcp' ? (
+                            demo.label
+                          ) : (
+                            <>
+                              {index + 1}. {demo.label}
+                            </>
+                          )}
+                        </button>
+                      </Fragment>
+                    )
+                  })}
+                  <NavGroupLabel label="Learn" />
+                  <a
+                    className="flex w-full items-center rounded-lg border border-brand-blue/30 bg-white px-3 py-2 text-left text-sm font-bold text-brand-blue hover:bg-brand-blue/5"
+                    href={documentationHash('overview')}
+                    onClick={() => setIsMobileNavigationOpen(false)}
+                  >
+                    <span aria-hidden="true" className="mr-2">
+                      ◫
+                    </span>
+                    Documentation
+                  </a>
+                </div>
+              ) : (
+                <DocumentationSidebar
+                  onNavigate={() => setIsMobileNavigationOpen(false)}
+                  selectedSectionId={route.sectionId}
+                />
+              )}
+            </div>
           </nav>
 
           <main
@@ -350,7 +411,9 @@ export function App() {
                 ? 'Chrome AI playground'
                 : 'Chrome AI documentation'
             }
-            className="min-h-0 flex-1 overflow-y-auto outline-none"
+            className={`min-h-0 flex-1 overflow-y-auto outline-none md:block ${
+              isMobileNavigationOpen ? 'hidden' : 'block'
+            }`}
             ref={mainRef}
             tabIndex={-1}
           >

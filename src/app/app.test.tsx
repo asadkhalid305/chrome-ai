@@ -128,6 +128,33 @@ describe('Chrome AI demo tabs', () => {
     ).toHaveAttribute('aria-current', 'page')
   })
 
+  it('opens and closes the mobile navigation around a route change', async () => {
+    const user = userEvent.setup()
+    await renderApp()
+    const openMenuButton = screen.getByRole('button', {
+      name: 'Open navigation menu',
+    })
+
+    expect(openMenuButton).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(openMenuButton)
+
+    expect(
+      screen.getByRole('button', { name: 'Close navigation menu' }),
+    ).toHaveAttribute('aria-expanded', 'true')
+
+    await user.click(screen.getByRole('link', { name: /documentation/i }))
+
+    expect(
+      await screen.findByRole('button', { name: 'Open navigation menu' }),
+    ).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.getByRole('heading', {
+        name: 'Build useful AI experiences directly in Chrome',
+      }),
+    ).toBeVisible()
+  })
+
   it('falls back to the documentation overview for an unknown docs section', async () => {
     window.history.replaceState(null, '', '/#docs/not-real')
     await renderApp()
