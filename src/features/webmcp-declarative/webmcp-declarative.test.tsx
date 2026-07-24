@@ -159,7 +159,7 @@ describe('WebmcpDeclarativeDemo', () => {
   })
 
   it('reads submitted field values even when they bypass React onChange', async () => {
-    const { container } = render(<WebmcpDeclarativeDemo />)
+    const { container } = render(<WebmcpDeclarativeDemo accent="yellow" />)
 
     // Simulate an agent-driven fill: the browser sets these DOM values
     // directly, the way the Declarative API does, without ever calling the
@@ -178,6 +178,52 @@ describe('WebmcpDeclarativeDemo', () => {
       }) as HTMLTextAreaElement,
       'I need help with billing.',
     )
+
+    const form = container.querySelector('form')
+    if (!form) {
+      throw new Error('Expected the support request form to be in the document.')
+    }
+    fireEvent.submit(form)
+
+    expect(await screen.findByText(/Submitted successfully/i)).toBeVisible()
+    expect(
+      screen.getByText(
+        /Support request routed to the Billing team for Ada Lovelace \(ada@example\.com\)/i,
+      ),
+    ).toBeVisible()
+  })
+
+  it('keeps agent-filled fields intact through the "activated" re-render', async () => {
+    const { container } = render(<WebmcpDeclarativeDemo accent="yellow" />)
+
+    // Simulate the real sequence: the browser fills the DOM directly, then
+    // fires toolactivated. That event drives a state update inside
+    // useWebmcpDeclarative, which re-renders this component. If the fields
+    // were still React-controlled, that re-render would snap them back to
+    // stale (empty) state and wipe the fill below.
+    setValueWithoutReactEvent(
+      screen.getByRole('textbox', { name: 'Full name' }) as HTMLInputElement,
+      'Ada Lovelace',
+    )
+    setValueWithoutReactEvent(
+      screen.getByRole('textbox', { name: 'Email' }) as HTMLInputElement,
+      'ada@example.com',
+    )
+    setValueWithoutReactEvent(
+      screen.getByRole('textbox', {
+        name: 'Message',
+      }) as HTMLTextAreaElement,
+      'I need help with billing.',
+    )
+
+    const activation = new Event('toolactivated') as ToolEvent
+    Object.defineProperty(activation, 'toolName', {
+      value: 'submitSupportRequest',
+    })
+    act(() => {
+      window.dispatchEvent(activation)
+    })
+    expect(await screen.findByText(/An agent activated/i)).toBeVisible()
 
     const form = container.querySelector('form')
     if (!form) {

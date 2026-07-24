@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 
 import {
   accentTextClassNames,
@@ -65,10 +65,7 @@ const supportBanner: Record<
 
 export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
   const declarative = useWebmcpDeclarative()
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [topic, setTopic] = useState(topicOptions[0].value)
-  const [details, setDetails] = useState('')
+  const formRef = useRef<HTMLFormElement>(null)
   // toolautosubmit is a static per-form flag in the spec, not something a
   // single call toggles. Making it a demo control lets learners compare the
   // two submission modes on the same tool instead of reading about both.
@@ -83,16 +80,21 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
     const native = event.nativeEvent as SubmitEvent
     const agentInvoked = native.agentInvoked === true
 
-    // Read the values the browser actually submitted, not component state.
-    // The Declarative API fills these fields directly on the form elements;
-    // that fill isn't guaranteed to go through React's onChange, so state can
-    // lag behind what the person (or agent) sees on screen. FormData always
-    // reflects the live DOM, so validation and respondWith() stay correct
-    // even when state is stale.
+    // Read the values the browser actually submitted, from the DOM via
+    // FormData, rather than mirroring them into React state. The Declarative
+    // API fills these fields directly on the form elements when an agent
+    // activates the tool, and that fill isn't guaranteed to go through
+    // React's onChange. If these were controlled inputs, the "activated"
+    // state update alone would re-render the form and snap each field's
+    // value back to whatever React last knew about, wiping the agent's fill
+    // before FormData ever got read. Leaving them uncontrolled means no
+    // render can overwrite the DOM out from under an in-progress fill.
     const submitted = new FormData(event.currentTarget)
     const trimmedName = String(submitted.get('fullName') ?? '').trim()
     const trimmedEmail = String(submitted.get('email') ?? '').trim()
-    const submittedTopic = String(submitted.get('topic') ?? topic)
+    const submittedTopic = String(
+      submitted.get('topic') ?? topicOptions[0].value,
+    )
     const trimmedDetails = String(submitted.get('details') ?? '').trim()
 
     if (!trimmedName || !trimmedEmail.includes('@') || !trimmedDetails) {
@@ -118,10 +120,9 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
   }
 
   function handleClear() {
-    setFullName('')
-    setEmail('')
-    setTopic(topicOptions[0].value)
-    setDetails('')
+    // form.reset() restores each field's defaultValue; there's no React
+    // state mirroring the DOM to clear separately (see handleSubmit).
+    formRef.current?.reset()
     declarative.reset()
   }
 
@@ -175,6 +176,7 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
         {/* The human interface. It never hides behind the tool: a person can
             complete it with or without an agent present. */}
         <form
+          ref={formRef}
           className="grid gap-4"
           toolname={TOOL_NAME}
           tooldescription={TOOL_DESCRIPTION}
@@ -195,8 +197,6 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
               className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               type="text"
               name="fullName"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
               toolparamdescription="The full name of the person who needs help."
               autoComplete="name"
               required
@@ -208,8 +208,6 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
               className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               type="email"
               name="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
               toolparamdescription="A contact email address for the reply."
               autoComplete="email"
               required
@@ -220,8 +218,7 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
             <select
               className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               name="topic"
-              value={topic}
-              onChange={(event) => setTopic(event.target.value)}
+              defaultValue={topicOptions[0].value}
               toolparamdescription="Which team should receive the request."
               required
             >
@@ -237,8 +234,6 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
             <textarea
               className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-24 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
               name="details"
-              value={details}
-              onChange={(event) => setDetails(event.target.value)}
               toolparamdescription="What the person needs help with."
               required
             />
