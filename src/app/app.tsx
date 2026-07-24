@@ -158,6 +158,32 @@ const visibleDemos: Demo[] = webmcpTrackEnabled
   ? [...apiDemos, ...webmcpDemos]
   : apiDemos;
 
+const visibleDemoIds = new Set<string>(visibleDemos.map((demo) => demo.id));
+
+const TAB_QUERY_PARAM = "tab";
+
+// Read the active tab from the URL so a refresh (or a shared link) restores
+// the same demo instead of always landing on the first tab. Falls back to
+// the default demo when the param is missing or names a tab that isn't
+// currently visible (e.g. a WebMCP tab while that track is flag-disabled).
+function getInitialDemoId(): DemoId {
+  const tabParam = new URLSearchParams(window.location.search).get(
+    TAB_QUERY_PARAM,
+  );
+  return tabParam && visibleDemoIds.has(tabParam)
+    ? (tabParam as DemoId)
+    : "translator";
+}
+
+// Tab switches replace the current history entry rather than pushing a new
+// one, so the back button still leaves the app instead of cycling through
+// every previously viewed tab.
+function writeDemoIdToUrl(id: DemoId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(TAB_QUERY_PARAM, id);
+  window.history.replaceState(null, "", url);
+}
+
 // A small decorative heading that groups tabs in the sidebar (e.g. "APIs",
 // "WebMCP"). Defined at module scope, not inside App, so it keeps a stable
 // component identity across renders.
@@ -178,16 +204,22 @@ function NavGroupLabel({ label }: { label: string }) {
 }
 
 export function App() {
-  const [selectedDemoId, setSelectedDemoId] = useState<DemoId>("translator");
+  const [selectedDemoId, setSelectedDemoId] =
+    useState<DemoId>(getInitialDemoId);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectedDemo =
     visibleDemos.find((demo) => demo.id === selectedDemoId) ??
     visibleDemos[0];
   const SelectedDemo = selectedDemo.component;
 
+  function selectDemoById(id: DemoId) {
+    setSelectedDemoId(id);
+    writeDemoIdToUrl(id);
+  }
+
   function selectDemo(index: number) {
     const demo = visibleDemos[index];
-    setSelectedDemoId(demo.id);
+    selectDemoById(demo.id);
     tabRefs.current[index]?.focus();
   }
 
@@ -267,7 +299,7 @@ export function App() {
                           : `${accent.hover} flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700`
                       }
                       id={`demo-tab-${demo.id}`}
-                      onClick={() => setSelectedDemoId(demo.id)}
+                      onClick={() => selectDemoById(demo.id)}
                       onKeyDown={(event) => handleTabKeyDown(event, index)}
                       ref={(element) => {
                         tabRefs.current[index] = element;
