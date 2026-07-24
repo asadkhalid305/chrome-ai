@@ -7,6 +7,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
   vi.unstubAllEnvs()
   vi.resetModules()
+  window.history.replaceState(null, '', '/')
 })
 
 // This suite exercises only the seven built-in-AI tabs and their fixed
@@ -67,6 +68,39 @@ describe('Chrome AI demo tabs', () => {
     await user.keyboard('{Home}')
     expect(translatorTab).toHaveFocus()
     expect(screen.getByRole('heading', { name: 'Translator' })).toBeVisible()
+  })
+
+  it('writes the selected tab to the URL so a refresh can restore it', async () => {
+    const user = userEvent.setup()
+    await renderApp()
+
+    await user.click(screen.getByRole('tab', { name: '3. Summarizer' }))
+
+    expect(new URL(window.location.href).searchParams.get('tab')).toBe(
+      'summarizer',
+    )
+  })
+
+  it('restores the tab named in the URL on load instead of the first tab', async () => {
+    window.history.replaceState(null, '', '/?tab=prompt')
+
+    await renderApp()
+
+    expect(screen.getByRole('tab', { name: '4. Prompt' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(screen.getByRole('heading', { name: 'Prompt' })).toBeVisible()
+  })
+
+  it('falls back to the default tab when the URL names an unknown or hidden tab', async () => {
+    window.history.replaceState(null, '', '/?tab=does-not-exist')
+
+    await renderApp()
+
+    expect(
+      screen.getByRole('tab', { name: '1. Translator' }),
+    ).toHaveAttribute('aria-selected', 'true')
   })
 
   it('destroys the active demo session when switching tabs', async () => {
