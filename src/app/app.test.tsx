@@ -2,17 +2,28 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { App } from './app'
-
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+  vi.resetModules()
 })
+
+// This suite exercises only the seven built-in-AI tabs and their fixed
+// indices (e.g. "7. Proofreader" as the last tab). The separate WebMCP track
+// defaults on and is read at module load, so force it off and re-import fresh
+// to keep this suite's tab count and End/Home navigation deterministic.
+async function renderApp() {
+  vi.stubEnv('VITE_WEBMCP', 'false')
+  vi.resetModules()
+  const { App } = await import('./app')
+  render(<App />)
+}
 
 describe('Chrome AI demo tabs', () => {
   it('shows one selected demo at a time', async () => {
     const user = userEvent.setup()
-    render(<App />)
+    await renderApp()
 
     expect(
       screen.getByRole('tab', { name: '1. Translator' }),
@@ -35,7 +46,7 @@ describe('Chrome AI demo tabs', () => {
 
   it('supports arrow, Home, and End keyboard navigation', async () => {
     const user = userEvent.setup()
-    render(<App />)
+    await renderApp()
     const translatorTab = screen.getByRole('tab', { name: '1. Translator' })
 
     translatorTab.focus()
@@ -68,7 +79,7 @@ describe('Chrome AI demo tabs', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<App />)
+    await renderApp()
 
     await user.click(await screen.findByRole('button', { name: 'Translate' }))
     await screen.findByText('Translated on device.')

@@ -56,18 +56,21 @@ Teach `document.modelContext`, explicit tool schemas, execution, cleanup, permis
 
 #### WebMCP track visibility (feature flag)
 
-The WebMCP track (Lessons 8 and 9) is hidden by default so the one-hour
-built-in-AI demo stays focused on on-device inference. It lives behind the
-`VITE_WEBMCP` app-level flag, which defaults off: an unset value on a fresh
-clone keeps the seven built-in-AI lessons unchanged and prevents any accidental
-origin-trial activation.
+The WebMCP track (Lessons 8 and 9) is appended after the core lessons by
+default. It lives behind the `VITE_WEBMCP` app-level flag, which defaults on:
+an unset value on a fresh clone shows the full ten-tab curriculum.
 
-To reveal the track for a longer talk, set `VITE_WEBMCP=true` in a local `.env`
-file (see `.env.example`) and restart the dev server. When enabled, the WebMCP
-tab is appended after the core lessons — existing lesson numbers stay stable —
-and a divider plus group label separate it from the built-in-AI lessons to make
-clear that WebMCP exposes website tools to browser agents rather than running a
-Chrome model.
+To trim the track for a shorter demo focused on on-device inference, set
+`VITE_WEBMCP=false` in a local `.env` file (see `.env.example`) and restart
+the dev server. When enabled (the default), the WebMCP tab is appended after
+the core lessons — existing lesson numbers stay stable — and a divider plus
+group label separate it from the built-in-AI lessons to make clear that
+WebMCP exposes website tools to browser agents rather than running a Chrome
+model.
+
+See `docs/webmcp-environment.md` for the Chrome flag, the supported
+verification tool, and the deployed-environment setup (origin isolation,
+permissions policy, origin-trial token placement) this track needs.
 
 ### Lesson 10: Production patterns
 

@@ -25,11 +25,10 @@ import { RevealContext } from "./reveal-context";
 const revealChromeByDefault = import.meta.env.VITE_REVEAL_CHROME !== "false";
 
 // The WebMCP track teaches website tools for browser agents rather than local
-// model inference, so it is hidden by default to keep the one-hour built-in-AI
-// demo focused. Require an explicit "true" (contrast the default-on reveal flag
-// above) so an unset value on a fresh clone stays off. Set VITE_WEBMCP=true in a
-// local env file to reveal it for a longer talk.
-const webmcpTrackEnabled = import.meta.env.VITE_WEBMCP === "true";
+// model inference. It defaults on, like the reveal flag above, so an unset
+// value on a fresh clone shows the full curriculum. Set VITE_WEBMCP=false in a
+// local env file to hide it for a shorter, built-in-AI-only demo.
+const webmcpTrackEnabled = import.meta.env.VITE_WEBMCP !== "false";
 
 type DemoId =
   | "translator"
