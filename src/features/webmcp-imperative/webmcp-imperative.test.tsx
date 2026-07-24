@@ -157,7 +157,7 @@ describe('useWebmcpImperative', () => {
 describe('WebmcpImperativeDemo', () => {
   it('lets a person add and clear items without an agent', async () => {
     const user = userEvent.setup()
-    render(<WebmcpImperativeDemo />)
+    render(<WebmcpImperativeDemo accent="red" />)
 
     await user.type(
       screen.getByRole('textbox', { name: 'New task' }),
@@ -173,7 +173,7 @@ describe('WebmcpImperativeDemo', () => {
   })
 
   it('renders the exact tool contract the hook registers', () => {
-    render(<WebmcpImperativeDemo />)
+    render(<WebmcpImperativeDemo accent="red" />)
 
     // The tool name is intentionally referenced in multiple places (agent
     // card, empty-list hint, idle activity copy) so the reader can trace it.

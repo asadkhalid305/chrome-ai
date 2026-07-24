@@ -1,13 +1,14 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { useSummarizer } from './use-summarizer'
 
 const sampleArticle = `Built-in browser AI APIs let websites use models supplied by the browser. The work happens on the user's device, so short-lived input does not need to be sent to an application server. Before a site can use an API, it checks availability and may need to ask the browser to download a model. Downloads can take time, so the interface should show progress and wait for clear user intent. Each API session also consumes resources. Applications should reuse a session when appropriate, cancel work the user no longer wants, and destroy the session during cleanup.`
 
-export function SummarizerDemo() {
+export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleArticle)
   const summarizer = useSummarizer()
   const canRun =
@@ -17,7 +18,7 @@ export function SummarizerDemo() {
 
   return (
     <DemoSection
-      accent="green"
+      accent={accent}
       eyebrow="API 3"
       title="Summarizer"
       description="Turn a longer English passage into short, plain-text key points with a reusable task session."
@@ -50,7 +51,7 @@ export function SummarizerDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-green hover:bg-brand-green/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -72,7 +73,7 @@ export function SummarizerDemo() {
 
       <div className="mt-5">
         <DemoOutput
-          accent="green"
+          accent={accent}
           request={summarizer.request}
           output={summarizer.output}
           error={summarizer.error}

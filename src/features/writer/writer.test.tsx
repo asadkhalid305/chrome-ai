@@ -59,7 +59,7 @@ describe('Writer demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<WriterDemo />)
+    render(<WriterDemo accent="yellow" />)
     const idea = screen.getByRole('textbox', { name: 'Writing idea' })
 
     await user.click(await screen.findByRole('button', { name: 'Create draft' }))
@@ -86,7 +86,7 @@ describe('Writer demo', () => {
       }),
     })
     const user = userEvent.setup()
-    render(<WriterDemo />)
+    render(<WriterDemo accent="yellow" />)
 
     const action = await screen.findByRole('button', {
       name: 'Download model and write',

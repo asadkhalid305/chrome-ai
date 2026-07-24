@@ -1,7 +1,13 @@
 import { useState, type FormEvent } from 'react'
 
+import {
+  accentBadgeClassNames,
+  accentTextClassNames,
+  primaryButtonClassNames,
+  softBoxClassNames,
+} from '../../components/accent-styles'
 import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import {
   IMPERATIVE_TOOL_CONTRACT,
   useWebmcpImperative,
@@ -33,17 +39,23 @@ const supportBanner: Record<
   },
 }
 
-const activityToneClass: Record<
-  ReturnType<typeof useWebmcpImperative>['activity'],
-  string
-> = {
-  idle: 'text-slate-500',
-  running: 'text-brand-blue',
-  success: 'text-brand-green',
-  error: 'text-brand-red',
+// "running" reads in the demo's own accent; the other states are fixed
+// semantic colors (success/error) shared with every other demo's output.
+function getActivityToneClass(
+  activity: ReturnType<typeof useWebmcpImperative>['activity'],
+  accent: DemoAccent,
+): string {
+  const fixedToneClass: Partial<
+    Record<ReturnType<typeof useWebmcpImperative>['activity'], string>
+  > = {
+    idle: 'text-slate-500',
+    success: 'text-brand-green',
+    error: 'text-brand-red',
+  }
+  return fixedToneClass[activity] ?? accentTextClassNames[accent]
 }
 
-export function WebmcpImperativeDemo() {
+export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
   const imperative = useWebmcpImperative()
   const [draft, setDraft] = useState('')
 
@@ -59,7 +71,7 @@ export function WebmcpImperativeDemo() {
 
   return (
     <DemoSection
-      accent="blue"
+      accent={accent}
       eyebrow="WebMCP · Imperative"
       title="Imperative API: register a JavaScript tool"
       description="Hand the browser one JavaScript tool through document.modelContext. It carries a name, description, JSON Schema for its input, and an execute function. A person adds items with the form on the left; an agent can call the same operation as a typed tool call, and the result flows back to the same list."
@@ -112,7 +124,7 @@ export function WebmcpImperativeDemo() {
             </label>
             <div className="flex flex-wrap gap-3">
               <button
-                className="bg-brand-blue hover:bg-brand-blue/85 rounded-xl px-4 py-2 text-sm font-bold text-white"
+                className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold`}
                 type="submit"
               >
                 Add task
@@ -155,7 +167,7 @@ export function WebmcpImperativeDemo() {
                       <span
                         className={
                           todo.source === 'agent'
-                            ? 'border-brand-blue/40 bg-brand-blue/10 text-brand-blue inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide'
+                            ? `inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${accentBadgeClassNames[accent]}`
                             : 'inline-flex items-center rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600'
                         }
                       >
@@ -189,7 +201,7 @@ export function WebmcpImperativeDemo() {
               auto minimum, which grew this card (and the whole column) past
               the section's edge. Capping the card lets the <pre>'s own
               `overflow-x-auto` scroll internally instead. */}
-          <div className="min-w-0 border-brand-blue/25 bg-brand-blue/5 rounded-2xl border p-4">
+          <div className={`min-w-0 rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
             <h3 className="text-sm font-bold text-slate-900">
               What the agent sees
             </h3>
@@ -237,7 +249,7 @@ export function WebmcpImperativeDemo() {
               </button>
             </div>
             <p
-              className={`mt-2 text-xs font-bold uppercase tracking-wide ${activityToneClass[imperative.activity]}`}
+              className={`mt-2 text-xs font-bold uppercase tracking-wide ${getActivityToneClass(imperative.activity, accent)}`}
             >
               {imperative.activity}
             </p>
@@ -252,7 +264,7 @@ export function WebmcpImperativeDemo() {
                 </p>
               ) : null}
               {imperative.activity === 'running' ? (
-                <p className="text-brand-blue">
+                <p className={accentTextClassNames[accent]}>
                   Running{' '}
                   <span className="font-mono text-xs">
                     {IMPERATIVE_TOOL_CONTRACT.name}

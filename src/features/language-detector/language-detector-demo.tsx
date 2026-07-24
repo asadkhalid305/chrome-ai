@@ -1,13 +1,14 @@
 import { useState } from 'react'
 
+import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection } from '../../components/demo-section'
+import { DemoSection, type DemoAccent } from '../../components/demo-section'
 import { OutputPanel } from '../../components/output-panel'
 import { useLanguageDetector } from './use-language-detector'
 
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-export function LanguageDetectorDemo() {
+export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(
     'La inteligencia artificial integrada funciona directamente en el navegador.',
   )
@@ -18,7 +19,7 @@ export function LanguageDetectorDemo() {
 
   return (
     <DemoSection
-      accent="red"
+      accent={accent}
       eyebrow="API 2"
       title="Language Detector"
       description="Inspect ranked language candidates and their confidence before deciding what to do with user text."
@@ -51,7 +52,7 @@ export function LanguageDetectorDemo() {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className="bg-brand-red hover:bg-brand-red/85 rounded-xl px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -72,7 +73,7 @@ export function LanguageDetectorDemo() {
       </form>
 
       <div className="mt-5">
-        <OutputPanel accent="red">
+        <OutputPanel accent={accent}>
           {detector.request === 'idle' ? (
             <p className="text-slate-400">Ranked candidates will appear here.</p>
           ) : null}
