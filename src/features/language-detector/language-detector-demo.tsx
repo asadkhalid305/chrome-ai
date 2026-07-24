@@ -19,7 +19,7 @@ export function LanguageDetectorDemo() {
   return (
     <DemoSection
       accent="red"
-      eyebrow="Lesson 2"
+      eyebrow="API 2"
       title="Language Detector"
       description="Inspect ranked language candidates and their confidence before deciding what to do with user text."
       availability={{

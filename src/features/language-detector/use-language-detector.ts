@@ -62,7 +62,7 @@ export function useLanguageDetector(
       const session = await adapter.create(setDownloadProgress, signal)
       if (lifecycleRef.current !== lifecycle) {
         session.destroy()
-        throw new DOMException('The lesson was cleaned up.', 'AbortError')
+        throw new DOMException('The demo was cleaned up.', 'AbortError')
       }
       sessionRef.current = session
       setCapability('ready')

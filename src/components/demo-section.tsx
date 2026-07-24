@@ -3,10 +3,10 @@ import { use, type ReactNode } from 'react'
 import { RevealContext } from '../app/reveal-context'
 import { ApiAvailabilityInfo, type ApiAvailability } from './api-availability'
 
-export type LessonAccent = 'yellow' | 'red' | 'green' | 'blue'
+export type DemoAccent = 'yellow' | 'red' | 'green' | 'blue'
 
 const accentClassNames: Record<
-  LessonAccent,
+  DemoAccent,
   { section: string; eyebrow: string; divider: string }
 > = {
   yellow: {
@@ -32,7 +32,7 @@ const accentClassNames: Record<
 }
 
 interface DemoSectionProps {
-  accent: LessonAccent
+  accent: DemoAccent
   eyebrow: string
   title: string
   description: string

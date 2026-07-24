@@ -12,7 +12,7 @@ import { usePrompt } from './use-prompt'
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe('Prompt lesson', () => {
+describe('Prompt demo', () => {
   it('creates a native session with a system instruction', async () => {
     const create = vi.fn().mockResolvedValue({ prompt: vi.fn(), destroy: vi.fn() })
     vi.stubGlobal('LanguageModel', {

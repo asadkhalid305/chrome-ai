@@ -40,6 +40,8 @@ Status labels below are a reviewed snapshot, not permanent compatibility claims.
 
 WebMCP is part of the wider Chrome AI and agentic-web curriculum, but it is not a built-in model API. Keep its adapters, security guidance, and lessons separate from `Translator`, `LanguageModel`, and the other on-device inference APIs.
 
+See `docs/webmcp-environment.md` for the operational setup this scope requires: local Chrome flags, the origin isolation and `tools` permissions policy requirements, the origin-trial token path for the deployed environment, and the supported verification tool.
+
 ## Early-preview watchlist
 
 Chrome's Early Preview Program provides access to in-progress, unreleased APIs and early-stage ideas. Public Chrome documentation does not currently name additional teachable APIs beyond the catalog above.

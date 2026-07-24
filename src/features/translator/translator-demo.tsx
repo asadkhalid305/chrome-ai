@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { LessonOutput } from '../../components/lesson-output'
+import { DemoOutput } from '../../components/demo-output'
 import { useTranslator } from './use-translator'
 
 const languages = [
@@ -27,7 +27,7 @@ export function TranslatorDemo() {
   return (
     <DemoSection
       accent="yellow"
-      eyebrow="Lesson 1"
+      eyebrow="API 1"
       title="Translator"
       description="Translate one string with a language-pair-specific model that stays on the device."
       availability={{
@@ -110,7 +110,7 @@ export function TranslatorDemo() {
       </form>
 
       <div className="mt-5">
-        <LessonOutput
+        <DemoOutput
           accent="yellow"
           request={translator.request}
           output={translator.output}

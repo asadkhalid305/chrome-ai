@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useRef,
   useState,
   type ComponentType,
@@ -11,8 +12,11 @@ import { ProofreaderDemo } from "../features/proofreader/proofreader-demo";
 import { RewriterDemo } from "../features/rewriter/rewriter-demo";
 import { SummarizerDemo } from "../features/summarizer/summarizer-demo";
 import { TranslatorDemo } from "../features/translator/translator-demo";
+import { WebmcpDeclarativeDemo } from "../features/webmcp-declarative/webmcp-declarative-demo";
+import { WebmcpImperativeDemo } from "../features/webmcp-imperative/webmcp-imperative-demo";
+import { WebMcpIntro } from "../features/webmcp/webmcp-intro";
 import { WriterDemo } from "../features/writer/writer-demo";
-import type { LessonAccent } from "../components/demo-section";
+import type { DemoAccent } from "../components/demo-section";
 import { RevealContext } from "./reveal-context";
 
 // Show the Chrome intro and API details from the start unless explicitly
@@ -20,20 +24,32 @@ import { RevealContext } from "./reveal-context";
 // local env file to keep them hidden.
 const revealChromeByDefault = import.meta.env.VITE_REVEAL_CHROME !== "false";
 
-type LessonId =
+// The WebMCP track teaches website tools for browser agents rather than local
+// model inference. It defaults on, like the reveal flag above, so an unset
+// value on a fresh clone shows the full curriculum. Set VITE_WEBMCP=false in a
+// local env file to hide it for a shorter, built-in-AI-only demo.
+const webmcpTrackEnabled = import.meta.env.VITE_WEBMCP !== "false";
+
+type DemoId =
   | "translator"
   | "language-detector"
   | "summarizer"
   | "prompt"
   | "writer"
   | "rewriter"
-  | "proofreader";
+  | "proofreader"
+  | "webmcp"
+  | "webmcp-declarative"
+  | "webmcp-imperative";
 
-interface Lesson {
-  id: LessonId;
+interface Demo {
+  id: DemoId;
   label: string;
   component: ComponentType;
-  accent: LessonAccent;
+  accent: DemoAccent;
+  // Present only on demos that belong to the separate WebMCP track, which the
+  // nav sets apart from the built-in-AI APIs.
+  track?: "webmcp";
 }
 
 // One coherent treatment per accent so every tab shares the same state logic.
@@ -41,7 +57,7 @@ interface Lesson {
 // aligned across the default, hover, and selected states automatically.
 // Yellow uses dark foregrounds because brand yellow is too light for white text.
 const accentClassNames: Record<
-  LessonAccent,
+  DemoAccent,
   { active: string; hover: string }
 > = {
   yellow: {
@@ -62,7 +78,7 @@ const accentClassNames: Record<
   },
 };
 
-const lessons: Lesson[] = [
+const apiDemos: Demo[] = [
   {
     id: "translator",
     label: "Translator",
@@ -107,17 +123,71 @@ const lessons: Lesson[] = [
   },
 ];
 
-export function App() {
-  const [selectedLessonId, setSelectedLessonId] =
-    useState<LessonId>("translator");
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const selectedLesson =
-    lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0];
-  const SelectedLesson = selectedLesson.component;
+// The WebMCP track. The intro is a static overview; the Declarative and
+// Imperative demos are the two runnable WebMCP lessons and sit in the order
+// they are taught. All three carry `track: "webmcp"` so the nav groups and
+// labels them apart from the numbered built-in-AI APIs. The track is appended
+// after the core APIs so the built-in-AI tab numbers stay stable.
+const webmcpDemos: Demo[] = [
+  {
+    id: "webmcp",
+    label: "Introduction",
+    component: WebMcpIntro,
+    accent: "blue",
+    track: "webmcp",
+  },
+  {
+    id: "webmcp-declarative",
+    label: "Declarative API",
+    component: WebmcpDeclarativeDemo,
+    accent: "blue",
+    track: "webmcp",
+  },
+  {
+    id: "webmcp-imperative",
+    label: "Imperative API",
+    component: WebmcpImperativeDemo,
+    accent: "blue",
+    track: "webmcp",
+  },
+];
 
-  function selectLesson(index: number) {
-    const lesson = lessons[index];
-    setSelectedLessonId(lesson.id);
+// When the flag is off this is exactly the seven built-in-AI APIs, so that
+// experience is unchanged. When on, the WebMCP track is appended at the end.
+const visibleDemos: Demo[] = webmcpTrackEnabled
+  ? [...apiDemos, ...webmcpDemos]
+  : apiDemos;
+
+// A small decorative heading that groups tabs in the sidebar (e.g. "APIs",
+// "WebMCP"). Defined at module scope, not inside App, so it keeps a stable
+// component identity across renders.
+function NavGroupLabel({ label }: { label: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="first:mt-0 mt-3 mb-1 flex items-center gap-2 px-1"
+      role="presentation"
+    >
+      <span className="h-px flex-1 bg-slate-200" />
+      <span className="text-brand-blue text-xs font-bold uppercase tracking-[0.18em]">
+        {label}
+      </span>
+      <span className="h-px flex-1 bg-slate-200" />
+    </div>
+  );
+}
+
+export function App() {
+  const [selectedDemoId, setSelectedDemoId] = useState<DemoId>("translator");
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const selectedDemo =
+    visibleDemos.find((demo) => demo.id === selectedDemoId) ??
+    visibleDemos[0];
+  const SelectedDemo = selectedDemo.component;
+
+  function selectDemo(index: number) {
+    const demo = visibleDemos[index];
+    setSelectedDemoId(demo.id);
     tabRefs.current[index]?.focus();
   }
 
@@ -127,77 +197,77 @@ export function App() {
   ) {
     let nextIndex: number | null = null;
 
-    if (event.key === "ArrowRight") {
-      nextIndex = (index + 1) % lessons.length;
-    } else if (event.key === "ArrowLeft") {
-      nextIndex = (index - 1 + lessons.length) % lessons.length;
+    // The tablist is vertical, so Up/Down are the primary keys. Left/Right are
+    // kept as aliases so muscle memory (and either orientation) still works.
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+      nextIndex = (index + 1) % visibleDemos.length;
+    } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+      nextIndex = (index - 1 + visibleDemos.length) % visibleDemos.length;
     } else if (event.key === "Home") {
       nextIndex = 0;
     } else if (event.key === "End") {
-      nextIndex = lessons.length - 1;
+      nextIndex = visibleDemos.length - 1;
     }
 
     if (nextIndex !== null) {
       event.preventDefault();
-      selectLesson(nextIndex);
+      selectDemo(nextIndex);
     }
   }
 
   return (
     <RevealContext value={revealChromeByDefault}>
-      <div className="min-h-screen bg-brand-yellow/10 text-slate-950">
+      {/* Fixed-height app shell: the page itself never scrolls. Scrolling is
+          delegated to the sidebar nav and the main panel independently. */}
+      <div className="flex h-screen flex-col overflow-hidden bg-brand-yellow/10 text-slate-950">
         <div
-          className="h-2 bg-[linear-gradient(to_right,var(--color-brand-yellow)_0_25%,var(--color-brand-red)_25%_50%,var(--color-brand-green)_50%_75%,var(--color-brand-blue)_75%_100%)]"
+          className="h-2 shrink-0 bg-[linear-gradient(to_right,var(--color-brand-yellow)_0_25%,var(--color-brand-red)_25%_50%,var(--color-brand-green)_50%_75%,var(--color-brand-blue)_75%_100%)]"
           aria-hidden="true"
         />
 
-        {/* The intro names Chrome, so it is shown only when the
-            VITE_REVEAL_CHROME flag is enabled. */}
-        {revealChromeByDefault ? (
-          <header className="border-b border-brand-blue/15 bg-brand-white">
-            <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
-              <p className="text-brand-blue text-sm font-bold uppercase tracking-[0.2em]">
-                Local-first teaching playground
-              </p>
-              <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">
-                Learn Chrome built-in AI one native API at a time.
-              </h1>
-              <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-                Pick one lesson to explore its browser capability, model
-                lifecycle, focused task, and local output. No backend or cloud
-                fallback is involved.
-              </p>
-            </div>
-          </header>
-        ) : null}
+        {/* Body split: vertical sidebar + scrollable content. min-h-0 lets the
+            flex children shrink so their own overflow scrolls instead of the
+            page. */}
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          <nav
+            aria-label="Playground"
+            className="bg-brand-white/95 flex w-60 shrink-0 flex-col overflow-y-auto border-r border-brand-blue/15 shadow-sm sm:w-64"
+          >
+            <div
+              className="flex flex-col gap-1 px-3 py-4"
+              role="tablist"
+              aria-label="Playground"
+              aria-orientation="vertical"
+            >
+              <NavGroupLabel label="APIs" />
+              {visibleDemos.map((demo, index) => {
+                const isSelected = demo.id === selectedDemoId;
+                const accent = accentClassNames[demo.accent];
+                const startsWebmcpGroup =
+                  demo.track === "webmcp" &&
+                  visibleDemos[index - 1]?.track !== "webmcp";
 
-        <nav
-          aria-label="Lessons"
-          className="bg-brand-white/95 sticky top-0 z-10 border-b border-brand-blue/15 shadow-sm backdrop-blur"
-        >
-          <div className="mx-auto max-w-6xl px-5 sm:px-8">
-            <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div
-                className="flex min-w-max gap-2 py-3"
-                role="tablist"
-                aria-label="Lessons"
-              >
-                {lessons.map((lesson, index) => {
-                  const isSelected = lesson.id === selectedLessonId;
-                  const accent = accentClassNames[lesson.accent];
-
-                  return (
+                return (
+                  <Fragment key={demo.id}>
+                    {/* Separate the WebMCP track from the built-in-AI APIs.
+                        The label is decorative; the tab's aria-label carries
+                        the track name for assistive tech. */}
+                    {startsWebmcpGroup ? <NavGroupLabel label="WebMCP" /> : null}
                     <button
-                      aria-controls="lesson-panel"
+                      aria-controls="demo-panel"
+                      aria-label={
+                        demo.track === "webmcp"
+                          ? `WebMCP track: ${demo.label}`
+                          : undefined
+                      }
                       aria-selected={isSelected}
                       className={
                         isSelected
-                          ? `rounded-full border px-4 py-2 text-sm font-bold shadow-sm ${accent.active}`
-                          : `${accent.hover} rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700`
+                          ? `flex w-full items-center rounded-lg border px-3 py-2 text-left text-sm font-bold shadow-sm ${accent.active}`
+                          : `${accent.hover} flex w-full items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700`
                       }
-                      id={`lesson-tab-${lesson.id}`}
-                      key={lesson.id}
-                      onClick={() => setSelectedLessonId(lesson.id)}
+                      id={`demo-tab-${demo.id}`}
+                      onClick={() => setSelectedDemoId(demo.id)}
                       onKeyDown={(event) => handleTabKeyDown(event, index)}
                       ref={(element) => {
                         tabRefs.current[index] = element;
@@ -207,28 +277,57 @@ export function App() {
                       type="button"
                     >
                       <span
-                        className="mr-2 inline-block size-2 rounded-full bg-current"
+                        className="mr-2 inline-block size-2 shrink-0 rounded-full bg-current"
                         aria-hidden="true"
                       />
-                      {index + 1}. {lesson.label}
+                      {demo.track === "webmcp" ? (
+                        demo.label
+                      ) : (
+                        <>
+                          {index + 1}. {demo.label}
+                        </>
+                      )}
                     </button>
-                  );
-                })}
+                  </Fragment>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* Only the main panel scrolls; min-h-0 enables its own overflow. */}
+          <main className="min-h-0 flex-1 overflow-y-auto">
+            {/* The intro names Chrome, so it is shown only when the
+                VITE_REVEAL_CHROME flag is enabled. */}
+            {revealChromeByDefault ? (
+              <header className="border-b border-brand-blue/15 bg-brand-white">
+                <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
+                  <p className="text-brand-blue text-sm font-bold uppercase tracking-[0.2em]">
+                    Local-first playground
+                  </p>
+                  <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">
+                    Learn Chrome built-in AI one native API at a time.
+                  </h1>
+                  <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+                    Pick one API to explore its browser capability, model
+                    lifecycle, focused task, and local output. No backend or
+                    cloud fallback is involved.
+                  </p>
+                </div>
+              </header>
+            ) : null}
+
+            <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
+              <div
+                aria-labelledby={`demo-tab-${selectedDemo.id}`}
+                id="demo-panel"
+                role="tabpanel"
+                tabIndex={0}
+              >
+                <SelectedDemo />
               </div>
             </div>
-          </div>
-        </nav>
-
-        <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
-          <div
-            aria-labelledby={`lesson-tab-${selectedLesson.id}`}
-            id="lesson-panel"
-            role="tabpanel"
-            tabIndex={0}
-          >
-            <SelectedLesson />
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </RevealContext>
   );

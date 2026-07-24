@@ -12,8 +12,8 @@ import { useSummarizer } from './use-summarizer'
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe('Summarizer lesson', () => {
-  it('checks availability with the lesson options', async () => {
+describe('Summarizer demo', () => {
+  it('checks availability with the demo options', async () => {
     const availability = vi.fn().mockResolvedValue('available')
     vi.stubGlobal('Summarizer', { availability, create: vi.fn() })
 

@@ -22,7 +22,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Writer lesson', () => {
+describe('Writer demo', () => {
   it('reports unavailable when the native global is absent', async () => {
     vi.stubGlobal('Writer', undefined)
 

@@ -86,7 +86,7 @@ export function useRewriter(adapter: RewriterAdapter = rewriterApi) {
         const session = await adapter.create(change, setDownloadProgress, signal)
         if (lifecycleRef.current !== lifecycle) {
           session.destroy()
-          throw new DOMException('The lesson was cleaned up.', 'AbortError')
+          throw new DOMException('The demo was cleaned up.', 'AbortError')
         }
         sessionRef.current = session
         sessionChangeRef.current = change

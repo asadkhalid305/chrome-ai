@@ -22,7 +22,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Rewriter lesson', () => {
+describe('Rewriter demo', () => {
   it('passes the selected immutable change to the native API', async () => {
     const create = vi.fn().mockResolvedValue({
       rewrite: vi.fn(),

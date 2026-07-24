@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { writingAssistanceFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { LessonOutput } from '../../components/lesson-output'
+import { DemoOutput } from '../../components/demo-output'
 import { type RewriteChange } from './rewriter-api'
 import { useRewriter } from './use-rewriter'
 
@@ -23,7 +23,7 @@ export function RewriterDemo() {
   return (
     <DemoSection
       accent="yellow"
-      eyebrow="Lesson 6"
+      eyebrow="API 6"
       title="Rewriter"
       description="Transform existing English text by one visible tone or length choice while preserving the original."
       availability={{
@@ -93,7 +93,7 @@ export function RewriterDemo() {
       </form>
 
       <div className="mt-5">
-        <LessonOutput
+        <DemoOutput
           accent="yellow"
           request={rewriter.request}
           output={rewriter.output}
