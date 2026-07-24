@@ -19,6 +19,8 @@ Before implementation or compatibility changes, verify the current official docu
 - https://developer.chrome.com/docs/ai/webmcp
 - https://developer.chrome.com/docs/ai/webmcp/declarative-api
 - https://developer.chrome.com/docs/ai/webmcp/imperative-api
+- https://developer.chrome.com/docs/devtools/application/webmcp
+- https://developer.chrome.com/blog/new-in-devtools-149
 - https://developer.chrome.com/docs/ai/join-epp
 
 ## Publicly documented curriculum

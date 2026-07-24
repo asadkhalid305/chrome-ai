@@ -138,12 +138,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
           is a real attribute in the Declarative API spec: adding it to a{' '}
           <span className="font-mono text-xs">{'<form>'}</span> lets the page
           author opt that specific tool into agent auto-submission, skipping
-          the human-review click entirely. This demo omits an interactive
-          toggle for it — the only agent-execution surface available while
-          building this lesson (the Model Context Tool Inspector extension's
-          simulated <span className="font-mono text-xs">executeTool()</span>)
-          fills forms but never dispatches a real submit either way, so a
-          live toggle here would teach behavior we can&apos;t actually verify.
+          the human-review click entirely. This demo deliberately omits the
+          attribute so every submission preserves the spec&apos;s human-review
+          default. Use Chrome DevTools → Application → WebMCP to inspect the
+          registered form tool, enter its parameters, and run it manually.
         </p>
       </div>
 
@@ -155,10 +153,8 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
           toolname={TOOL_NAME}
           tooldescription={TOOL_DESCRIPTION}
           // toolautosubmit is intentionally never set: this form always keeps
-          // the spec's human-review default. The available agent-testing tool
-          // (see note above the form) can't reliably demonstrate what setting
-          // it would actually do, so we don't expose a control that implies we
-          // can.
+          // the spec's human-review default. Auto-submission is consequential,
+          // so it is explained without being enabled in this core lesson.
           onSubmit={handleSubmit}
           // The browser derives each tool parameter's key from the field's
           // plain `name` attribute (the same one HTML forms have always used),
