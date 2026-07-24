@@ -52,8 +52,8 @@ export function WebMcpIntro() {
               </span>{' '}
               — register schema-driven JavaScript tools through{' '}
               <code className="font-mono text-xs">document.modelContext</code>{' '}
-              with explicit inputs, permissions, and user-visible state. Coming
-              next.
+              with explicit inputs, permissions, and user-visible state.
+              Available now in the tab after Declarative.
             </li>
           </ul>
           <p className="mt-3 text-sm leading-6 text-slate-500">

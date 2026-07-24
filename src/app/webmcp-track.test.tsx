@@ -44,9 +44,12 @@ describe('WebMCP track feature flag', () => {
     expect(
       screen.getByRole('tab', { name: 'WebMCP track: Declarative API' }),
     ).toBeInTheDocument()
+    expect(
+      screen.getByRole('tab', { name: 'WebMCP track: Imperative API' }),
+    ).toBeInTheDocument()
 
-    // The seven built-in-AI APIs plus the two WebMCP track tabs.
-    expect(screen.getAllByRole('tab')).toHaveLength(9)
+    // The seven built-in-AI APIs plus the three WebMCP track tabs.
+    expect(screen.getAllByRole('tab')).toHaveLength(10)
     expect(
       screen.getByRole('tab', { name: '1. Translator' }),
     ).toBeInTheDocument()
@@ -83,7 +86,7 @@ describe('WebMCP track feature flag', () => {
 
     await user.keyboard('{End}')
     expect(
-      screen.getByRole('tab', { name: 'WebMCP track: Declarative API' }),
+      screen.getByRole('tab', { name: 'WebMCP track: Imperative API' }),
     ).toHaveFocus()
 
     await user.keyboard('{Home}')

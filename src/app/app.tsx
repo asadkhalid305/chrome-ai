@@ -13,6 +13,7 @@ import { RewriterDemo } from "../features/rewriter/rewriter-demo";
 import { SummarizerDemo } from "../features/summarizer/summarizer-demo";
 import { TranslatorDemo } from "../features/translator/translator-demo";
 import { WebmcpDeclarativeDemo } from "../features/webmcp-declarative/webmcp-declarative-demo";
+import { WebmcpImperativeDemo } from "../features/webmcp-imperative/webmcp-imperative-demo";
 import { WebMcpIntro } from "../features/webmcp/webmcp-intro";
 import { WriterDemo } from "../features/writer/writer-demo";
 import type { DemoAccent } from "../components/demo-section";
@@ -39,7 +40,8 @@ type DemoId =
   | "rewriter"
   | "proofreader"
   | "webmcp"
-  | "webmcp-declarative";
+  | "webmcp-declarative"
+  | "webmcp-imperative";
 
 interface Demo {
   id: DemoId;
@@ -122,10 +124,11 @@ const apiDemos: Demo[] = [
   },
 ];
 
-// The WebMCP track. The intro is a static overview; the Declarative demo is the
-// first runnable WebMCP lesson. Both carry `track: "webmcp"` so the nav groups
-// and labels them apart from the numbered built-in-AI APIs. The track is
-// appended after the core APIs so the built-in-AI tab numbers stay stable.
+// The WebMCP track. The intro is a static overview; the Declarative and
+// Imperative demos are the two runnable WebMCP lessons and sit in the order
+// they are taught. All three carry `track: "webmcp"` so the nav groups and
+// labels them apart from the numbered built-in-AI APIs. The track is appended
+// after the core APIs so the built-in-AI tab numbers stay stable.
 const webmcpDemos: Demo[] = [
   {
     id: "webmcp",
@@ -138,6 +141,13 @@ const webmcpDemos: Demo[] = [
     id: "webmcp-declarative",
     label: "Declarative API",
     component: WebmcpDeclarativeDemo,
+    accent: "blue",
+    track: "webmcp",
+  },
+  {
+    id: "webmcp-imperative",
+    label: "Imperative API",
+    component: WebmcpImperativeDemo,
     accent: "blue",
     track: "webmcp",
   },
