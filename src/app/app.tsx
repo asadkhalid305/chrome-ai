@@ -72,14 +72,19 @@ function accentForPosition(index: number): DemoAccent {
 // One coherent treatment per accent so every tab shares the same state logic.
 // The dot inherits the text color (`bg-current`), which keeps text and dot
 // aligned across the default, hover, and selected states automatically.
-// Yellow uses dark foregrounds because brand yellow is too light for white text.
+// Yellow's *active* (filled) state uses a dark foreground because brand
+// yellow is too light for white text on a solid yellow background. The
+// unselected hover state has a white background instead, so it uses
+// brand-yellow directly, just like every other accent's hover treatment —
+// an earlier "amber-700" substitute here read as orange/red rather than
+// yellow, since Tailwind's amber hue sits much closer to red than yellow.
 const accentClassNames: Record<
   DemoAccent,
   { active: string; hover: string }
 > = {
   yellow: {
     active: "border-brand-yellow bg-brand-yellow text-slate-950",
-    hover: "hover:border-brand-yellow hover:text-amber-700",
+    hover: "hover:border-brand-yellow hover:text-brand-yellow",
   },
   red: {
     active: "border-brand-red bg-brand-red text-white",
