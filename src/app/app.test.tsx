@@ -70,19 +70,17 @@ describe('Chrome AI demo tabs', () => {
     expect(screen.getByRole('heading', { name: 'Translator' })).toBeVisible()
   })
 
-  it('writes the selected tab to the URL so a refresh can restore it', async () => {
+  it('writes the selected tab to the hash so a refresh can restore it', async () => {
     const user = userEvent.setup()
     await renderApp()
 
     await user.click(screen.getByRole('tab', { name: '3. Summarizer' }))
 
-    expect(new URL(window.location.href).searchParams.get('tab')).toBe(
-      'summarizer',
-    )
+    expect(window.location.hash).toBe('#playground/summarizer')
   })
 
   it('restores the tab named in the URL on load instead of the first tab', async () => {
-    window.history.replaceState(null, '', '/?tab=prompt')
+    window.history.replaceState(null, '', '/#playground/prompt')
 
     await renderApp()
 
@@ -94,13 +92,110 @@ describe('Chrome AI demo tabs', () => {
   })
 
   it('falls back to the default tab when the URL names an unknown or hidden tab', async () => {
-    window.history.replaceState(null, '', '/?tab=does-not-exist')
+    window.history.replaceState(null, '', '/#playground/does-not-exist')
 
     await renderApp()
 
     expect(
       screen.getByRole('tab', { name: '1. Translator' }),
     ).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('opens the standalone documentation and restores a deep-linked section', async () => {
+    const user = userEvent.setup()
+    await renderApp()
+
+    await user.click(screen.getByRole('link', { name: /documentation/i }))
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Build useful AI experiences directly in Chrome',
+      }),
+    ).toBeVisible()
+    expect(window.location.hash).toBe('#docs/overview')
+    expect(
+      screen.getByRole('navigation', { name: 'Documentation' }),
+    ).toBeVisible()
+
+    window.history.replaceState(null, '', '/#docs/prompt')
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Prompt', level: 1 }),
+    ).toBeVisible()
+    expect(
+      screen.getByRole('link', { name: 'Prompt' }),
+    ).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('opens and closes the mobile navigation around a route change', async () => {
+    const user = userEvent.setup()
+    await renderApp()
+    const openMenuButton = screen.getByRole('button', {
+      name: 'Open navigation menu',
+    })
+
+    expect(openMenuButton).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(openMenuButton)
+
+    expect(
+      screen.getByRole('button', { name: 'Close navigation menu' }),
+    ).toHaveAttribute('aria-expanded', 'true')
+
+    await user.click(screen.getByRole('link', { name: /documentation/i }))
+
+    expect(
+      await screen.findByRole('button', { name: 'Open navigation menu' }),
+    ).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.getByRole('heading', {
+        name: 'Build useful AI experiences directly in Chrome',
+      }),
+    ).toBeVisible()
+  })
+
+  it('maps documentation links to the playground accent cycle', async () => {
+    window.history.replaceState(null, '', '/#docs/overview')
+    await renderApp()
+
+    expect(
+      screen.getByRole('link', { name: 'Overview' }),
+    ).toHaveClass('bg-brand-yellow')
+
+    const expectedHoverAccents = [
+      ['Browser requirements', 'red'],
+      ['Choosing an API', 'green'],
+      ['Translator', 'yellow'],
+      ['Language Detector', 'red'],
+      ['Summarizer', 'green'],
+      ['Prompt', 'blue'],
+      ['Writer', 'yellow'],
+      ['Rewriter', 'red'],
+      ['Proofreader', 'green'],
+      ['WebMCP overview', 'blue'],
+      ['Declarative API', 'yellow'],
+      ['Imperative API', 'red'],
+      ['Sources', 'blue'],
+      ['Terminology', 'blue'],
+    ] as const
+
+    for (const [label, accent] of expectedHoverAccents) {
+      expect(
+        screen.getByRole('link', { name: label }),
+      ).toHaveClass(`hover:border-brand-${accent}`)
+    }
+  })
+
+  it('falls back to the documentation overview for an unknown docs section', async () => {
+    window.history.replaceState(null, '', '/#docs/not-real')
+    await renderApp()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Build useful AI experiences directly in Chrome',
+      }),
+    ).toBeVisible()
   })
 
   it('destroys the active demo session when switching tabs', async () => {

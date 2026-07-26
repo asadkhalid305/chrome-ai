@@ -1,6 +1,6 @@
 # WebMCP Environment
 
-Last reviewed: 2026-07-24, against https://developer.chrome.com/docs/ai/webmcp and https://developer.chrome.com/docs/ai/webmcp/imperative-api.
+Last reviewed: 2026-07-24, against https://developer.chrome.com/docs/ai/webmcp, https://developer.chrome.com/docs/devtools/application/webmcp, and https://developer.chrome.com/blog/new-in-devtools-149.
 
 This document covers the conditions needed to run and verify the WebMCP lessons (`docs/teaching-plan.md` Lessons 8–9), both on localhost and on the eventual deployed Vercel origin. WebMCP is an agentic-web API, not on-device inference, so its environment needs (origin isolation, a permissions policy, an origin-trial token) are different from the built-in-AI lessons and are recorded here rather than in `docs/api-scope.md`.
 
@@ -10,14 +10,18 @@ Running a WebMCP lesson requires two separate things to be true at once. Neither
 
 - **`VITE_WEBMCP` app flag** (see `.env.example`) — reveals the WebMCP tab in this app's navigation. Defaults on; set to `false` for a shorter, built-in-AI-only demo.
 - **`chrome://flags/#enable-webmcp-testing` browser flag** — makes `document.modelContext` and the declarative `toolname`/`tooldescription` form attributes exist in the browser at all. Without it, the WebMCP tab renders but every lesson reports its "unavailable" state, and the human-facing form/UI still works normally.
+- **`chrome://flags/#devtools-webmcp-support` DevTools flag** — reveals the experimental WebMCP pane in Chrome DevTools so registered tools can be inspected and called manually.
 
 ## Run and verify locally
 
 1. `npm run dev` (the WebMCP tab is visible by default; no `.env` change needed unless you previously set `VITE_WEBMCP=false`).
 2. Open `chrome://flags/#enable-webmcp-testing`, set it to **Enabled**, and relaunch Chrome.
-3. Install [WebMCP - Model Context Tool Inspector](https://chromewebstore.google.com/detail/gbpdfapgefenggkahomfgkhfehlcenpd) from the Chrome Web Store. This is Chrome's own inspection extension for native WebMCP pages.
-4. Open the Declarative or Imperative tab, open the extension's side panel, and confirm the tool(s) registered by that lesson appear with the expected name, description, and input schema. Use the panel's manual execution to call a tool directly and confirm the human-visible state (the "Tool activity" panel in each demo) updates in response.
-5. Fallback check without the extension: open DevTools console and run `await document.modelContext.getTools()` to confirm the same tool list.
+3. Open `chrome://flags/#devtools-webmcp-support`, set it to **Enabled**, and relaunch Chrome if required.
+4. Open the Declarative or Imperative tab so that lesson's tool is registered.
+5. Open Chrome DevTools, select **Application**, then select **WebMCP** in the Application sidebar.
+6. Confirm the expected tool appears under **Available Tools** with its name, description, type, and inputs.
+7. Select the tool, enter parameters in the manual test area, and choose **Run tool**.
+8. Select the call under **Invoked Tools** and verify its status, exact **Input**, and returned **Output** or error. Confirm the same call updates the lesson's human-visible state.
 
 Record a real run here, and in `docs/smoke-tests.md`, once this has been exercised in a supported Chrome build.
 
