@@ -980,6 +980,7 @@ export const apiGuides: ApiGuide[] = [
       'Enable both WebMCP and DevTools WebMCP flags, then relaunch Chrome.',
       'Open this demo before opening Application → WebMCP so the form tool is mounted.',
       'Select submitSupportRequest in Available Tools and enter values in the manual test area.',
+      'This form omits toolautosubmit, so after choosing Run tool you must also click the page’s Submit request button before DevTools reports Completed or Error.',
     ],
     goodFor: [
       'Existing forms whose labels, names, types, and required fields already describe the action.',
@@ -991,6 +992,16 @@ export const apiGuides: ApiGuide[] = [
     ],
     playground:
       'The support form uses toolname, tooldescription, field names, native types, required attributes, and tool parameter descriptions. The same submission path validates person and tool calls.',
+    workflow: {
+      title: 'Complete a non-autosubmit tool call',
+      steps: [
+        'Open Chrome DevTools → Application → WebMCP and select submitSupportRequest under Available Tools.',
+        'Enter fullName, email, topic, and details in the manual test area, then choose Run tool.',
+        'Because the form does not set toolautosubmit, running the tool only activates and pre-fills it; the call stays pending.',
+        'Switch to the demo tab and click Submit request on the page to actually submit the form.',
+        'Return to DevTools and select the call under Invoked Tools: it now shows Completed (or Error) with the same Input and Output the page rendered.',
+      ],
+    },
     observe: [
       'Available Tools shows submitSupportRequest as a Declarative tool.',
       'Input contains the exact form parameter values.',
@@ -1007,6 +1018,8 @@ export const apiGuides: ApiGuide[] = [
       {
         title: 'Route a valid technical request',
         goal: 'Run the complete Declarative tool successfully.',
+        setup:
+          'Run submitSupportRequest in DevTools with these values, then click the page’s Submit request button — this form has no toolautosubmit.',
         fields: [
           { label: 'fullName', value: 'Ada Lovelace' },
           { label: 'email', value: 'ada@example.com' },
@@ -1024,6 +1037,8 @@ export const apiGuides: ApiGuide[] = [
       {
         title: 'Inspect a validation failure',
         goal: 'See how page validation becomes tool error output.',
+        setup:
+          'Run submitSupportRequest in DevTools with these values, then click the page’s Submit request button to trigger validation.',
         fields: [
           { label: 'fullName', value: 'Grace Hopper' },
           { label: 'email', value: 'not-an-email' },
@@ -1037,6 +1052,8 @@ export const apiGuides: ApiGuide[] = [
       {
         title: 'Compare alternate routing',
         goal: 'Change an enum input and verify synchronized output.',
+        setup:
+          'Run submitSupportRequest in DevTools with these values, then click the page’s Submit request button — this form has no toolautosubmit.',
         fields: [
           { label: 'fullName', value: 'Katherine Johnson' },
           { label: 'email', value: 'katherine@example.com' },
