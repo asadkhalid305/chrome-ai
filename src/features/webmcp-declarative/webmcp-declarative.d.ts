@@ -33,6 +33,9 @@ declare module 'react' {
     toolname?: string
     tooldescription?: string
     toolparamdescription?: string
+    // Presence-based boolean attribute, like `required`: pass '' to set it,
+    // `undefined` to omit it. React drops the attribute entirely when the
+    // value is `undefined`, matching how the browser expects a bare flag.
     toolautosubmit?: string
   }
 }

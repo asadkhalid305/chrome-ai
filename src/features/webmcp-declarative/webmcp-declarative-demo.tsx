@@ -69,6 +69,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
   const [email, setEmail] = useState('')
   const [topic, setTopic] = useState(topicOptions[0].value)
   const [details, setDetails] = useState('')
+  // toolautosubmit is a static per-form flag in the spec, not something a
+  // single call toggles. Making it a demo control lets learners compare the
+  // two submission modes on the same tool instead of reading about both.
+  const [autoSubmit, setAutoSubmit] = useState(false)
 
   const banner = supportBanner[declarative.support]
 
@@ -86,7 +90,7 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
     if (!trimmedName || !trimmedEmail.includes('@') || !trimmedDetails) {
       const message =
         'Add a name, a valid email, and a short message before submitting.'
-      declarative.reportError(message)
+      declarative.reportError(message, { agentInvoked })
       // Hand the same validation error back so an agent can correct its input.
       if (agentInvoked) {
         native.respondWith?.(Promise.reject(new Error(message)))
@@ -97,7 +101,7 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
     const topicLabel =
       topicOptions.find((option) => option.value === topic)?.label ?? topic
     const confirmation = `Support request routed to the ${topicLabel} team for ${trimmedName} (${trimmedEmail}).`
-    declarative.reportSuccess(confirmation)
+    declarative.reportSuccess(confirmation, { agentInvoked })
     // The same text the person sees is serialized back to the agent as output.
     if (agentInvoked) {
       native.respondWith?.(Promise.resolve(confirmation))
@@ -132,16 +136,29 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
 
       <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
         <p className="text-sm leading-6 text-slate-600">
-          <span className="font-semibold text-slate-800">
-            <span className="font-mono text-xs">toolautosubmit</span>
+          <span className="font-mono text-xs font-semibold text-slate-800">
+            toolautosubmit
           </span>{' '}
           is a real attribute in the Declarative API spec: adding it to a{' '}
-          <span className="font-mono text-xs">{'<form>'}</span> lets the page
-          author opt that specific tool into agent auto-submission, skipping
-          the human-review click entirely. This demo deliberately omits the
-          attribute so every submission preserves the spec&apos;s human-review
-          default. Use Chrome DevTools → Application → WebMCP to inspect the
-          registered form tool, enter its parameters, and run it manually.
+          <span className="font-mono text-xs">{'<form>'}</span> submits the
+          form (and, without a script overriding it, navigates) as soon as an
+          agent calls the tool, skipping the human-review click. Toggle it
+          below to compare both modes on the same form. Use Chrome DevTools →
+          Application → WebMCP to inspect the registered form tool, enter its
+          parameters, and run it.
+        </p>
+        <label className="mt-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
+          <input
+            checked={autoSubmit}
+            onChange={(event) => setAutoSubmit(event.target.checked)}
+            type="checkbox"
+          />
+          Enable toolautosubmit
+        </label>
+        <p className="mt-2 text-xs leading-5 text-slate-500">
+          {autoSubmit
+            ? 'On: running the tool in DevTools submits immediately, no click needed. This demo still calls preventDefault() and respondWith(), so no real navigation happens.'
+            : 'Off (default): running the tool only activates and pre-fills the form. A person must click Submit request to complete it.'}
         </p>
       </div>
 
@@ -152,9 +169,9 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
           className="grid gap-4"
           toolname={TOOL_NAME}
           tooldescription={TOOL_DESCRIPTION}
-          // toolautosubmit is intentionally never set: this form always keeps
-          // the spec's human-review default. Auto-submission is consequential,
-          // so it is explained without being enabled in this core lesson.
+          // Presence-based: the "Enable toolautosubmit" checkbox above toggles
+          // this between the spec's two submission modes for the same tool.
+          toolautosubmit={autoSubmit ? '' : undefined}
           onSubmit={handleSubmit}
           // The browser derives each tool parameter's key from the field's
           // plain `name` attribute (the same one HTML forms have always used),
@@ -289,7 +306,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
                   <span className="font-mono text-xs">
                     {declarative.toolName}
                   </span>{' '}
-                  and pre-filled the form. Review the values and submit.
+                  and pre-filled the form.{' '}
+                  {autoSubmit
+                    ? 'toolautosubmit is on, so it should submit automatically.'
+                    : 'Review the values and submit.'}
                 </p>
               ) : null}
               {declarative.activity === 'success' ? (

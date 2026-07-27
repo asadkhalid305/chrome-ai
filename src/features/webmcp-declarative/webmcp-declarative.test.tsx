@@ -77,6 +77,35 @@ describe('useWebmcpDeclarative', () => {
     expect(result.current.activity).toBe('idle')
     expect(result.current.output).toBe('')
   })
+
+  // Verified against real Chrome 150: with toolautosubmit, the browser fires
+  // the form's `submit` event for an agent call *before* the window's
+  // `toolactivated` event for that same invocation. Without the suppression
+  // guard, this late activation would revert a just-reported success back to
+  // 'activated'.
+  it('keeps an agent-invoked success when toolactivated arrives right after it', () => {
+    const fake = createFakeAdapter(true)
+    const { result } = renderHook(() => useWebmcpDeclarative(fake.adapter))
+
+    act(() =>
+      result.current.reportSuccess('Routed to the Billing team.', {
+        agentInvoked: true,
+      }),
+    )
+    act(() => fake.activate('submitSupportRequest'))
+
+    expect(result.current.activity).toBe('success')
+    expect(result.current.output).toBe('Routed to the Billing team.')
+  })
+
+  it('still shows activation when it is not immediately preceded by an agent-invoked submit', () => {
+    const fake = createFakeAdapter(true)
+    const { result } = renderHook(() => useWebmcpDeclarative(fake.adapter))
+
+    act(() => fake.activate('submitSupportRequest'))
+
+    expect(result.current.activity).toBe('activated')
+  })
 })
 
 describe('WebmcpDeclarativeDemo', () => {
@@ -119,11 +148,26 @@ describe('WebmcpDeclarativeDemo', () => {
     expect(screen.queryByText(/Submitted successfully/i)).not.toBeInTheDocument()
   })
 
-  it('never sets toolautosubmit, keeping the human-review default', () => {
+  it('defaults to the human-review flow, without toolautosubmit', () => {
     const { container } = render(<WebmcpDeclarativeDemo accent="yellow" />)
     const form = container.querySelector('form')
 
     expect(form).not.toHaveAttribute('toolautosubmit')
+    expect(
+      screen.getByRole('checkbox', { name: 'Enable toolautosubmit' }),
+    ).not.toBeChecked()
+  })
+
+  it('sets toolautosubmit on the form when the checkbox is enabled', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<WebmcpDeclarativeDemo accent="yellow" />)
+
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Enable toolautosubmit' }),
+    )
+
+    const form = container.querySelector('form')
+    expect(form).toHaveAttribute('toolautosubmit')
   })
 
   it('exposes the tool name, purpose, and typed parameters to the reader', () => {

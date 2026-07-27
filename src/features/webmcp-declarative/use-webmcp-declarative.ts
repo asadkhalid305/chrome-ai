@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   webmcpDeclarativeApi,
@@ -26,8 +26,8 @@ export interface WebmcpDeclarativeState {
   // Text handed back to the agent (and shown to the person) on success.
   output: string
   error: string | null
-  reportSuccess: (output: string) => void
-  reportError: (message: string) => void
+  reportSuccess: (output: string, options?: { agentInvoked?: boolean }) => void
+  reportError: (message: string, options?: { agentInvoked?: boolean }) => void
   reset: () => void
 }
 
@@ -39,6 +39,13 @@ export function useWebmcpDeclarative(
   const [toolName, setToolName] = useState<string | null>(null)
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
+  // Verified against Chrome 150: when a form sets toolautosubmit, the browser
+  // fires the form's real `submit` event for an agent call *before* the
+  // window's `toolactivated` event for that same invocation (the opposite of
+  // the no-autosubmit order, where only `toolactivated` fires). Without this
+  // guard, the late `toolactivated` would overwrite the success/error state we
+  // just set from the agent-invoked submit with a stale 'activated' state.
+  const suppressNextActivationRef = useRef(false)
 
   useEffect(() => {
     setSupport(adapter.isSupported() ? 'supported' : 'unavailable')
@@ -48,6 +55,10 @@ export function useWebmcpDeclarative(
     // must run synchronously on the SubmitEvent.
     const unsubscribe = adapter.subscribeToolEvents({
       onActivated: (name) => {
+        if (suppressNextActivationRef.current) {
+          suppressNextActivationRef.current = false
+          return
+        }
         setToolName(name)
         setError(null)
         setActivity('activated')
@@ -61,13 +72,15 @@ export function useWebmcpDeclarative(
     return unsubscribe
   }, [adapter])
 
-  function reportSuccess(nextOutput: string) {
+  function reportSuccess(nextOutput: string, options?: { agentInvoked?: boolean }) {
+    if (options?.agentInvoked) suppressNextActivationRef.current = true
     setOutput(nextOutput)
     setError(null)
     setActivity('success')
   }
 
-  function reportError(message: string) {
+  function reportError(message: string, options?: { agentInvoked?: boolean }) {
+    if (options?.agentInvoked) suppressNextActivationRef.current = true
     setError(message)
     setActivity('error')
   }
