@@ -97,4 +97,24 @@ describe('Translator demo', () => {
 
     expect(await screen.findByText('Translated on device.')).toBeVisible()
   })
+
+  it('lets the user join an in-progress model download', async () => {
+    vi.stubGlobal('Translator', {
+      availability: vi.fn().mockResolvedValue('downloading'),
+      create: vi.fn().mockResolvedValue({
+        translate: vi.fn().mockResolvedValue('Prepared translation.'),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<TranslatorDemo accent="yellow" />)
+
+    const action = await screen.findByRole('button', {
+      name: 'Download model and translate',
+    })
+    expect(action).toBeEnabled()
+    await user.click(action)
+
+    expect(await screen.findByText('Prepared translation.')).toBeVisible()
+  })
 })

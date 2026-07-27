@@ -5,6 +5,12 @@ import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
+import {
+  cancelButtonClassNames,
+  fieldLabelClassNames,
+  primaryButtonShellClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
 import { type RewriteChange } from './rewriter-api'
 import { useRewriter } from './use-rewriter'
 
@@ -47,18 +53,18 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
           void rewriter.rewrite(input, change)
         }}
       >
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           Original text
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-32 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-32`}
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
-        <label className="grid max-w-sm gap-2 text-sm font-semibold text-slate-800">
+        <label className={`${fieldLabelClassNames} max-w-sm`}>
           Requested change
           <select
-            className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} bg-white`}
             value={change}
             onChange={(event) =>
               setChange(event.target.value as RewriteChange)
@@ -72,7 +78,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
+            className={`${primaryButtonClassNames[accent]} ${primaryButtonShellClassNames}`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
@@ -83,7 +89,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
           </button>
           {rewriter.request === 'running' ? (
             <button
-              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
+              className={cancelButtonClassNames}
               type="button"
               onClick={rewriter.cancel}
             >

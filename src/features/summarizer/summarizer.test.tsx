@@ -96,4 +96,24 @@ describe('Summarizer demo', () => {
 
     expect(await screen.findByText('Sessions must be cleaned up.')).toBeVisible()
   })
+
+  it('lets the user join an in-progress model download', async () => {
+    vi.stubGlobal('Summarizer', {
+      availability: vi.fn().mockResolvedValue('downloading'),
+      create: vi.fn().mockResolvedValue({
+        summarize: vi.fn().mockResolvedValue('Prepared summary.'),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<SummarizerDemo accent="green" />)
+
+    const action = await screen.findByRole('button', {
+      name: 'Download model and summarize',
+    })
+    expect(action).toBeEnabled()
+    await user.click(action)
+
+    expect(await screen.findByText('Prepared summary.')).toBeVisible()
+  })
 })

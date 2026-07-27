@@ -11,6 +11,7 @@ import {
   primaryButtonClassNames,
   type DemoAccent,
 } from '../theme/accent'
+import { primaryButtonShellClassNames } from '../theme/field-styles'
 import { accentForDocumentationSection } from './documentation-accents'
 import {
   apiGuideById,
@@ -347,7 +348,7 @@ function GuidePage({
           </ul>
           {guide.demoId ? (
             <button
-              className={`mt-5 rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 ${primaryButtonClassNames[accent]}`}
+              className={`mt-5 disabled:text-slate-600 ${primaryButtonShellClassNames} ${primaryButtonClassNames[accent]}`}
               disabled={!demoAvailable}
               onClick={() => onOpenDemo(guide.demoId as DemoId)}
               type="button"

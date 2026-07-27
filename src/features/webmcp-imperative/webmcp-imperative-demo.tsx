@@ -10,6 +10,10 @@ import {
   type DemoAccent,
 } from '../../theme/accent'
 import {
+  fieldLabelClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
+import {
   IMPERATIVE_TOOL_CONTRACT,
   useWebmcpImperative,
 } from './use-webmcp-imperative'
@@ -112,10 +116,10 @@ export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
             add and remove items with or without an agent present. */}
         <div className="grid min-w-0 content-start gap-4">
           <form className="grid gap-3" onSubmit={handleAdd}>
-            <label className="grid gap-2 text-sm font-semibold text-slate-800">
+            <label className={fieldLabelClassNames}>
               New task
               <input
-                className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+                className={textFieldClassNames}
                 type="text"
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}

@@ -4,6 +4,12 @@ import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
 import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
+import {
+  cancelButtonClassNames,
+  fieldLabelClassNames,
+  primaryButtonShellClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
 import { useSummarizer } from './use-summarizer'
 
 const sampleArticle = `Built-in browser AI APIs let websites use models supplied by the browser. The work happens on the user's device, so short-lived input does not need to be sent to an application server. Before a site can use an API, it checks availability and may need to ask the browser to download a model. Downloads can take time, so the interface should show progress and wait for clear user intent. Each API session also consumes resources. Applications should reuse a session when appropriate, cancel work the user no longer wants, and destroy the session during cleanup.`
@@ -14,7 +20,8 @@ export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
   const canRun =
     summarizer.request !== 'running' &&
     (summarizer.capability === 'ready' ||
-      summarizer.capability === 'downloadable')
+      summarizer.capability === 'downloadable' ||
+      summarizer.capability === 'downloading')
 
   return (
     <DemoSection
@@ -41,27 +48,28 @@ export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
           void summarizer.summarize(input)
         }}
       >
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           English article
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-48 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-48`}
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
+            className={`${primaryButtonClassNames[accent]} ${primaryButtonShellClassNames}`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
-            {summarizer.capability === 'downloadable'
+            {summarizer.capability === 'downloadable' ||
+            summarizer.capability === 'downloading'
               ? 'Download model and summarize'
               : 'Summarize'}
           </button>
           {summarizer.request === 'running' ? (
             <button
-              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
+              className={cancelButtonClassNames}
               type="button"
               onClick={summarizer.cancel}
             >

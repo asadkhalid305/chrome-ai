@@ -1,4 +1,11 @@
-import { act, render, renderHook, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  cleanup,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -10,7 +17,12 @@ import {
 } from './language-detector-api'
 import { useLanguageDetector } from './use-language-detector'
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  // Two cases in this file render the same detected language, so a leftover DOM
+  // from the previous test makes the text query ambiguous.
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 describe('Language Detector demo', () => {
   it('reports unavailable when the native API is absent', async () => {
@@ -61,5 +73,27 @@ describe('Language Detector demo', () => {
 
     expect(await screen.findByText('Spanish')).toBeVisible()
     expect(screen.getByText('98.0%')).toBeVisible()
+  })
+
+  it('lets the user join an in-progress model download', async () => {
+    vi.stubGlobal('LanguageDetector', {
+      availability: vi.fn().mockResolvedValue('downloading'),
+      create: vi.fn().mockResolvedValue({
+        detect: vi
+          .fn()
+          .mockResolvedValue([{ detectedLanguage: 'es', confidence: 0.98 }]),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<LanguageDetectorDemo accent="red" />)
+
+    const action = await screen.findByRole('button', {
+      name: 'Download model and detect',
+    })
+    expect(action).toBeEnabled()
+    await user.click(action)
+
+    expect(await screen.findByText('Spanish')).toBeVisible()
   })
 })

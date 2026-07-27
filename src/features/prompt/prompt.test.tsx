@@ -79,4 +79,24 @@ describe('Prompt demo', () => {
     expect(await screen.findByText('<strong>Untrusted text</strong>')).toBeVisible()
     expect(document.querySelector('strong')).toBeNull()
   })
+
+  it('lets the user join an in-progress model download', async () => {
+    vi.stubGlobal('LanguageModel', {
+      availability: vi.fn().mockResolvedValue('downloading'),
+      create: vi.fn().mockResolvedValue({
+        prompt: vi.fn().mockResolvedValue('Prepared answer.'),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<PromptDemo accent="blue" />)
+
+    const action = await screen.findByRole('button', {
+      name: 'Download model and ask',
+    })
+    expect(action).toBeEnabled()
+    await user.click(action)
+
+    expect(await screen.findByText('Prepared answer.')).toBeVisible()
+  })
 })
