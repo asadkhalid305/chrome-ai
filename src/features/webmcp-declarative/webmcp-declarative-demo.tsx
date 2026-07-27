@@ -1,12 +1,13 @@
 import { useRef, useState, type FormEvent } from 'react'
 
+import { webmcpFlags } from '../../components/api-availability'
+import { DemoSection } from '../../components/demo-section'
 import {
   accentTextClassNames,
   primaryButtonClassNames,
   softBoxClassNames,
-} from '../../components/accent-styles'
-import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+  type DemoAccent,
+} from '../../theme/accent'
 import { useWebmcpDeclarative } from './use-webmcp-declarative'
 
 // The tool identity. `toolname` + `tooldescription` on the <form> are what

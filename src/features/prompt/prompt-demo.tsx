@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+import { DemoSection } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
+import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import { usePrompt } from './use-prompt'
 
 export function PromptDemo({ accent }: { accent: DemoAccent }) {

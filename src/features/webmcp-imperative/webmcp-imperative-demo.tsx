@@ -1,13 +1,14 @@
 import { useState, type FormEvent } from 'react'
 
+import { webmcpFlags } from '../../components/api-availability'
+import { DemoSection } from '../../components/demo-section'
 import {
   accentBadgeClassNames,
   accentTextClassNames,
   primaryButtonClassNames,
   softBoxClassNames,
-} from '../../components/accent-styles'
-import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+  type DemoAccent,
+} from '../../theme/accent'
 import {
   IMPERATIVE_TOOL_CONTRACT,
   useWebmcpImperative,

@@ -1,12 +1,13 @@
 import { useState } from 'react'
 
+import { writingAssistanceFlags } from '../../components/api-availability'
+import { CapabilityStatus } from '../../components/capability-status'
+import { DemoSection } from '../../components/demo-section'
 import {
   primaryButtonClassNames,
   softBoxClassNames,
-} from '../../components/accent-styles'
-import { writingAssistanceFlags } from '../../components/api-availability'
-import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+  type DemoAccent,
+} from '../../theme/accent'
 import { useWriter } from './use-writer'
 
 const sampleIdea = 'Invite the local web community to a hands-on AI study session.'

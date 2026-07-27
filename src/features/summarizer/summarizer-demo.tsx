@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+import { DemoSection } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
+import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import { useSummarizer } from './use-summarizer'
 
 const sampleArticle = `Built-in browser AI APIs let websites use models supplied by the browser. The work happens on the user's device, so short-lived input does not need to be sent to an application server. Before a site can use an API, it checks availability and may need to ask the browser to download a model. Downloads can take time, so the interface should show progress and wait for clear user intent. Each API session also consumes resources. Applications should reuse a session when appropriate, cancel work the user no longer wants, and destroy the session during cleanup.`

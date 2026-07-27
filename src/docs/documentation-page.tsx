@@ -4,7 +4,13 @@ import type {
   DemoId,
   DocumentationSectionId,
 } from '../app/navigation'
-import type { DemoAccent } from '../components/demo-section'
+import {
+  accentBorderClassNames,
+  accentSoftFillClassNames,
+  accentTextClassNames,
+  primaryButtonClassNames,
+  type DemoAccent,
+} from '../theme/accent'
 import {
   apiGuideById,
   documentationArticleById,
@@ -31,36 +37,6 @@ const guideAccent: Record<string, DemoAccent> = {
   webmcp: 'blue',
   'webmcp-declarative': 'yellow',
   'webmcp-imperative': 'red',
-}
-
-const accentStyles: Record<
-  DemoAccent,
-  { text: string; border: string; soft: string; button: string }
-> = {
-  yellow: {
-    text: 'text-brand-yellow',
-    border: 'border-brand-yellow/35',
-    soft: 'bg-brand-yellow/10',
-    button: 'bg-brand-yellow text-slate-950 hover:bg-brand-yellow/85',
-  },
-  red: {
-    text: 'text-brand-red',
-    border: 'border-brand-red/35',
-    soft: 'bg-brand-red/5',
-    button: 'bg-brand-red text-white hover:bg-brand-red/85',
-  },
-  green: {
-    text: 'text-brand-green',
-    border: 'border-brand-green/35',
-    soft: 'bg-brand-green/5',
-    button: 'bg-brand-green text-white hover:bg-brand-green/85',
-  },
-  blue: {
-    text: 'text-brand-blue',
-    border: 'border-brand-blue/35',
-    soft: 'bg-brand-blue/5',
-    button: 'bg-brand-blue text-white hover:bg-brand-blue/85',
-  },
 }
 
 const statusStyles: Record<ApiGuide['status'], string> = {
@@ -115,7 +91,6 @@ function ExerciseCard({
   accent: DemoAccent
 }) {
   const [copiedField, setCopiedField] = useState<string | null>(null)
-  const styles = accentStyles[accent]
 
   async function handleCopy(label: string, value: string) {
     await copyToClipboard(value)
@@ -125,9 +100,11 @@ function ExerciseCard({
 
   return (
     <article
-      className={`rounded-2xl border bg-white p-5 shadow-sm ${styles.border}`}
+      className={`rounded-2xl border bg-white p-5 shadow-sm ${accentBorderClassNames[accent]}`}
     >
-      <p className={`text-xs font-black uppercase tracking-[0.16em] ${styles.text}`}>
+      <p
+        className={`text-xs font-black uppercase tracking-[0.16em] ${accentTextClassNames[accent]}`}
+      >
         Challenge {index + 1}
       </p>
       <h3 className="mt-2 text-lg font-bold text-slate-950">
@@ -136,7 +113,9 @@ function ExerciseCard({
       <p className="mt-2 text-sm leading-6 text-slate-600">{exercise.goal}</p>
 
       {exercise.setup ? (
-        <p className={`mt-4 rounded-xl px-3 py-2 text-sm ${styles.soft}`}>
+        <p
+          className={`mt-4 rounded-xl px-3 py-2 text-sm ${accentSoftFillClassNames[accent]}`}
+        >
           <span className="font-semibold text-slate-900">Setup:</span>{' '}
           {exercise.setup}
         </p>
@@ -294,7 +273,6 @@ function GuidePage({
   onOpenDemo: (demoId: DemoId) => void
 }) {
   const accent = guideAccent[guide.id] ?? 'blue'
-  const styles = accentStyles[accent]
   const toc = [
     { id: 'availability', label: 'Availability' },
     { id: 'when-to-use', label: 'When to use it' },
@@ -310,9 +288,11 @@ function GuidePage({
   return (
     <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_13rem]">
       <article
-        className={`min-w-0 rounded-3xl border border-t-4 bg-white p-6 shadow-sm sm:p-8 ${styles.border}`}
+        className={`min-w-0 rounded-3xl border border-t-4 bg-white p-6 shadow-sm sm:p-8 ${accentBorderClassNames[accent]}`}
       >
-        <p className={`text-sm font-bold uppercase tracking-[0.18em] ${styles.text}`}>
+        <p
+          className={`text-sm font-bold uppercase tracking-[0.18em] ${accentTextClassNames[accent]}`}
+        >
           {guide.eyebrow}
         </p>
         <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
@@ -377,7 +357,7 @@ function GuidePage({
           </ul>
           {guide.demoId ? (
             <button
-              className={`mt-5 rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 ${styles.button}`}
+              className={`mt-5 rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 ${primaryButtonClassNames[accent]}`}
               disabled={!demoAvailable}
               onClick={() => onOpenDemo(guide.demoId as DemoId)}
               type="button"
@@ -408,7 +388,7 @@ function GuidePage({
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p
-                  className={`text-xs font-black uppercase tracking-[0.16em] ${styles.text}`}
+                  className={`text-xs font-black uppercase tracking-[0.16em] ${accentTextClassNames[accent]}`}
                 >
                   Try it yourself
                 </p>
@@ -449,7 +429,9 @@ function GuidePage({
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <p className={`mt-5 rounded-xl px-4 py-3 leading-7 text-slate-700 ${styles.soft}`}>
+          <p
+            className={`mt-5 rounded-xl px-4 py-3 leading-7 text-slate-700 ${accentSoftFillClassNames[accent]}`}
+          >
             <span className="font-bold text-slate-950">Lifecycle:</span>{' '}
             {guide.lifecycle}
           </p>

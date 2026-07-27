@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-import { primaryButtonClassNames } from '../../components/accent-styles'
 import { proofreaderFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+import { DemoSection } from '../../components/demo-section'
 import { OutputPanel } from '../../components/output-panel'
+import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import { useProofreader } from './use-proofreader'
 
 const sampleText =

@@ -7,7 +7,11 @@ import {
   type KeyboardEvent,
 } from 'react'
 
-import type { DemoAccent } from '../components/demo-section'
+import {
+  accentForPosition,
+  navItemClassNames,
+  type DemoAccent,
+} from '../theme/accent'
 import { DocumentationPage } from '../docs/documentation-page'
 import { documentationNavGroups } from '../docs/documentation-content'
 import { LanguageDetectorDemo } from '../features/language-detector/language-detector-demo'
@@ -42,34 +46,6 @@ interface Demo {
 }
 
 type DemoDefinition = Omit<Demo, 'accent'>
-
-const ACCENT_CYCLE: DemoAccent[] = ['yellow', 'red', 'green', 'blue']
-
-function accentForPosition(index: number): DemoAccent {
-  return ACCENT_CYCLE[index % ACCENT_CYCLE.length]
-}
-
-const accentClassNames: Record<
-  DemoAccent,
-  { active: string; hover: string }
-> = {
-  yellow: {
-    active: 'border-brand-yellow bg-brand-yellow text-slate-950',
-    hover: 'hover:border-brand-yellow hover:text-brand-yellow',
-  },
-  red: {
-    active: 'border-brand-red bg-brand-red text-white',
-    hover: 'hover:border-brand-red hover:text-brand-red',
-  },
-  green: {
-    active: 'border-brand-green bg-brand-green text-white',
-    hover: 'hover:border-brand-green hover:text-brand-green',
-  },
-  blue: {
-    active: 'border-brand-blue bg-brand-blue text-white',
-    hover: 'hover:border-brand-blue hover:text-brand-blue',
-  },
-}
 
 const apiDemos: DemoDefinition[] = [
   { id: 'translator', label: 'Translator', component: TranslatorDemo },
@@ -181,9 +157,8 @@ function DocumentationSidebar({
           <NavGroupLabel label={group.label} />
           {group.items.map((item) => {
             const selected = item.id === selectedSectionId
-            const accent = accentClassNames[
-              accentForDocumentationSection(item.id)
-            ]
+            const accent =
+              navItemClassNames[accentForDocumentationSection(item.id)]
             return (
               <a
                 aria-current={selected ? 'page' : undefined}
@@ -369,7 +344,7 @@ export function App() {
                   <NavGroupLabel label="APIs" />
                   {visibleDemos.map((demo, index) => {
                     const isSelected = demo.id === selectedDemoId
-                    const accent = accentClassNames[demo.accent]
+                    const accent = navItemClassNames[demo.accent]
                     const startsWebmcpGroup =
                       demo.track === 'webmcp' &&
                       visibleDemos[index - 1]?.track !== 'webmcp'
