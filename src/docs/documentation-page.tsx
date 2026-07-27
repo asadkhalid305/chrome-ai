@@ -11,6 +11,7 @@ import {
   primaryButtonClassNames,
   type DemoAccent,
 } from '../theme/accent'
+import { accentForDocumentationSection } from './documentation-accents'
 import {
   apiGuideById,
   documentationArticleById,
@@ -24,19 +25,6 @@ interface DocumentationPageProps {
   sectionId: DocumentationSectionId
   isDemoAvailable: (demoId: DemoId) => boolean
   onOpenDemo: (demoId: DemoId) => void
-}
-
-const guideAccent: Record<string, DemoAccent> = {
-  translator: 'yellow',
-  'language-detector': 'red',
-  summarizer: 'green',
-  prompt: 'blue',
-  writer: 'yellow',
-  rewriter: 'red',
-  proofreader: 'green',
-  webmcp: 'blue',
-  'webmcp-declarative': 'yellow',
-  'webmcp-imperative': 'red',
 }
 
 const statusStyles: Record<ApiGuide['status'], string> = {
@@ -272,7 +260,9 @@ function GuidePage({
   demoAvailable: boolean
   onOpenDemo: (demoId: DemoId) => void
 }) {
-  const accent = guideAccent[guide.id] ?? 'blue'
+  // A guide takes the accent of the demo it documents, so the reader sees the
+  // same color in the sidebar, the tab, and the demo card.
+  const accent = accentForDocumentationSection(guide.id)
   const toc = [
     { id: 'availability', label: 'Availability' },
     { id: 'when-to-use', label: 'When to use it' },
