@@ -1,3 +1,8 @@
+import {
+  readBrowserApi,
+  withDownloadMonitor,
+} from '../../chrome-ai/browser-globals'
+
 export type RewriteChange =
   | 'more-formal'
   | 'more-casual'
@@ -17,11 +22,10 @@ export interface RewriterAdapter {
 
 type RewriterFactory = Pick<typeof Rewriter, 'availability' | 'create'>
 
-function browserRewriter(): RewriterFactory | undefined {
-  return (globalThis as typeof globalThis & { Rewriter?: RewriterFactory })
-    .Rewriter
-}
+const browserRewriter = () => readBrowserApi<RewriterFactory>('Rewriter')
 
+// Chrome splits rewriting into an independent tone and length axis, so the
+// demo's four single choices each map onto one axis with the other left alone.
 export function rewriterOptions(
   change: RewriteChange,
 ): RewriterCreateCoreOptions {
@@ -50,14 +54,11 @@ export const rewriterApi: RewriterAdapter = {
       throw new Error('The Rewriter API is not available in this browser.')
     }
 
-    return factory.create({
-      ...rewriterOptions(change),
-      signal,
-      monitor(monitor) {
-        monitor.addEventListener('downloadprogress', (event) => {
-          onDownloadProgress(event.loaded)
-        })
-      },
-    })
+    return factory.create(
+      withDownloadMonitor(
+        { ...rewriterOptions(change), signal },
+        onDownloadProgress,
+      ),
+    )
   },
 }

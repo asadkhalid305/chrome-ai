@@ -1,3 +1,8 @@
+import {
+  readBrowserApi,
+  withDownloadMonitor,
+} from '../../chrome-ai/browser-globals'
+
 export const writerOptions = {
   tone: 'casual',
   format: 'plain-text',
@@ -19,9 +24,7 @@ export interface WriterAdapter {
 
 type WriterFactory = Pick<typeof Writer, 'availability' | 'create'>
 
-function browserWriter(): WriterFactory | undefined {
-  return (globalThis as typeof globalThis & { Writer?: WriterFactory }).Writer
-}
+const browserWriter = () => readBrowserApi<WriterFactory>('Writer')
 
 export const writerApi: WriterAdapter = {
   async availability() {
@@ -35,14 +38,8 @@ export const writerApi: WriterAdapter = {
       throw new Error('The Writer API is not available in this browser.')
     }
 
-    return factory.create({
-      ...writerOptions,
-      signal,
-      monitor(monitor) {
-        monitor.addEventListener('downloadprogress', (event) => {
-          onDownloadProgress(event.loaded)
-        })
-      },
-    })
+    return factory.create(
+      withDownloadMonitor({ ...writerOptions, signal }, onDownloadProgress),
+    )
   },
 }

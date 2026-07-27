@@ -1,3 +1,8 @@
+import {
+  readBrowserApi,
+  withDownloadMonitor,
+} from '../../chrome-ai/browser-globals'
+
 export interface TranslatorOptions {
   sourceLanguage: string
   targetLanguage: string
@@ -16,14 +21,12 @@ export interface TranslatorAdapter {
 
 type TranslatorFactory = Pick<typeof Translator, 'availability' | 'create'>
 
-function browserTranslator(): TranslatorFactory | undefined {
-  return (globalThis as typeof globalThis & { Translator?: TranslatorFactory })
-    .Translator
-}
+const browserTranslator = () => readBrowserApi<TranslatorFactory>('Translator')
 
 export const translatorApi: TranslatorAdapter = {
   async availability(options) {
     const factory = browserTranslator()
+    // Each language pair is a separate model, so availability is per pair.
     return factory ? factory.availability(options) : 'unavailable'
   },
 
@@ -33,14 +36,8 @@ export const translatorApi: TranslatorAdapter = {
       throw new Error('The Translator API is not available in this browser.')
     }
 
-    return factory.create({
-      ...options,
-      signal,
-      monitor(monitor) {
-        monitor.addEventListener('downloadprogress', (event) => {
-          onDownloadProgress(event.loaded)
-        })
-      },
-    })
+    return factory.create(
+      withDownloadMonitor({ ...options, signal }, onDownloadProgress),
+    )
   },
 }

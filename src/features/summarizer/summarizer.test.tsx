@@ -44,6 +44,43 @@ describe('Summarizer demo', () => {
     expect(session.destroy).toHaveBeenCalledOnce()
   })
 
+  it('creates one session when two requests race an in-progress download', async () => {
+    let resolveCreation: (session: SummarizerSession) => void = () => undefined
+    const session: SummarizerSession = {
+      summarize: vi.fn().mockResolvedValue('• Shared session'),
+      destroy: vi.fn(),
+    }
+    const adapter: SummarizerAdapter = {
+      availability: vi.fn().mockResolvedValue('downloadable'),
+      create: vi.fn(
+        () =>
+          new Promise<SummarizerSession>((resolve) => {
+            resolveCreation = resolve
+          }),
+      ),
+    }
+    const { result, unmount } = renderHook(() => useSummarizer(adapter))
+
+    await waitFor(() => expect(result.current.capability).toBe('downloadable'))
+    let first: Promise<void>
+    let second: Promise<void>
+    act(() => {
+      first = result.current.summarize('First article.')
+      second = result.current.summarize('Second article.')
+    })
+
+    expect(adapter.create).toHaveBeenCalledOnce()
+    await act(async () => {
+      resolveCreation(session)
+      await Promise.all([first!, second!])
+    })
+
+    expect(session.summarize).toHaveBeenCalledTimes(2)
+    unmount()
+    // A second session would have had nothing left holding a reference to it.
+    expect(session.destroy).toHaveBeenCalledOnce()
+  })
+
   it('shows the plain-text summary through the form', async () => {
     vi.stubGlobal('Summarizer', {
       availability: vi.fn().mockResolvedValue('available'),
