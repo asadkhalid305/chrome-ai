@@ -12,10 +12,19 @@ import {
 } from '../../theme/field-styles'
 import { useSummarizer } from './use-summarizer'
 
-const sampleArticle = `Built-in browser AI APIs let websites use models supplied by the browser. The work happens on the user's device, so short-lived input does not need to be sent to an application server. Before a site can use an API, it checks availability and may need to ask the browser to download a model. Downloads can take time, so the interface should show progress and wait for clear user intent. Each API session also consumes resources. Applications should reuse a session when appropriate, cancel work the user no longer wants, and destroy the session during cleanup.`
+// Real summarization input is uneven: decisions and owners sit next to a room
+// mix-up and an argument nobody settled. A short key-points summary has to drop
+// the noise, so the learner can judge the output instead of admiring it.
+const sampleNotes = `Notes from the Thursday release review. Twelve people attended, and three joined late because the invite listed the wrong room.
+
+Dana walked through the on-device translation rollout. The first-run model download is the loudest complaint in the beta feedback: people assume the page is broken while nothing visible happens. Priya proposed replacing the spinner with byte-level progress, and the group agreed to ship that in 2.4 even though it pushes the offline history view to 2.5.
+
+Marco raised the storage question again. Laptops with 8 GB of RAM sometimes fail the availability check after a browser update, but nobody could reproduce it on demand, so he will collect traces for two weeks before we change anything.
+
+We then spent ten minutes arguing about renaming the feature and reached no decision. Support wants a help-centre article before 2.4 ships, and Priya owns it. Open question for next week: keep the beta flag after the progress indicator lands, or enable it for everyone in Europe first?`
 
 export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
-  const [input, setInput] = useState(sampleArticle)
+  const [input, setInput] = useState(sampleNotes)
   const summarizer = useSummarizer()
   const canRun =
     summarizer.request !== 'running' &&
@@ -49,9 +58,9 @@ export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
         }}
       >
         <label className={fieldLabelClassNames}>
-          English article
+          English source text
           <textarea
-            className={`${textFieldClassNames} min-h-48`}
+            className={`${textFieldClassNames} min-h-60`}
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />

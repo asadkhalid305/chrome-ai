@@ -427,7 +427,7 @@ export const apiGuides: ApiGuide[] = [
       'The demo reuses one detector and renders the top three candidates with confidence percentages.',
     observe: [
       'Long, coherent sentences usually produce a clearer first candidate.',
-      'Mixed-language input can distribute confidence across candidates.',
+      'Closely related languages and mixed-language input spread confidence across several candidates.',
       'A successful request may still be uncertain.',
     ],
     limitations: [
@@ -520,7 +520,7 @@ export const apiGuides: ApiGuide[] = [
         goal: 'Extract the decision and its constraints.',
         fields: [
           {
-            label: 'English article',
+            label: 'English source text',
             value:
               'The team compared three options for adding translation to the support form. A hosted provider offered broad language coverage but required sending every message to a server. Shipping a model with the app would increase download size and maintenance. The browser Translator API kept short-lived text on the device and required no application backend, but only worked in supported desktop Chrome environments. The team chose progressive enhancement: show on-device translation when the pair is available and preserve the normal form when it is not.',
           },
@@ -533,7 +533,7 @@ export const apiGuides: ApiGuide[] = [
         goal: 'See which details the model considers central.',
         fields: [
           {
-            label: 'English article',
+            label: 'English source text',
             value:
               'A community study group meets on Thursday at 18:30 in the city library. The session is free, lasts 90 minutes, and is designed for frontend developers who know basic JavaScript. Participants need a laptop with a supported desktop version of Chrome and enough free storage for an on-device model. The first half explains capability detection and model downloads. The second half compares translation, summarization, and general prompting. Registration closes on Tuesday because the room has 24 seats.',
           },
@@ -546,7 +546,7 @@ export const apiGuides: ApiGuide[] = [
         goal: 'Use a dense incident update with competing details.',
         fields: [
           {
-            label: 'English article',
+            label: 'English source text',
             value:
               'At 09:12 the content editor stopped loading for some users. Monitoring showed no increase in server errors because the failure happened before any network request. At 09:28 the team reproduced it only in browsers where the local language model was downloading. The interface had disabled editing during preparation without explaining why. At 10:05 a patch separated editing state from model readiness and added visible download progress. No user content was lost. The patch reached production at 10:42, and support confirmed recovery at 11:10. A follow-up will add a regression test for editing while a model prepares.',
           },

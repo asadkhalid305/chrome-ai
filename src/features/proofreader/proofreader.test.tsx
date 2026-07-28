@@ -56,14 +56,16 @@ describe('Proofreader demo', () => {
       create: vi.fn().mockResolvedValue({
         proofread: vi.fn().mockResolvedValue({
           correctedInput:
-            'I saw the new browser APIs yesterday, and they were very interesting.',
+            'Last week my teammate and I tested the new browser API on their laptops. We did not know that the model downloads only once, so we were surprised when the second run finished instantly.',
+          // The indices address the demo's seeded text, which is what the
+          // component slices to show each correction's original.
           corrections: [
             {
-              startIndex: 2,
-              endIndex: 6,
-              correction: 'saw',
+              startIndex: 63,
+              endIndex: 68,
+              correction: 'their',
               types: ['grammar'],
-              explanation: 'Use the simple past form after I.',
+              explanation: 'Use the possessive "their" before a noun.',
             },
           ],
         }),
@@ -81,12 +83,14 @@ describe('Proofreader demo', () => {
 
     expect(original).toHaveValue(originalValue)
     expect(await screen.findByText('grammar')).toBeVisible()
-    expect(screen.getByText('Use the simple past form after I.')).toBeVisible()
+    expect(
+      screen.getByText('Use the possessive "their" before a noun.'),
+    ).toBeVisible()
 
     await user.clear(original)
     await user.type(original, 'A different sentence.')
 
-    expect(screen.getByText('seen')).toBeVisible()
+    expect(screen.getByText('there')).toBeVisible()
     expect(original).toHaveValue('A different sentence.')
   })
 

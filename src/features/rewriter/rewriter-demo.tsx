@@ -14,8 +14,10 @@ import {
 import { type RewriteChange } from './rewriter-api'
 import { useRewriter } from './use-rewriter'
 
-const sampleText =
-  'Hey everyone, we are doing a browser AI workshop next week and it would be really great if you could come along.'
+// Informal register plus checkable facts makes every option visibly different:
+// the formal rewrite has something to lift, the shorter one something to cut,
+// and all four have a date, a time, a room, a seat count, and a version to keep.
+const sampleText = `hey all — quick one before the weekend: the browser AI workshop is on Thursday the 14th at 18:30 in the small meeting room on floor 3, and it would be a shame if nobody showed up since we only managed to get 12 seats. bring a laptop with Chrome 141 or newer if you have one, otherwise just pair with someone. no prep needed, we'll do everything live.`
 
 export function RewriterDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)

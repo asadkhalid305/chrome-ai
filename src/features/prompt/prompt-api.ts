@@ -11,11 +11,13 @@ export const promptModelOptions = {
 // Unlike the task-specific APIs, the Prompt API has no built-in job, so the
 // demo's instruction lives here as the session's system prompt. Chrome only
 // accepts the system role in first position, which the tuple type enforces.
+// The instruction asks for a stated recommendation so its effect on the answer
+// is visible next to the free-form question the demo sends.
 const initialPrompts: [LanguageModelSystemMessage] = [
   {
     role: 'system',
     content:
-      'Explain browser AI concepts clearly in no more than three short sentences.',
+      'You help web developers understand browser AI. Use at most three short sentences. When a question has more than one defensible answer, name your recommendation in the first sentence and say what it costs.',
   },
 ]
 

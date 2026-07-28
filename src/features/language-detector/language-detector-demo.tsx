@@ -14,10 +14,14 @@ import { useLanguageDetector } from './use-language-detector'
 
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
+// Danish, Norwegian, and Swedish share much of this vocabulary, so the detector
+// cannot reach near-certainty on one label. That is the point of the demo: the
+// API answers with ranked evidence, not with a single verdict.
+const sampleText =
+  'Sprogmodellen kører lokalt i browseren, så teksten aldrig behøver at forlade computeren.'
+
 export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
-  const [input, setInput] = useState(
-    'La inteligencia artificial integrada funciona directamente en el navegador.',
-  )
+  const [input, setInput] = useState(sampleText)
   const detector = useLanguageDetector()
   const canRun =
     detector.request !== 'running' &&
@@ -115,7 +119,10 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
         </OutputPanel>
       </div>
       <p className="mt-3 text-sm text-slate-500">
-        Try a full sentence: very short phrases usually produce weaker confidence.
+        The seeded sentence is Danish, and its Scandinavian neighbours take a
+        real share of the confidence. Swap in an unrelated language to watch the
+        ranking collapse onto one candidate, or a single word to watch every
+        score weaken.
       </p>
     </DemoSection>
   )

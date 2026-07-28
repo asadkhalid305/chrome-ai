@@ -61,12 +61,11 @@ describe('Writer demo', () => {
     const user = userEvent.setup()
     render(<WriterDemo accent="yellow" />)
     const idea = screen.getByRole('textbox', { name: 'Writing idea' })
+    const seededIdea = (idea as HTMLTextAreaElement).value
 
     await user.click(await screen.findByRole('button', { name: 'Create draft' }))
 
-    expect(idea).toHaveValue(
-      'Invite the local web community to a hands-on AI study session.',
-    )
+    expect(idea).toHaveValue(seededIdea)
     const draft = await screen.findByRole('textbox', {
       name: 'Editable generated draft',
     })

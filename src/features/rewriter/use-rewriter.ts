@@ -40,7 +40,11 @@ export function useRewriter(adapter: RewriterAdapter = rewriterApi) {
 
     await session.run((rewriter, signal) =>
       rewriter.rewrite(input, {
-        context: 'Keep the meaning and important facts of this message.',
+        // Naming the details that must survive gives the shorter and more formal
+        // rewrites something to be judged against, since both are free to drop
+        // whatever the context does not protect.
+        context:
+          'Keep the meaning of this message, and keep every date, time, place, number, and version it mentions.',
         signal,
       }),
     )

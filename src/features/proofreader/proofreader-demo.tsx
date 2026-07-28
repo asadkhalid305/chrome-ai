@@ -13,8 +13,10 @@ import {
 } from '../../theme/field-styles'
 import { useProofreader } from './use-proofreader'
 
-const sampleText =
-  'I seen the new browser APIs yesterday, and they was very interesting.'
+// One error per category the result can report — pronoun case, subject-verb
+// agreement, a homophone, a missing apostrophe, a wrong verb form, and a
+// misspelling — so the correction list arrives with varied types to compare.
+const sampleText = `Last week me and my teammate has tested the new browser API on there laptops. We didnt knew that the model downloads only once, so we was suprised when the second run finished instantly.`
 
 export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)

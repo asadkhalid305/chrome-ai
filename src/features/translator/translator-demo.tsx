@@ -19,12 +19,15 @@ const languages = [
   { code: 'fr', name: 'French' },
 ]
 
+// German puts the verb last in subordinate clauses and builds long compound
+// nouns, so a translation has to restructure the sentence rather than swap words
+// one by one. Dates, times, and the formal address are the details to check.
+const sampleText = `Weil die Softwareaktualisierung länger dauert als geplant, verschiebt sich die Freischaltung der Übersetzungsfunktion auf den 14. August. Nutzerinnen und Nutzer, die sich bereits angemeldet haben, behalten ihren Zugang und müssen nichts weiter tun. Sollten am Freitag erneut Verbindungsprobleme auftreten, benachrichtigen wir Sie noch am selben Tag per E-Mail.`
+
 export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
   const [sourceLanguage, setSourceLanguage] = useState('de')
   const [targetLanguage, setTargetLanguage] = useState('en')
-  const [input, setInput] = useState(
-    'Browser-KI kann Texte direkt auf deinem Gerät übersetzen.',
-  )
+  const [input, setInput] = useState(sampleText)
   const translator = useTranslator({ sourceLanguage, targetLanguage })
   const canRun =
     translator.request !== 'running' &&
@@ -90,7 +93,7 @@ export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
         <label className={fieldLabelClassNames}>
           Text to translate
           <textarea
-            className={`${textFieldClassNames} min-h-28`}
+            className={`${textFieldClassNames} min-h-32`}
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />

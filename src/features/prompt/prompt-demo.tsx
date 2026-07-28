@@ -12,10 +12,13 @@ import {
 } from '../../theme/field-styles'
 import { usePrompt } from './use-prompt'
 
+// A question with two supported answers and a follow-up constraint shows more
+// than a definition request does: the reply has to choose, justify the choice,
+// and still obey the three-sentence system instruction in prompt-api.ts.
+const samplePrompt = `A support page needs to condense a 3,000-word ticket thread while the user keeps typing in the same textarea. Would you reach for the Summarizer API or the Prompt API, and what should the page do about the first-visit model download?`
+
 export function PromptDemo({ accent }: { accent: DemoAccent }) {
-  const [input, setInput] = useState(
-    'Why should a web app destroy a browser AI session when it is finished?',
-  )
+  const [input, setInput] = useState(samplePrompt)
   const promptModel = usePrompt()
   const canRun =
     promptModel.request !== 'running' &&
@@ -28,7 +31,7 @@ export function PromptDemo({ accent }: { accent: DemoAccent }) {
       accent={accent}
       eyebrow="API 4"
       title="Prompt"
-      description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
+      description="Ask a small general-purpose language model a question with no single right answer, and watch the system instruction shape the reply."
       availability={{
         status: 'stable',
         summary: 'Stable on the web since Chrome 148.',
