@@ -30,15 +30,17 @@ Status labels below are a reviewed snapshot, not permanent compatibility claims.
 | API | Reviewed status | Curriculum role | Initial example |
 | --- | --- | --- | --- |
 | Translator | Stable from Chrome 138 | First task-specific expert-model API | German-to-English text translation |
-| Language Detector | Stable from Chrome 138 | Ranked detection results and API composition | Detect an editable sentence, then optionally translate it |
+| Language Detector | Stable from Chrome 138 | Ranked detection results and API composition | Detect a message that switches language mid-sentence |
 | Summarizer | Stable from Chrome 138 | Task options, longer input, and model preparation | Reduce uneven meeting notes to short key points |
-| Prompt / `LanguageModel` | Web: stable from Chrome 148; extensions: stable from Chrome 138 | General model, multimodal input, sessions, and structured output | Ask which API fits a described situation, and why |
+| Prompt / `LanguageModel` | Web: stable from Chrome 148; extensions: stable from Chrome 138 | General model, multimodal input, sessions, and structured output | Solve a short reasoning puzzle, answer first |
 | Prompt sampling parameters | Origin-trial capability on the web | Explain experimental model controls without making output deterministic | Compare supported sampling settings |
 | Writer | Developer trial | Generate a new editable draft from an idea and context | Draft an announcement from supplied facts |
 | Rewriter | Developer trial | Transform existing text by tone or length | Rewrite a short message while preserving the original |
-| Proofreader | Developer trial | Structured corrections and explanations | Check editable text containing several error types |
+| Proofreader | Developer trial | Corrections as character ranges in the submitted text | Check editable text containing several error types |
 | WebMCP Declarative | Origin trial from Chrome 149 | Expose semantic HTML forms as tools for browser agents | Annotate a visible support-request form |
 | WebMCP Imperative | Origin trial from Chrome 149 | Register schema-driven JavaScript tools for browser agents | Register and execute a local state-management tool |
+
+Chrome's Proofreader implementation returns correction ranges and replacements only. The official API page records the explainer's `includeCorrectionTypes` and `includeCorrectionExplanation` options as unsupported, so a correction carries no category or explanation today (checked 2026-07-28). The lesson says so in the output panel rather than printing empty fields.
 
 WebMCP is part of the wider Chrome AI and agentic-web curriculum, but it is not a built-in model API. Keep its adapters, security guidance, and lessons separate from `Translator`, `LanguageModel`, and the other on-device inference APIs.
 

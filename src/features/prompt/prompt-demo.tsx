@@ -12,10 +12,11 @@ import {
 } from '../../theme/field-styles'
 import { usePrompt } from './use-prompt'
 
-// A question with two supported answers and a follow-up constraint shows more
-// than a definition request does: the reply has to choose, justify the choice,
-// and still obey the three-sentence system instruction in prompt-api.ts.
-const samplePrompt = `A support page needs to condense a 3,000-word ticket thread while the user keeps typing in the same textarea. Would you reach for the Summarizer API or the Prompt API, and what should the page do about the first-visit model download?`
+// The bat-and-ball puzzle: everyone in the room can follow it, almost everyone
+// answers 10 cents, and the right answer needs an actual step of arithmetic. A
+// small on-device model is genuinely at risk of falling for it, which is a more
+// honest thing to show than a definition it can recite.
+const samplePrompt = `A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost?`
 
 export function PromptDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(samplePrompt)
@@ -31,7 +32,7 @@ export function PromptDemo({ accent }: { accent: DemoAccent }) {
       accent={accent}
       eyebrow="API 4"
       title="Prompt"
-      description="Ask a small general-purpose language model a question with no single right answer, and watch the system instruction shape the reply."
+      description="Give a small general-purpose language model a question it has to reason about, and watch the system instruction shape how the answer arrives."
       availability={{
         status: 'stable',
         summary: 'Stable on the web since Chrome 148.',

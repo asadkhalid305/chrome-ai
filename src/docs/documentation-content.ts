@@ -833,7 +833,7 @@ export const apiGuides: ApiGuide[] = [
     eyebrow: 'Built-in AI · API 7',
     title: 'Proofreader',
     summary:
-      'Inspect grammar, spelling, and punctuation corrections with categories and explanations.',
+      'Inspect grammar, spelling, and punctuation corrections as character ranges in the text you submitted.',
     status: 'Developer trial',
     statusDetail: 'Experimental proofreading API; verify current trial access.',
     prerequisites: [
@@ -842,20 +842,21 @@ export const apiGuides: ApiGuide[] = [
     ],
     goodFor: [
       'Reviewing messages, comments, notes, and editable documents.',
-      'Showing explainable corrections before a person accepts them.',
+      'Highlighting a suggested change in place before a person accepts it.',
     ],
     avoidFor: [
       'Silently replacing user-authored text.',
       'Treating style preferences as objective grammatical errors.',
     ],
     playground:
-      'The demo keeps the original text, renders a corrected alternative, and lists every returned correction with its category and explanation.',
+      'The demo keeps the original text, renders a corrected alternative, and marks every returned correction inside the words around it with its character range.',
     observe: [
-      'Correction indices refer to the submitted original.',
+      'Correction indices refer to the submitted original, so the demo marks each range in place.',
       'A successful run can legitimately return zero corrections.',
-      'Categories and explanations can be absent or imperfect.',
+      'A correction can have an empty range, which means text is missing rather than wrong.',
     ],
     limitations: [
+      'Chrome does not implement the specified includeCorrectionTypes and includeCorrectionExplanations options yet, so categories and explanations are absent.',
       'The API focuses on proofreading rather than broad rewriting.',
       'Suggestions still require user review.',
     ],
@@ -865,7 +866,7 @@ export const apiGuides: ApiGuide[] = [
     exercises: [
       {
         title: 'Correct agreement errors',
-        goal: 'Produce several explainable grammar corrections.',
+        goal: 'Produce several grammar corrections you can locate in the original.',
         fields: [
           {
             label: 'Original text',
@@ -873,7 +874,8 @@ export const apiGuides: ApiGuide[] = [
               'She have finished the tests, but the results was not uploaded yet.',
           },
         ],
-        observe: 'Look for subject–verb agreement categories and explanations.',
+        observe:
+          'Expect one marked range per agreement error rather than one rewrite of the whole sentence.',
       },
       {
         title: 'Mix spelling and punctuation',
@@ -908,7 +910,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/proofreader-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-07-28',
   },
   {
     id: 'webmcp',

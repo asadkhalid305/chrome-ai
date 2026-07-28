@@ -19,10 +19,11 @@ const languages = [
   { code: 'fr', name: 'French' },
 ]
 
-// German puts the verb last in subordinate clauses and builds long compound
-// nouns, so a translation has to restructure the sentence rather than swap words
-// one by one. Dates, times, and the formal address are the details to check.
-const sampleText = `Weil die Softwareaktualisierung länger dauert als geplant, verschiebt sich die Freischaltung der Übersetzungsfunktion auf den 14. August. Nutzerinnen und Nutzer, die sich bereits angemeldet haben, behalten ihren Zugang und müssen nichts weiter tun. Sollten am Freitag erneut Verbindungsprobleme auftreten, benachrichtigen wir Sie noch am selben Tag per E-Mail.`
+// A notice in the stairwell: silly enough to be worth reading out loud, and
+// still built the way German is. The verb lands at the end of the clause
+// ("geworfen hat"), the condition drops its "wenn" ("Sollte Fridolin öffnen"),
+// and the compound nouns have to be unpacked rather than swapped word for word.
+const sampleText = `Liebe Nachbarn, weil unser Kater Fridolin gestern die Fernbedienung in den Kühlschrank geworfen hat, läuft bei uns seit elf Stunden ununterbrochen eine Kochsendung. Wer eine Ersatzfernbedienung übrig hat, darf sie gern vorbeibringen; wir bezahlen in selbstgebackenem Kuchen. Sollte Fridolin die Tür öffnen, geben Sie ihm bitte nichts — er hat beim Grillfest schon die halbe Bratwurst mitgenommen.`
 
 export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
   const [sourceLanguage, setSourceLanguage] = useState('de')

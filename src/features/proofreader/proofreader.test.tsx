@@ -56,13 +56,13 @@ describe('Proofreader demo', () => {
       create: vi.fn().mockResolvedValue({
         proofread: vi.fn().mockResolvedValue({
           correctedInput:
-            'Last week my teammate and I tested the new browser API on their laptops. We did not know that the model downloads only once, so we were surprised when the second run finished instantly.',
+            'Yesterday I received an email about the new browser API. We were surprised that the model only downloads once, and we did not notice any delay on their second run.',
           // The indices address the demo's seeded text, which is what the
-          // component slices to show each correction's original.
+          // component slices to show each correction in place.
           corrections: [
             {
-              startIndex: 63,
-              endIndex: 68,
+              startIndex: 140,
+              endIndex: 145,
               correction: 'their',
               types: ['grammar'],
               explanation: 'Use the possessive "their" before a noun.',
@@ -92,6 +92,34 @@ describe('Proofreader demo', () => {
 
     expect(screen.getByText('there')).toBeVisible()
     expect(original).toHaveValue('A different sentence.')
+  })
+
+  it('renders a missing-text correction and says why labels are absent', async () => {
+    vi.stubGlobal('Proofreader', {
+      availability: vi.fn().mockResolvedValue('available'),
+      create: vi.fn().mockResolvedValue({
+        // Chrome reports missing text as an empty range and returns no category
+        // or explanation today, which is the result that previously rendered as
+        // an empty "Original" line next to two "Not provided" rows.
+        proofread: vi.fn().mockResolvedValue({
+          correctedInput: 'Yesterday, i recieved a email.',
+          corrections: [{ startIndex: 9, endIndex: 9, correction: ',' }],
+        }),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<ProofreaderDemo accent="green" />)
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Inspect corrections' }),
+    )
+
+    expect(await screen.findByText('Insert:')).toBeVisible()
+    expect(screen.getByText('insertion point')).toBeInTheDocument()
+    expect(screen.getByText('Characters 9–9')).toBeVisible()
+    expect(screen.getByText(/returns positions and/)).toBeVisible()
+    expect(screen.queryByText('Not provided')).not.toBeInTheDocument()
   })
 
   it('distinguishes a successful result with no corrections', async () => {

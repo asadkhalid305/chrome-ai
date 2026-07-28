@@ -14,11 +14,11 @@ import { useLanguageDetector } from './use-language-detector'
 
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-// Danish, Norwegian, and Swedish share much of this vocabulary, so the detector
-// cannot reach near-certainty on one label. That is the point of the demo: the
-// API answers with ranked evidence, not with a single verdict.
+// One message that switches language four times, the way a multilingual team
+// chat actually reads. No single label is correct, so the detector has to spread
+// its confidence — which is why this API returns a ranked list at all.
 const sampleText =
-  'Sprogmodellen kører lokalt i browseren, så teksten aldrig behøver at forlade computeren.'
+  'Hola equipo, ich schicke euch das Update heute Abend, and then we can review it together demain matin.'
 
 export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)
@@ -119,9 +119,9 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
         </OutputPanel>
       </div>
       <p className="mt-3 text-sm text-slate-500">
-        The seeded sentence is Danish, and its Scandinavian neighbours take a
-        real share of the confidence. Swap in an unrelated language to watch the
-        ranking collapse onto one candidate, or a single word to watch every
+        The seeded message mixes Spanish, German, English, and French, so no
+        candidate can win outright. Replace it with one language to watch the
+        ranking collapse onto a single result, or with one word to watch every
         score weaken.
       </p>
     </DemoSection>
