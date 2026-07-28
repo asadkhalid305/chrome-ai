@@ -20,19 +20,41 @@ export interface ApiAvailability {
   flags?: ChromeFlag[]
 }
 
-// Writer and Rewriter ship together as a joint developer trial and share the
-// same localhost flags, so both demos reference this one source.
-export const writingAssistanceFlags: ChromeFlag[] = [
-  { id: 'optimization-guide-on-device-model', value: 'Enabled' },
+// Writer and Rewriter ship as a joint developer trial and share the Gemini Nano
+// base flags. Each also has its own API flag in chrome://flags.
+const geminiNanoBaseFlags: ChromeFlag[] = [
+  {
+    id: 'optimization-guide-on-device-model',
+    // BypassPerfRequirement is the localhost escape hatch when Enabled still
+    // leaves availability() at "unavailable" on machines under Chrome's
+    // hardware gate.
+    value: 'Enabled or Enabled BypassPerfRequirement',
+  },
   {
     id: 'prompt-api-for-gemini-nano-multimodal-input',
     value: 'Enabled or Enabled Multilingual',
   },
+]
+
+export const writerFlags: ChromeFlag[] = [
+  ...geminiNanoBaseFlags,
   {
     id: 'writer-api-for-gemini-nano',
     value: 'Enabled or Enabled Multilingual',
   },
 ]
+
+export const rewriterFlags: ChromeFlag[] = [
+  ...geminiNanoBaseFlags,
+  {
+    id: 'rewriter-api-for-gemini-nano',
+    value: 'Enabled or Enabled Multilingual',
+  },
+]
+
+// Kept as an alias so older references stay readable; prefer writerFlags /
+// rewriterFlags at call sites.
+export const writingAssistanceFlags = writerFlags
 
 export const proofreaderFlags: ChromeFlag[] = [
   { id: 'proofreader-api', value: 'Enabled' },

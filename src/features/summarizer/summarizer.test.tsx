@@ -75,10 +75,56 @@ describe('Summarizer demo', () => {
       await Promise.all([first!, second!])
     })
 
-    expect(session.summarize).toHaveBeenCalledTimes(2)
+    // The second submit aborts the first request, so only the active run calls
+    // the model. Both still share the one in-flight create.
+    expect(session.summarize).toHaveBeenCalledTimes(1)
+    expect(session.summarize).toHaveBeenCalledWith(
+      'Second article.',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    )
+    expect(result.current.request).toBe('success')
+    expect(result.current.output).toBe('• Shared session')
     unmount()
-    // A second session would have had nothing left holding a reference to it.
     expect(session.destroy).toHaveBeenCalledOnce()
+  })
+
+  it('cancels the active request after a double submit, not a superseded one', async () => {
+    let resolveSummarize: (value: string) => void = () => undefined
+    const session: SummarizerSession = {
+      summarize: vi.fn(
+        (_input, options) =>
+          new Promise<string>((resolve, reject) => {
+            resolveSummarize = resolve
+            options?.signal?.addEventListener('abort', () => {
+              reject(new DOMException('Aborted', 'AbortError'))
+            })
+          }),
+      ),
+      destroy: vi.fn(),
+    }
+    const adapter: SummarizerAdapter = {
+      availability: vi.fn().mockResolvedValue('available'),
+      create: vi.fn().mockResolvedValue(session),
+    }
+    const { result } = renderHook(() => useSummarizer(adapter))
+
+    await waitFor(() => expect(result.current.capability).toBe('ready'))
+
+    act(() => {
+      void result.current.summarize('First article.')
+      void result.current.summarize('Second article.')
+    })
+
+    await waitFor(() => expect(session.summarize).toHaveBeenCalledTimes(1))
+    act(() => result.current.cancel())
+    await waitFor(() => expect(result.current.request).toBe('canceled'))
+
+    await act(async () => {
+      resolveSummarize('Late result from a superseded run')
+    })
+
+    expect(result.current.request).toBe('canceled')
+    expect(result.current.output).toBe('')
   })
 
   it('shows the plain-text summary through the form', async () => {

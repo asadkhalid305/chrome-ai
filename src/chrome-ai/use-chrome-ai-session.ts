@@ -97,9 +97,21 @@ export function useChromeAiSession<TSession extends DestroyableSession, TResult>
   // Chrome recommends: creating one per request would re-pay the setup cost.
   async function prepare(signal?: AbortSignal): Promise<TSession> {
     if (sessionRef.current) return sessionRef.current
+
     // Two submits during one model download must share a session, or the second
-    // creates a model that nothing will ever destroy.
-    if (preparationRef.current) return preparationRef.current
+    // creates a model that nothing will ever destroy. If a superseded request
+    // aborted that shared create, a still-live request starts a fresh one.
+    if (preparationRef.current) {
+      try {
+        return await preparationRef.current
+      } catch (reason) {
+        if (sessionRef.current) return sessionRef.current
+        if (signal?.aborted) throw reason
+      }
+    }
+
+    if (sessionRef.current) return sessionRef.current
+    if (preparationRef.current) return prepare(signal)
 
     const lifecycle = lifecycleRef.current
     setCapability('downloading')
@@ -164,6 +176,11 @@ export function useChromeAiSession<TSession extends DestroyableSession, TResult>
     operation: (session: TSession, signal: AbortSignal) => Promise<TResult>,
   ) {
     const lifecycle = lifecycleRef.current
+    // A second submit can land before React disables the button. Abort the
+    // previous run first so cancel() and unmount always target the active
+    // request, and so a late success from the old run cannot overwrite it.
+    requestControllerRef.current?.abort()
+
     setRequest('running')
     setError(null)
     if (!config.keepPreviousResult) setResult(null)
@@ -171,14 +188,22 @@ export function useChromeAiSession<TSession extends DestroyableSession, TResult>
     const controller = new AbortController()
     requestControllerRef.current = controller
 
+    function isActiveRequest() {
+      return (
+        lifecycleRef.current === lifecycle &&
+        requestControllerRef.current === controller
+      )
+    }
+
     try {
       const session = await prepare(controller.signal)
+      if (!isActiveRequest()) return
       const nextResult = await operation(session, controller.signal)
-      if (lifecycleRef.current !== lifecycle) return
+      if (!isActiveRequest()) return
       setResult(nextResult)
       setRequest('success')
     } catch (reason) {
-      if (lifecycleRef.current !== lifecycle) return
+      if (!isActiveRequest()) return
       if (isAbortError(reason)) {
         setRequest('canceled')
       } else {

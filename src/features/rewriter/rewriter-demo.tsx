@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { writingAssistanceFlags } from '../../components/api-availability'
+import { rewriterFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
 import { DemoOutput } from '../../components/demo-output'
@@ -36,7 +36,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
       availability={{
         status: 'developer-trial',
         summary: 'Developer trial in Chrome 137–148.',
-        flags: writingAssistanceFlags,
+        flags: rewriterFlags,
       }}
       codePath="rewriter-api.ts → use-rewriter.ts → rewriter-demo.tsx"
       lifecycleNote="Tone and length are immutable session options. The hook destroys the old rewriter before creating one for a different change."

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { writingAssistanceFlags } from '../../components/api-availability'
+import { writerFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
 import {
@@ -39,7 +39,7 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
       availability={{
         status: 'developer-trial',
         summary: 'Developer trial in Chrome 137–148.',
-        flags: writingAssistanceFlags,
+        flags: writerFlags,
       }}
       codePath="writer-api.ts → use-writer.ts → writer-demo.tsx"
       lifecycleNote="The hook reuses one writer with fixed demo options, aborts unwanted work, and destroys the session when this demo unmounts."
