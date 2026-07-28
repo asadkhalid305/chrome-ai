@@ -130,6 +130,10 @@ describe('Writer demo', () => {
       await Promise.all([firstWrite!, secondWrite!])
     })
 
-    expect(session.write).toHaveBeenCalledTimes(2)
+    expect(session.write).toHaveBeenCalledTimes(1)
+    expect(session.write).toHaveBeenCalledWith(
+      'Second idea',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    )
   })
 })

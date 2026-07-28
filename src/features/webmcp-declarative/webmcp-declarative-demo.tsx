@@ -1,12 +1,17 @@
 import { useRef, useState, type FormEvent } from 'react'
 
+import { webmcpFlags } from '../../components/api-availability'
+import { DemoSection } from '../../components/demo-section'
 import {
   accentTextClassNames,
   primaryButtonClassNames,
   softBoxClassNames,
-} from '../../components/accent-styles'
-import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+  type DemoAccent,
+} from '../../theme/accent'
+import {
+  fieldLabelClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
 import { useWebmcpDeclarative } from './use-webmcp-declarative'
 
 // The tool identity. `toolname` + `tooldescription` on the <form> are what
@@ -191,10 +196,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
           // before our friendlier, agent-visible error message can run.
           noValidate
         >
-          <label className="grid gap-2 text-sm font-semibold text-slate-800">
+          <label className={fieldLabelClassNames}>
             Full name
             <input
-              className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+              className={textFieldClassNames}
               type="text"
               name="fullName"
               toolparamdescription="The full name of the person who needs help."
@@ -202,10 +207,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
               required
             />
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-800">
+          <label className={fieldLabelClassNames}>
             Email
             <input
-              className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+              className={textFieldClassNames}
               type="email"
               name="email"
               toolparamdescription="A contact email address for the reply."
@@ -213,10 +218,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
               required
             />
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-800">
+          <label className={fieldLabelClassNames}>
             Topic
             <select
-              className="focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+              className={textFieldClassNames}
               name="topic"
               defaultValue={topicOptions[0].value}
               toolparamdescription="Which team should receive the request."
@@ -229,10 +234,10 @@ export function WebmcpDeclarativeDemo({ accent }: { accent: DemoAccent }) {
               ))}
             </select>
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-800">
+          <label className={fieldLabelClassNames}>
             Message
             <textarea
-              className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-24 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+              className={`${textFieldClassNames} min-h-24`}
               name="details"
               toolparamdescription="What the person needs help with."
               required

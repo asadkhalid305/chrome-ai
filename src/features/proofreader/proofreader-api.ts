@@ -1,3 +1,8 @@
+import {
+  readBrowserApi,
+  withDownloadMonitor,
+} from '../../chrome-ai/browser-globals'
+
 export const proofreaderOptions = {
   expectedInputLanguages: ['en'],
 } as const satisfies ProofreaderCreateCoreOptions
@@ -15,18 +20,13 @@ export interface ProofreaderAdapter {
 
 type ProofreaderFactory = Pick<typeof Proofreader, 'availability' | 'create'>
 
-function browserProofreader(): ProofreaderFactory | undefined {
-  return (
-    globalThis as typeof globalThis & { Proofreader?: ProofreaderFactory }
-  ).Proofreader
-}
+const browserProofreader = () =>
+  readBrowserApi<ProofreaderFactory>('Proofreader')
 
 export const proofreaderApi: ProofreaderAdapter = {
   async availability() {
     const factory = browserProofreader()
-    return factory
-      ? factory.availability(proofreaderOptions)
-      : 'unavailable'
+    return factory ? factory.availability(proofreaderOptions) : 'unavailable'
   },
 
   async create(onDownloadProgress, signal) {
@@ -35,14 +35,11 @@ export const proofreaderApi: ProofreaderAdapter = {
       throw new Error('The Proofreader API is not available in this browser.')
     }
 
-    return factory.create({
-      ...proofreaderOptions,
-      signal,
-      monitor(monitor) {
-        monitor.addEventListener('downloadprogress', (event) => {
-          onDownloadProgress(event.loaded)
-        })
-      },
-    })
+    return factory.create(
+      withDownloadMonitor(
+        { ...proofreaderOptions, signal },
+        onDownloadProgress,
+      ),
+    )
   },
 }

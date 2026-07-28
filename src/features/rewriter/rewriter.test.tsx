@@ -156,6 +156,10 @@ describe('Rewriter demo', () => {
       await Promise.all([firstRewrite!, secondRewrite!])
     })
 
-    expect(session.rewrite).toHaveBeenCalledTimes(2)
+    expect(session.rewrite).toHaveBeenCalledTimes(1)
+    expect(session.rewrite).toHaveBeenCalledWith(
+      'Second',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    )
   })
 })

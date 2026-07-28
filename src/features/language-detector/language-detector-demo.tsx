@@ -1,9 +1,15 @@
 import { useState } from 'react'
 
-import { primaryButtonClassNames } from '../../components/accent-styles'
 import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+import { DemoSection } from '../../components/demo-section'
 import { OutputPanel } from '../../components/output-panel'
+import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
+import {
+  cancelButtonClassNames,
+  fieldLabelClassNames,
+  primaryButtonShellClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
 import { useLanguageDetector } from './use-language-detector'
 
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
@@ -15,7 +21,9 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
   const detector = useLanguageDetector()
   const canRun =
     detector.request !== 'running' &&
-    (detector.capability === 'ready' || detector.capability === 'downloadable')
+    (detector.capability === 'ready' ||
+      detector.capability === 'downloadable' ||
+      detector.capability === 'downloading')
 
   return (
     <DemoSection
@@ -42,27 +50,28 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
           void detector.detect(input)
         }}
       >
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           Text to inspect
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-28`}
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
+            className={`${primaryButtonClassNames[accent]} ${primaryButtonShellClassNames}`}
             disabled={!canRun || !input.trim()}
             type="submit"
           >
-            {detector.capability === 'downloadable'
+            {detector.capability === 'downloadable' ||
+            detector.capability === 'downloading'
               ? 'Download model and detect'
               : 'Detect language'}
           </button>
           {detector.request === 'running' ? (
             <button
-              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
+              className={cancelButtonClassNames}
               type="button"
               onClick={detector.cancel}
             >

@@ -1,12 +1,13 @@
 import type { RequestState } from '../chrome-ai/shared-types'
-import { OutputPanel, type OutputAccent } from './output-panel'
+import type { DemoAccent } from '../theme/accent'
+import { OutputPanel } from './output-panel'
 
 interface DemoOutputProps {
   request: RequestState
   output: string
   error: string | null
   emptyMessage: string
-  accent: OutputAccent
+  accent: DemoAccent
 }
 
 export function DemoOutput({

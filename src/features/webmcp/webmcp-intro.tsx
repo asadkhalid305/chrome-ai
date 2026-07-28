@@ -1,6 +1,6 @@
-import { softBoxClassNames } from '../../components/accent-styles'
 import { webmcpFlags } from '../../components/api-availability'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+import { DemoSection } from '../../components/demo-section'
+import { softBoxClassNames, type DemoAccent } from '../../theme/accent'
 
 // Static overview only. WebMCP is an origin-trial agentic-web API, not an
 // on-device inference API, so this surface deliberately creates no session and

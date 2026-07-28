@@ -1,3 +1,8 @@
+import {
+  readBrowserApi,
+  withDownloadMonitor,
+} from '../../chrome-ai/browser-globals'
+
 export const summarizerOptions = {
   type: 'key-points',
   format: 'plain-text',
@@ -18,17 +23,15 @@ export interface SummarizerAdapter {
 
 type SummarizerFactory = Pick<typeof Summarizer, 'availability' | 'create'>
 
-function browserSummarizer(): SummarizerFactory | undefined {
-  return (globalThis as typeof globalThis & { Summarizer?: SummarizerFactory })
-    .Summarizer
-}
+const browserSummarizer = () =>
+  readBrowserApi<SummarizerFactory>('Summarizer')
 
 export const summarizerApi: SummarizerAdapter = {
   async availability() {
     const factory = browserSummarizer()
-    return factory
-      ? factory.availability(summarizerOptions)
-      : 'unavailable'
+    // Availability depends on the options: the same browser can have one
+    // configuration ready and another unavailable.
+    return factory ? factory.availability(summarizerOptions) : 'unavailable'
   },
 
   async create(onDownloadProgress, signal) {
@@ -37,14 +40,8 @@ export const summarizerApi: SummarizerAdapter = {
       throw new Error('The Summarizer API is not available in this browser.')
     }
 
-    return factory.create({
-      ...summarizerOptions,
-      signal,
-      monitor(monitor) {
-        monitor.addEventListener('downloadprogress', (event) => {
-          onDownloadProgress(event.loaded)
-        })
-      },
-    })
+    return factory.create(
+      withDownloadMonitor({ ...summarizerOptions, signal }, onDownloadProgress),
+    )
   },
 }

@@ -44,6 +44,89 @@ describe('Summarizer demo', () => {
     expect(session.destroy).toHaveBeenCalledOnce()
   })
 
+  it('creates one session when two requests race an in-progress download', async () => {
+    let resolveCreation: (session: SummarizerSession) => void = () => undefined
+    const session: SummarizerSession = {
+      summarize: vi.fn().mockResolvedValue('• Shared session'),
+      destroy: vi.fn(),
+    }
+    const adapter: SummarizerAdapter = {
+      availability: vi.fn().mockResolvedValue('downloadable'),
+      create: vi.fn(
+        () =>
+          new Promise<SummarizerSession>((resolve) => {
+            resolveCreation = resolve
+          }),
+      ),
+    }
+    const { result, unmount } = renderHook(() => useSummarizer(adapter))
+
+    await waitFor(() => expect(result.current.capability).toBe('downloadable'))
+    let first: Promise<void>
+    let second: Promise<void>
+    act(() => {
+      first = result.current.summarize('First article.')
+      second = result.current.summarize('Second article.')
+    })
+
+    expect(adapter.create).toHaveBeenCalledOnce()
+    await act(async () => {
+      resolveCreation(session)
+      await Promise.all([first!, second!])
+    })
+
+    // The second submit aborts the first request, so only the active run calls
+    // the model. Both still share the one in-flight create.
+    expect(session.summarize).toHaveBeenCalledTimes(1)
+    expect(session.summarize).toHaveBeenCalledWith(
+      'Second article.',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    )
+    expect(result.current.request).toBe('success')
+    expect(result.current.output).toBe('• Shared session')
+    unmount()
+    expect(session.destroy).toHaveBeenCalledOnce()
+  })
+
+  it('cancels the active request after a double submit, not a superseded one', async () => {
+    let resolveSummarize: (value: string) => void = () => undefined
+    const session: SummarizerSession = {
+      summarize: vi.fn(
+        (_input, options) =>
+          new Promise<string>((resolve, reject) => {
+            resolveSummarize = resolve
+            options?.signal?.addEventListener('abort', () => {
+              reject(new DOMException('Aborted', 'AbortError'))
+            })
+          }),
+      ),
+      destroy: vi.fn(),
+    }
+    const adapter: SummarizerAdapter = {
+      availability: vi.fn().mockResolvedValue('available'),
+      create: vi.fn().mockResolvedValue(session),
+    }
+    const { result } = renderHook(() => useSummarizer(adapter))
+
+    await waitFor(() => expect(result.current.capability).toBe('ready'))
+
+    act(() => {
+      void result.current.summarize('First article.')
+      void result.current.summarize('Second article.')
+    })
+
+    await waitFor(() => expect(session.summarize).toHaveBeenCalledTimes(1))
+    act(() => result.current.cancel())
+    await waitFor(() => expect(result.current.request).toBe('canceled'))
+
+    await act(async () => {
+      resolveSummarize('Late result from a superseded run')
+    })
+
+    expect(result.current.request).toBe('canceled')
+    expect(result.current.output).toBe('')
+  })
+
   it('shows the plain-text summary through the form', async () => {
     vi.stubGlobal('Summarizer', {
       availability: vi.fn().mockResolvedValue('available'),
@@ -58,5 +141,25 @@ describe('Summarizer demo', () => {
     await user.click(await screen.findByRole('button', { name: 'Summarize' }))
 
     expect(await screen.findByText('Sessions must be cleaned up.')).toBeVisible()
+  })
+
+  it('lets the user join an in-progress model download', async () => {
+    vi.stubGlobal('Summarizer', {
+      availability: vi.fn().mockResolvedValue('downloading'),
+      create: vi.fn().mockResolvedValue({
+        summarize: vi.fn().mockResolvedValue('Prepared summary.'),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<SummarizerDemo accent="green" />)
+
+    const action = await screen.findByRole('button', {
+      name: 'Download model and summarize',
+    })
+    expect(action).toBeEnabled()
+    await user.click(action)
+
+    expect(await screen.findByText('Prepared summary.')).toBeVisible()
   })
 })

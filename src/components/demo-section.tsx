@@ -1,35 +1,8 @@
 import { use, type ReactNode } from 'react'
 
 import { RevealContext } from '../app/reveal-context'
+import { demoSectionClassNames, type DemoAccent } from '../theme/accent'
 import { ApiAvailabilityInfo, type ApiAvailability } from './api-availability'
-
-export type DemoAccent = 'yellow' | 'red' | 'green' | 'blue'
-
-const accentClassNames: Record<
-  DemoAccent,
-  { section: string; eyebrow: string; divider: string }
-> = {
-  yellow: {
-    section: 'border-brand-yellow/30 border-t-brand-yellow',
-    eyebrow: 'text-brand-yellow',
-    divider: 'border-brand-yellow',
-  },
-  red: {
-    section: 'border-brand-red/30 border-t-brand-red',
-    eyebrow: 'text-brand-red',
-    divider: 'border-brand-red',
-  },
-  green: {
-    section: 'border-brand-green/30 border-t-brand-green',
-    eyebrow: 'text-brand-green',
-    divider: 'border-brand-green',
-  },
-  blue: {
-    section: 'border-brand-blue/30 border-t-brand-blue',
-    eyebrow: 'text-brand-blue',
-    divider: 'border-brand-blue',
-  },
-}
 
 interface DemoSectionProps {
   accent: DemoAccent
@@ -52,7 +25,7 @@ export function DemoSection({
   codePath,
   lifecycleNote,
 }: DemoSectionProps) {
-  const accentClasses = accentClassNames[accent]
+  const accentClasses = demoSectionClassNames[accent]
   // The availability block names Chrome versions and flags, so it is part of
   // the reveal rather than shown by default.
   const revealed = use(RevealContext)

@@ -1,12 +1,19 @@
 import { useState } from 'react'
 
+import { writerFlags } from '../../components/api-availability'
+import { CapabilityStatus } from '../../components/capability-status'
+import { DemoSection } from '../../components/demo-section'
 import {
   primaryButtonClassNames,
   softBoxClassNames,
-} from '../../components/accent-styles'
-import { writingAssistanceFlags } from '../../components/api-availability'
-import { CapabilityStatus } from '../../components/capability-status'
-import { DemoSection, type DemoAccent } from '../../components/demo-section'
+  type DemoAccent,
+} from '../../theme/accent'
+import {
+  cancelButtonClassNames,
+  fieldLabelClassNames,
+  primaryButtonShellClassNames,
+  textFieldClassNames,
+} from '../../theme/field-styles'
 import { useWriter } from './use-writer'
 
 const sampleIdea = 'Invite the local web community to a hands-on AI study session.'
@@ -32,7 +39,7 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
       availability={{
         status: 'developer-trial',
         summary: 'Developer trial in Chrome 137–148.',
-        flags: writingAssistanceFlags,
+        flags: writerFlags,
       }}
       codePath="writer-api.ts → use-writer.ts → writer-demo.tsx"
       lifecycleNote="The hook reuses one writer with fixed demo options, aborts unwanted work, and destroys the session when this demo unmounts."
@@ -49,25 +56,25 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
           void writer.write(idea, context)
         }}
       >
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           Writing idea
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-28 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-28`}
             value={idea}
             onChange={(event) => setIdea(event.target.value)}
           />
         </label>
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           Optional context
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-24 rounded-xl border border-slate-300 px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-24`}
             value={context}
             onChange={(event) => setContext(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap gap-3">
           <button
-            className={`${primaryButtonClassNames[accent]} rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-300`}
+            className={`${primaryButtonClassNames[accent]} ${primaryButtonShellClassNames}`}
             disabled={!canRun || !idea.trim()}
             type="submit"
           >
@@ -78,7 +85,7 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
           </button>
           {writer.request === 'running' ? (
             <button
-              className="border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold"
+              className={cancelButtonClassNames}
               type="button"
               onClick={writer.cancel}
             >
@@ -89,10 +96,10 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
       </form>
 
       <div className={`mt-5 rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
-        <label className="grid gap-2 text-sm font-semibold text-slate-800">
+        <label className={fieldLabelClassNames}>
           Editable generated draft
           <textarea
-            className="focus:border-brand-blue focus:ring-brand-blue/20 min-h-40 rounded-xl border border-slate-300 bg-white px-3 py-2 font-normal focus:ring-4 focus:outline-none"
+            className={`${textFieldClassNames} min-h-40 bg-white`}
             placeholder={
               writer.request === 'running'
                 ? 'Writing on your device…'
