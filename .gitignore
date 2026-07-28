@@ -6,3 +6,6 @@ coverage/
 !.env.example
 .DS_Store
 *.log
+
+# Personal notes / talk prep — keep local until ready to commit
+docs/personal/
