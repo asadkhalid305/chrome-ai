@@ -30,7 +30,7 @@ Status labels below are a reviewed snapshot, not permanent compatibility claims.
 | API | Reviewed status | Curriculum role | Initial example |
 | --- | --- | --- | --- |
 | Translator | Stable from Chrome 138 | First task-specific expert-model API | German-to-English text translation |
-| Language Detector | Stable from Chrome 138 | Ranked detection results and API composition | Detect a message that switches language mid-sentence |
+| Language Detector | Stable from Chrome 138 | Ranked detection results and API composition | Detect a short form value the model cannot label confidently |
 | Summarizer | Stable from Chrome 138 | Task options, longer input, and model preparation | Reduce uneven meeting notes to short key points |
 | Prompt / `LanguageModel` | Web: stable from Chrome 148; extensions: stable from Chrome 138 | General model, multimodal input, sessions, and structured output | Solve a short reasoning puzzle, answer first |
 | Prompt sampling parameters | Origin-trial capability on the web | Explain experimental model controls without making output deterministic | Compare supported sampling settings |

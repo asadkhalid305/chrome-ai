@@ -427,7 +427,7 @@ export const apiGuides: ApiGuide[] = [
       'The demo reuses one detector and renders the top three candidates with confidence percentages.',
     observe: [
       'Long, coherent sentences usually produce a clearer first candidate.',
-      'Closely related languages and mixed-language input spread confidence across several candidates.',
+      'Short, name-like input is where confidence genuinely spreads; the API labels the whole text, so mixed-language input still resolves to whichever language dominates.',
       'A successful request may still be uncertain.',
     ],
     limitations: [
