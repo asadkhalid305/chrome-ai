@@ -75,6 +75,29 @@ describe('Language Detector demo', () => {
     expect(screen.getByText('98.0%')).toBeVisible()
   })
 
+  it('names the residual candidate Chrome closes the list with', async () => {
+    vi.stubGlobal('LanguageDetector', {
+      availability: vi.fn().mockResolvedValue('available'),
+      create: vi.fn().mockResolvedValue({
+        detect: vi.fn().mockResolvedValue([
+          { detectedLanguage: 'es', confidence: 0.62 },
+          { detectedLanguage: 'pt', confidence: 0.3 },
+          { detectedLanguage: 'root', confidence: 0.08 },
+        ]),
+        destroy: vi.fn(),
+      }),
+    })
+    const user = userEvent.setup()
+    render(<LanguageDetectorDemo accent="red" />)
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Detect language' }),
+    )
+
+    expect(await screen.findByText('Not identified')).toBeVisible()
+    expect(screen.queryByText('root')).not.toBeInTheDocument()
+  })
+
   it('lets the user join an in-progress model download', async () => {
     vi.stubGlobal('LanguageDetector', {
       availability: vi.fn().mockResolvedValue('downloading'),

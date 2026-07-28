@@ -15,9 +15,11 @@ export function useSummarizer(adapter: SummarizerAdapter = summarizerApi) {
   async function summarize(input: string) {
     await session.run((summarizer, signal) =>
       summarizer.summarize(input, {
-        // Context tells the model what kind of text it is reading. The fixed
-        // type/format/length options live in summarizer-api.ts.
-        context: 'This is a short educational article for web developers.',
+        // Context tells the model what kind of text it is reading and which
+        // parts matter, which is what makes a key-points summary skip the small
+        // talk. The fixed type/format/length options live in summarizer-api.ts.
+        context:
+          'These are informal notes from an internal product meeting. Keep decisions, owners, dates, and open questions.',
         signal,
       }),
     )

@@ -12,10 +12,14 @@ import {
 } from '../../theme/field-styles'
 import { usePrompt } from './use-prompt'
 
+// The bat-and-ball puzzle: everyone in the room can follow it, almost everyone
+// answers 10 cents, and the right answer needs an actual step of arithmetic. A
+// small on-device model is genuinely at risk of falling for it, which is a more
+// honest thing to show than a definition it can recite.
+const samplePrompt = `A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost?`
+
 export function PromptDemo({ accent }: { accent: DemoAccent }) {
-  const [input, setInput] = useState(
-    'Why should a web app destroy a browser AI session when it is finished?',
-  )
+  const [input, setInput] = useState(samplePrompt)
   const promptModel = usePrompt()
   const canRun =
     promptModel.request !== 'running' &&
@@ -28,7 +32,7 @@ export function PromptDemo({ accent }: { accent: DemoAccent }) {
       accent={accent}
       eyebrow="API 4"
       title="Prompt"
-      description="Ask a small general-purpose language model for a concise explanation, with a visible session and cancelable request."
+      description="Give a small general-purpose language model a question it has to reason about, and watch the system instruction shape how the answer arrives."
       availability={{
         status: 'stable',
         summary: 'Stable on the web since Chrome 148.',

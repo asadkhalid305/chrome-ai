@@ -11,10 +11,14 @@ import {
   primaryButtonShellClassNames,
   textFieldClassNames,
 } from '../../theme/field-styles'
+import { CorrectionCard } from './correction-card'
 import { useProofreader } from './use-proofreader'
 
-const sampleText =
-  'I seen the new browser APIs yesterday, and they was very interesting.'
+// Each mistake is a short, self-contained span: a lowercase "i", a misspelling,
+// a wrong article, an uncapitalised acronym, a plural verb, and a homophone.
+// Overlapping errors make the API return one confusing multi-word range, so this
+// text keeps them apart and the returned offsets stay easy to follow.
+const sampleText = `Yesterday i recieved a email about the new browser api. We was suprised that the model only download once, and we didnt notice any delay on there second run.`
 
 export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)
@@ -32,7 +36,7 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
       accent={accent}
       eyebrow="API 7"
       title="Proofreader"
-      description="Inspect English grammar, spelling, and punctuation suggestions without silently changing the original text."
+      description="See where Chrome would fix English grammar, spelling, and punctuation. Each correction is a character range in the text you submitted, so nothing is rewritten behind your back."
       availability={{
         status: 'developer-trial',
         summary: 'Developer trial in Chrome 141–145.',
@@ -114,34 +118,35 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
                   {completedResult.correctedInput}
                 </p>
               </div>
-              <ol className="grid gap-3">
-                {completedResult.corrections.map((correction, index) => (
-                  <li
-                    className="rounded-xl border border-slate-200 bg-white p-3 text-slate-800"
-                    key={`${correction.startIndex}-${correction.endIndex}-${index}`}
-                  >
-                    <p>
-                      <span className="font-semibold">Original:</span>{' '}
-                      {completedInput.slice(
-                        correction.startIndex,
-                        correction.endIndex,
-                      )}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Suggestion:</span>{' '}
-                      {correction.correction}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Category:</span>{' '}
-                      {correction.types?.join(', ') ?? 'Not provided'}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Explanation:</span>{' '}
-                      {correction.explanation ?? 'Not provided'}
-                    </p>
-                  </li>
-                ))}
-              </ol>
+              <div>
+                <h3 className="text-sm font-bold text-white">
+                  {completedResult.corrections.length} correction
+                  {completedResult.corrections.length === 1 ? '' : 's'}, each a
+                  range in the text you submitted
+                </h3>
+                <ol className="mt-2 grid gap-3">
+                  {completedResult.corrections.map((correction, index) => (
+                    <CorrectionCard
+                      correction={correction}
+                      input={completedInput}
+                      key={`${correction.startIndex}-${correction.endIndex}-${index}`}
+                    />
+                  ))}
+                </ol>
+              </div>
+              {completedResult.corrections.every(
+                (correction) => !correction.types?.length,
+              ) ? (
+                <p className="text-sm text-slate-400">
+                  No categories or explanations came back. Chrome's current
+                  developer-trial implementation returns positions and
+                  replacements only: the specified{' '}
+                  <code>includeCorrectionTypes</code> and{' '}
+                  <code>includeCorrectionExplanations</code> options are not
+                  implemented yet, so this list shows everything the browser
+                  actually sent.
+                </p>
+              ) : null}
             </div>
           ) : null}
         </OutputPanel>

@@ -14,10 +14,25 @@ import { useLanguageDetector } from './use-language-detector'
 
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
+// Chrome closes the ranked list with a residual entry holding the confidence it
+// did not assign to any named language. It arrives as "und" or "root", so the
+// demo names that row instead of printing a code that reads like a bug.
+const residualLanguageCodes = new Set(['und', 'root', 'zxx'])
+
+function languageLabel(code: string) {
+  if (residualLanguageCodes.has(code)) {
+    return 'Not identified'
+  }
+  return languageNames.of(code) ?? code
+}
+
+// A line typed into a form: too short and too name-like for the detector to
+// commit, which is where a ranked list earns its place. A full clean sentence
+// scores one language above 99% and teaches nothing about confidence.
+const sampleText = 'Hotel Central, 12 Avenida Bolivar, 3B'
+
 export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
-  const [input, setInput] = useState(
-    'La inteligencia artificial integrada funciona directamente en el navegador.',
-  )
+  const [input, setInput] = useState(sampleText)
   const detector = useLanguageDetector()
   const canRun =
     detector.request !== 'running' &&
@@ -102,7 +117,7 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
                     key={`${language}-${index}`}
                   >
                     <span className="font-semibold text-slate-100">
-                      {languageNames.of(language) ?? language}
+                      {languageLabel(language)}
                     </span>
                     <span className="font-mono text-slate-300">
                       {(confidence * 100).toFixed(1)}%
@@ -115,7 +130,10 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
         </OutputPanel>
       </div>
       <p className="mt-3 text-sm text-slate-500">
-        Try a full sentence: very short phrases usually produce weaker confidence.
+        Confidence spreads when the evidence is thin, not when languages are
+        mixed: this API labels the whole input, so a sentence that switches
+        language still resolves to whichever one dominates. Paste a full,
+        single-language sentence to watch the top candidate pass 99%.
       </p>
     </DemoSection>
   )
