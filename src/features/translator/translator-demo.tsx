@@ -19,11 +19,12 @@ const languages = [
   { code: 'fr', name: 'French' },
 ]
 
-// A notice in the stairwell: silly enough to be worth reading out loud, and
-// still built the way German is. The verb lands at the end of the clause
-// ("geworfen hat"), the condition drops its "wenn" ("Sollte Fridolin öffnen"),
-// and the compound nouns have to be unpacked rather than swapped word for word.
-const sampleText = `Liebe Nachbarn, weil unser Kater Fridolin gestern die Fernbedienung in den Kühlschrank geworfen hat, läuft bei uns seit elf Stunden ununterbrochen eine Kochsendung. Wer eine Ersatzfernbedienung übrig hat, darf sie gern vorbeibringen; wir bezahlen in selbstgebackenem Kuchen. Sollte Fridolin die Tür öffnen, geben Sie ihm bitte nichts — er hat beim Grillfest schon die halbe Bratwurst mitgenommen.`
+// The opening of the Brothers Grimm's "Schneewittchen" (1857, public domain),
+// chosen because it is recognizable worldwide without quoting anything under
+// copyright. It still exercises real German structure: two verb-final clauses
+// ("hatte", "aussah") and a triple simile whose three comparisons a translation
+// has to keep in the same order.
+const sampleText = `Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab, da saß eine Königin an einem Fenster, das einen Rahmen von schwarzem Ebenholz hatte, und nähte. Und wie sie so nähte und nach dem Schnee aufblickte, stach sie sich mit der Nadel in den Finger, und es fielen drei Tropfen Blut in den Schnee. Und weil das Rote in dem weißen Schnee so schön aussah, dachte sie bei sich: "Hätte ich doch ein Kind, so weiß wie Schnee, so rot wie Blut und so schwarz wie das Holz an dem Rahmen!"`
 
 export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
   const [sourceLanguage, setSourceLanguage] = useState('de')
