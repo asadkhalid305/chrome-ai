@@ -1,65 +1,95 @@
-# Chrome AI
+# Chrome AI hands-on workshop
 
-A teaching-first React project for learning Chrome built-in AI APIs through small, isolated examples and then understanding how those primitives grow into production features.
+Add browser AI to a prepared UI. Choose one exercise, work alone or pair, and
+allow 10–20 minutes. You can finish the others afterwards.
 
-## Current status
+## Start
 
-The project currently contains seven independently runnable lessons:
+You need **Node.js 24+** and desktop Chrome. Check
+[Chrome's device and model-download requirements](https://developer.chrome.com/docs/ai/get-started).
+A model may need downloading before your first result; pair on a prepared laptop
+if your device cannot run it.
 
-- Translator;
-- Language Detector;
-- Summarizer;
-- Prompt / `LanguageModel`;
-- Writer (experimental developer trial);
-- Rewriter (experimental developer trial);
-- Proofreader (experimental developer trial).
-
-The sticky tab bar mounts one lesson at a time for presentation-friendly navigation. Each lesson keeps the native browser call in an adapter, owns its session and cancellation lifecycle in a React hook, and presents capability, download, running, canceled, success, and error states in an accessible UI.
-
-A separate WebMCP track (website tools for browser agents, not on-device inference) is appended after the core lessons by default. Set `VITE_WEBMCP=false` in a local `.env` file to hide it for a shorter, built-in-AI-only demo; see `.env.example`. See [the WebMCP environment guide](docs/webmcp-environment.md) for the Chrome flag, verification tool, and deployed-environment setup this track needs.
-
-Start with [the architecture](docs/architecture.md), then read [the teaching plan](docs/teaching-plan.md) and [the API scope](docs/api-scope.md).
-
-## Intended stack
-
-- Vite
-- React
-- TypeScript
-- Tailwind CSS
-- Vitest and Testing Library
-- Chrome built-in AI APIs
-
-There is intentionally no backend, application framework, router, global state library, component library, or generic AI SDK in the initial curriculum.
-
-## Run locally
-
-Use a supported desktop Chrome version. Some APIs require Chrome to download an on-device model after you click a lesson's action button.
-
-```bash
-npm install
-npm run dev
+```sh
+git clone --branch workshop https://github.com/asadkhalid305/chrome-ai.git
+cd chrome-ai
+npm ci
+npm run workshop
 ```
 
-The terminal prints the local URL. Open it in Chrome and run each lesson independently.
+Open the localhost URL printed by Vite in Chrome. If you already have the repo,
+switch to `workshop` before installing and starting it.
 
-## Verify
+## Complete an exercise
 
-```bash
+| Choose                         | Edit this file                                        | Official documentation                                                  |
+| ------------------------------ | ----------------------------------------------------- | ----------------------------------------------------------------------- |
+| Summarizer (recommended first) | [summarizer.ts](src/workshop/exercises/summarizer.ts) | [Summarizer guide](https://developer.chrome.com/docs/ai/summarizer-api) |
+| Translator                     | [translator.ts](src/workshop/exercises/translator.ts) | [Translator guide](https://developer.chrome.com/docs/ai/translator-api) |
+| Prompt                         | [prompt.ts](src/workshop/exercises/prompt.ts)         | [Prompt guide](https://developer.chrome.com/docs/ai/prompt-api)         |
+
+1. Select the matching tab in the UI. Its instructions show the file to open.
+2. Follow the five TODOs. Use the documentation to implement options, browser
+   feature detection and availability, session creation/download progress, the
+   operation, and cleanup after success, errors, or cancellation.
+3. Replace the placeholder errors. Remove the `_` prefix from parameters as you
+   use them. Keep the exported function names and signatures so the UI can call them.
+4. Reload after implementing availability. Run the button, inspect the output,
+   change the input, and try again. For longer requests, try Cancel.
+5. Run the check for your chosen exercise below.
+
+Edit only your exercise file. `src/workshop/ui/` provides the UI, and
+`src/workshop/tests/` provides automated checks. The completed exercise code uses
+native browser APIs without importing project helpers.
+
+### Prompt: three independent choices
+
+Use the **Text / Image / Streaming** switch. Each section in `prompt.ts` has its
+own options, availability check, and five TODOs. Implement each independently.
+
+- **Text:** `availability` and `runExercise`, for an email reply.
+- **Image:** `imageAvailability` and `runImageExercise`, for text plus a local File.
+- **Streaming:** `streamingAvailability` and `runStreamingExercise`. Send the full
+  accumulated text to `onPartialOutput` after each chunk, then return the final text.
+
+Progress callbacks accept a fraction from 0 to 1. Switching Prompt choices aborts
+old work and resets the form and output. Canceled streamed text remains labeled partial.
+
+## Check your implementation
+
+Run TypeScript checking, then **one** command matching the exercise you completed:
+
+```sh
 npm run typecheck
-npm test
-npm run build
+npm run check:exercises -- -t "Summarizer"
+npm run check:exercises -- -t "Translator"
+npm run check:exercises -- -t "Prompt text"
+npm run check:exercises -- -t "Prompt image"
+npm run check:exercises -- -t "Prompt streaming"
 ```
 
-Automated tests use deterministic browser adapters; they do not prove that Chrome's native models work. See [the live smoke-test record](docs/smoke-tests.md) for the latest supported-browser run.
+These checks run **your exercise code** against simulated Chrome APIs: they check
+configuration, input/output forwarding, and cleanup, plus download progress or
+streamed updates where applicable. They intentionally fail while TODOs remain.
+Run `npm run check:exercises` without a filter once all five choices are complete.
 
-## Documentation refresh — 10 November 2026
+The checks do not run a real model or evaluate its wording. Also verify the UI in
+Chrome: expect a useful, non-empty result, not an exact sentence.
 
-The Prompt lesson includes optional exercises for validated structured feedback,
-local image input, and streamed text with cancellation. Each exercise owns its
-session and declares its modalities before creation. The default example remains
-a small text prompt.
+## If something does not work
 
-API and access claims are reviewed snapshots. Stable built-in AI does not require
-EPP membership; experimental APIs and WebMCP have separate trial/local setup.
-See docs/api-scope.md and docs/smoke-tests.md for the distinction between a source
-review, deterministic tests, and real native-browser verification.
+- A TODO error is expected while that part is unfinished. Reload after changing
+  capability checking. An unavailable result after implementing it means the
+  requested configuration cannot run on that browser/device.
+- Compare your file with the matching reference: [Summarizer](src/workshop/solutions/summarizer.ts),
+  [Translator](src/workshop/solutions/translator.ts), or [Prompt](src/workshop/solutions/prompt.ts).
+  Check options, awaited calls, abort signals, and cleanup. You can copy a reference
+  into its matching exercise file to try the complete implementation in the same UI.
+- The UI passes the image File directly to Chrome. No server upload or API key is needed.
+
+## Other commands
+
+`npm test` checks the reference solutions and supporting application code; it does
+not certify that your TODOs are complete. `npm run build:workshop` builds this
+workshop. `npm run dev` opens the full teaching app with working demonstrations.
+See [the verification record](docs/smoke-tests.md) for native-browser test scope.

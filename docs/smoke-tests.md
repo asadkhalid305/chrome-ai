@@ -81,3 +81,35 @@ A real autonomous-agent evaluation remains separate from manual DevTools calls.
 The public origin returned HTTP 200 and tools=(self) on 2026-11-10, without an
 Origin-Trial response header. No deployment was performed; production trial
 console enrollment and any HTML-provided token remain unverified.
+
+## 2026-11-11 — Breakout workshop verification
+
+- The pre-workshop baseline is commit `a5b6136`; the workshop is isolated on
+  `workshop`.
+- Participant files live in `src/workshop/exercises/`, complete native
+  references in `solutions/`, prepared React code in `ui/`, and checks in `tests/`.
+- Deterministic tests verify three-tab navigation, visible exercise paths,
+  unfinished-code versus absent-global feedback, progress, cancellation, and
+  protection against late output after cancellation or unmount.
+- Complete solutions are tested with fake native factories for capability and
+  creation options, progress forwarding, results, and destruction after success,
+  errors, and cancellation. Each request owns its session and destroys it in
+  finally. The exercise files import no project helpers.
+- Starter TODOs now require participants to write feature detection, native
+  availability, creation, monitoring, operation, and cleanup. Complete solutions
+  recheck capability before execution and do not create unavailable sessions.
+- Native Chrome inference and device eligibility were not rerun. The previous
+  native records retain their original dates and scope.
+
+Prompt workshop image and streaming extensions have matching independent native
+solutions. Deterministic checks cover image modality options and File forwarding,
+stream accumulation, cancellation, cleanup, partial output, and abort on choice
+switch. This does not add a native Chrome run.
+
+Participant acceptance checks use `npm run check:exercises`, with optional
+`-t` filters documented in README. The same test file validates references during
+`npm test` and imports the actual starters in exercise-check mode. Unfinished
+starters were confirmed to fail. Each of the five filters was then confirmed to
+pass with only its corresponding section filled from the reference, and all
+starter TODOs were restored afterwards. These checks remain simulated native API
+contracts, not a new native Chrome run.

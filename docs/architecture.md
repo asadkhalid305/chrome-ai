@@ -183,3 +183,14 @@ Comments should answer one of these questions:
 - What teaching decision intentionally avoids a production abstraction?
 
 Comments should not narrate assignments, JSX, or standard hook syntax.
+
+## Workshop exception
+
+The breakout starters and their solutions under `src/workshop/` keep
+native browser detection, availability, creation, monitoring, operation, and
+destruction in one portable file per API, without project-helper imports. Each
+request owns a short-lived session and releases it in finally. This deliberate
+teaching choice follows the workshop's requirement to show code participants
+can transfer into a fresh project. `useWorkshopRequest` handles only React state
+and cancellation. The main teaching application's reusable-session design above
+remains unchanged.

@@ -134,3 +134,24 @@ application validation, local image input with image capability declarations,
 and promptStreaming with incremental plain-text output and cancellation.
 Switching exercises or closing the panel destroys the exercise session. A schema
 validates shape; it does not certify the sentiment or summary as correct.
+
+## Breakout workshop
+
+`npm run workshop` selects Summarizer, Translator, and Prompt exercises. Each
+learner edits one browser-only file under `src/workshop/`. Native
+availability, creation, download monitoring, operation, and destruction stay
+visible together without project-helper imports. Matching complete native
+solutions live in `solutions/`; prepared UI and checks live in `ui/` and `tests/`.
+
+For this workshop, each request owns a session and destroys it in finally. This
+is an intentional teaching exception to the main application's reusable-session
+architecture, requested to make the native lifecycle transferable to a fresh
+project. A separate React hook manages only UI state and request cancellation.
+The main application's session abstraction is unchanged.
+
+See [README.md](../README.md) for participant instructions.
+
+The Prompt workshop offers independent text, image, and streaming sections in
+`src/workshop/exercises/prompt.ts`. Each has its own options, capability check,
+and native lifecycle. The selector remounts the chosen UI, aborting old work.
+Streaming publishes accumulated partial text; image input stays local.
