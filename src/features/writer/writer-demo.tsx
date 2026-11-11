@@ -3,11 +3,8 @@ import { useState } from 'react'
 import { writerFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import {
-  primaryButtonClassNames,
-  softBoxClassNames,
-  type DemoAccent,
-} from '../../theme/accent'
+import { DemoOutput } from '../../components/demo-output'
+import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import {
   cancelButtonClassNames,
   fieldLabelClassNames,
@@ -21,7 +18,7 @@ import { useWriter } from './use-writer'
 // deliberately open so the learner can see whether the draft invents a date.
 const sampleIdea =
   'Announce an internal pilot of the on-device draft assistant and ask the design and support teams to join it.'
-const sampleContext = `The pilot runs from 3 to 14 August. It needs Chrome 141 or newer on a laptop; there is no mobile version yet. Drafts are generated on the device, so nothing is sent to a server. Each team gets two 30-minute slots, booked in the shared calendar. Feedback goes in the #draft-pilot channel by 15 August. Pricing and the public launch date are still undecided.`
+const sampleContext = `The pilot runs from 3 to 14 August. It needs supported desktop Chrome with the experimental Writer API enabled. Drafts are generated on the device, so nothing is sent to a server. Each team gets two 30-minute slots, booked in the shared calendar. Feedback goes in the #draft-pilot channel by 15 August. Pricing and the public launch date are still undecided.`
 
 export function WriterDemo({ accent }: { accent: DemoAccent }) {
   const [idea, setIdea] = useState(sampleIdea)
@@ -41,7 +38,7 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
       description="Create a new, editable English draft from one focused idea and optional context."
       availability={{
         status: 'developer-trial',
-        summary: 'Developer trial in Chrome 137–148.',
+        summary: 'Developer trial. Previous origin trial: Chrome 137–148.',
         flags: writerFlags,
       }}
       codePath="writer-api.ts → use-writer.ts → writer-demo.tsx"
@@ -98,26 +95,19 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
         </div>
       </form>
 
-      <div className={`mt-5 rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
-        <label className={fieldLabelClassNames}>
-          Editable generated draft
-          <textarea
-            className={`${textFieldClassNames} min-h-40 bg-white`}
-            placeholder={
-              writer.request === 'running'
-                ? 'Writing on your device…'
-                : 'Your generated draft will appear here.'
-            }
-            value={writer.draft}
-            onChange={(event) => writer.setDraft(event.target.value)}
-          />
-        </label>
-        {writer.request === 'canceled' ? (
-          <p className="mt-2 text-sm text-slate-600">Request canceled.</p>
-        ) : null}
-        {writer.request === 'error' ? (
-          <p className="text-brand-red mt-2 text-sm">{writer.error}</p>
-        ) : null}
+      <div className="mt-5">
+        <DemoOutput
+          accent={accent}
+          capability={writer.capability}
+          request={writer.request}
+          output={writer.draft}
+          error={writer.error}
+          emptyMessage="Your generated draft will appear here."
+          editor={{
+            label: 'Editable generated draft',
+            onChange: writer.setDraft,
+          }}
+        />
       </div>
     </DemoSection>
   )

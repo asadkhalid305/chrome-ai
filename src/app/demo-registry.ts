@@ -20,6 +20,7 @@ export interface Demo {
   component: ComponentType<{ accent: DemoAccent }>
   accent: DemoAccent
   track?: 'webmcp'
+  status: 'stable' | 'developer-trial' | 'origin-trial'
 }
 
 type DemoDefinition = Omit<Demo, 'accent'>
@@ -28,17 +29,43 @@ type DemoDefinition = Omit<Demo, 'accent'>
 // navigation.ts. Order is the curriculum order, and it also decides each demo's
 // accent color, so a new demo cannot repeat its neighbor's color by accident.
 const apiDemos: DemoDefinition[] = [
-  { id: 'translator', label: 'Translator', component: TranslatorDemo },
+  {
+    status: 'stable',
+    id: 'translator',
+    label: 'Translator',
+    component: TranslatorDemo,
+  },
   {
     id: 'language-detector',
+    status: 'stable',
     label: 'Language Detector',
     component: LanguageDetectorDemo,
   },
-  { id: 'summarizer', label: 'Summarizer', component: SummarizerDemo },
-  { id: 'prompt', label: 'Prompt', component: PromptDemo },
-  { id: 'writer', label: 'Writer', component: WriterDemo },
-  { id: 'rewriter', label: 'Rewriter', component: RewriterDemo },
-  { id: 'proofreader', label: 'Proofreader', component: ProofreaderDemo },
+  {
+    status: 'stable',
+    id: 'summarizer',
+    label: 'Summarizer',
+    component: SummarizerDemo,
+  },
+  { status: 'stable', id: 'prompt', label: 'Prompt', component: PromptDemo },
+  {
+    status: 'developer-trial',
+    id: 'writer',
+    label: 'Writer',
+    component: WriterDemo,
+  },
+  {
+    status: 'developer-trial',
+    id: 'rewriter',
+    label: 'Rewriter',
+    component: RewriterDemo,
+  },
+  {
+    status: 'developer-trial',
+    id: 'proofreader',
+    label: 'Proofreader',
+    component: ProofreaderDemo,
+  },
 ]
 
 const webmcpDemos: DemoDefinition[] = [
@@ -47,18 +74,21 @@ const webmcpDemos: DemoDefinition[] = [
     label: 'Introduction',
     component: WebMcpIntro,
     track: 'webmcp',
+    status: 'origin-trial',
   },
   {
     id: 'webmcp-declarative',
     label: 'Declarative API',
     component: WebmcpDeclarativeDemo,
     track: 'webmcp',
+    status: 'origin-trial',
   },
   {
     id: 'webmcp-imperative',
     label: 'Imperative API',
     component: WebmcpImperativeDemo,
     track: 'webmcp',
+    status: 'origin-trial',
   },
 ]
 

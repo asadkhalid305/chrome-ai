@@ -11,10 +11,7 @@ interface PlaygroundSidebarProps {
   onSelectDemo: (demoId: DemoId) => void
   onOpenDocumentation: () => void
   registerTab: (index: number) => (element: HTMLButtonElement | null) => void
-  onTabKeyDown: (
-    event: KeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) => void
+  onTabKeyDown: (event: KeyboardEvent<HTMLButtonElement>, index: number) => void
 }
 
 // The playground is a tab list rather than a set of links because selecting a
@@ -39,11 +36,20 @@ export function PlaygroundSidebar({
       {demos.map((demo, index) => {
         const isSelected = demo.id === selectedDemoId
         const accent = navItemClassNames[demo.accent]
+        const startsApiStatusGroup =
+          demo.track !== 'webmcp' &&
+          (index === 0 || demos[index - 1]?.status !== demo.status)
         const startsWebmcpGroup =
           demo.track === 'webmcp' && demos[index - 1]?.track !== 'webmcp'
 
         return (
           <Fragment key={demo.id}>
+            {startsApiStatusGroup ? (
+              <NavGroupLabel
+                label={demo.status === 'stable' ? 'Stable' : 'Developer trial'}
+                variant="subgroup"
+              />
+            ) : null}
             {startsWebmcpGroup ? <NavGroupLabel label="WebMCP" /> : null}
             <button
               aria-controls="demo-panel"

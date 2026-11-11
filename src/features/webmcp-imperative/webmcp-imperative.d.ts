@@ -1,10 +1,7 @@
 // Minimal local declarations for the WebMCP Imperative API (origin trial from
 // Chrome 149). The installed DOM typings (`@types/dom-chromium-ai`) cover the
 // built-in model APIs but not WebMCP, so we declare only the members this
-// lesson touches. The global was renamed from `navigator.modelContext` to
-// `document.modelContext` in Chrome 150; we type only the new name here so the
-// reader is never tempted to reach for the deprecated one. Verified against
-// https://developer.chrome.com/docs/ai/webmcp/imperative-api on 2026-07-24.
+// lesson touches. Reviewed against the official Imperative API on 2026-11-10.
 export {}
 
 declare global {
@@ -13,6 +10,7 @@ declare global {
     // `readOnlyHint` is false when the tool mutates observable state.
     // `untrustedContentHint` is true when the tool returns content that came
     // from an outside source (e.g. a fetched web page).
+    consequentialHint?: boolean
     readOnlyHint?: boolean
     untrustedContentHint?: boolean
   }
@@ -35,15 +33,14 @@ declare global {
     // parsed object. The returned value is serialized back to the agent as the
     // tool result. Typed as `unknown` because the agent's input crosses a trust
     // boundary — the lesson code must validate it before use.
-    execute: (input: unknown) => Promise<unknown> | unknown
+    execute: (input: unknown, signal: AbortSignal) => Promise<unknown> | unknown
     annotations?: WebmcpToolAnnotations
-    // Explicitly listed cross-origin documents that may see and call this tool.
-    // Omitted here because the lesson is same-origin only.
-    exposedTo?: readonly string[]
   }
 
   interface WebmcpRegisterToolOptions {
-    // Aborting the signal unregisters the tool. There is no `unregisterTool()`.
+    // Cross-origin exposure is explicit and belongs to registration options.
+    exposedTo?: readonly string[]
+    // Aborting the signal unregisters the tool.
     signal?: AbortSignal
   }
 

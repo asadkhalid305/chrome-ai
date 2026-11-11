@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { proofreaderFlags } from '../../components/api-availability'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { OutputPanel } from '../../components/output-panel'
+import { DemoOutput } from '../../components/demo-output'
 import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import {
   cancelButtonClassNames,
@@ -39,7 +39,7 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
       description="See where Chrome would fix English grammar, spelling, and punctuation. Each correction is a character range in the text you submitted, so nothing is rewritten behind your back."
       availability={{
         status: 'developer-trial',
-        summary: 'Developer trial in Chrome 141–145.',
+        summary: 'Developer trial. Previous origin trial: Chrome 141–145.',
         flags: proofreaderFlags,
       }}
       codePath="proofreader-api.ts → use-proofreader.ts → proofreader-demo.tsx"
@@ -89,19 +89,13 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
       </form>
 
       <div className="mt-5">
-        <OutputPanel accent={accent}>
-          {proofreader.request === 'idle' ? (
-            <p className="text-slate-400">
-              Suggested corrections will appear here.
-            </p>
-          ) : null}
-          {proofreader.request === 'running' ? (
-            <p>Proofreading on your device…</p>
-          ) : null}
-          {proofreader.request === 'canceled' ? <p>Request canceled.</p> : null}
-          {proofreader.request === 'error' ? (
-            <p className="text-brand-red">{proofreader.error}</p>
-          ) : null}
+        <DemoOutput
+          accent={accent}
+          capability={proofreader.capability}
+          request={proofreader.request}
+          error={proofreader.error}
+          emptyMessage="Suggested corrections will appear here."
+        >
           {proofreader.request === 'success' &&
           completedResult?.corrections.length === 0 ? (
             <p>No corrections were suggested. The API ran successfully.</p>
@@ -149,7 +143,7 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
               ) : null}
             </div>
           ) : null}
-        </OutputPanel>
+        </DemoOutput>
       </div>
     </DemoSection>
   )

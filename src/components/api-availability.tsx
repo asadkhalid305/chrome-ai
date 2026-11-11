@@ -20,36 +20,13 @@ export interface ApiAvailability {
   flags?: ChromeFlag[]
 }
 
-// Writer and Rewriter ship as a joint developer trial and share the Gemini Nano
-// base flags. Each also has its own API flag in chrome://flags.
-const geminiNanoBaseFlags: ChromeFlag[] = [
-  {
-    id: 'optimization-guide-on-device-model',
-    // BypassPerfRequirement is the localhost escape hatch when Enabled still
-    // leaves availability() at "unavailable" on machines under Chrome's
-    // hardware gate.
-    value: 'Enabled or Enabled BypassPerfRequirement',
-  },
-  {
-    id: 'prompt-api-for-gemini-nano-multimodal-input',
-    value: 'Enabled or Enabled Multilingual',
-  },
-]
-
+// Reviewed against the Writer and Rewriter localhost guides on 2026-11-10.
 export const writerFlags: ChromeFlag[] = [
-  ...geminiNanoBaseFlags,
-  {
-    id: 'writer-api-for-gemini-nano',
-    value: 'Enabled or Enabled Multilingual',
-  },
+  { id: 'writer-api', value: 'Enabled or Enabled Multilingual' },
 ]
 
 export const rewriterFlags: ChromeFlag[] = [
-  ...geminiNanoBaseFlags,
-  {
-    id: 'rewriter-api-for-gemini-nano',
-    value: 'Enabled or Enabled Multilingual',
-  },
+  { id: 'rewriter-api', value: 'Enabled or Enabled Multilingual' },
 ]
 
 // Kept as an alias so older references stay readable; prefer writerFlags /
@@ -61,8 +38,8 @@ export const proofreaderFlags: ChromeFlag[] = [
 ]
 
 // WebMCP ships as an origin trial from Chrome 149. For local development it is
-// gated behind a single testing flag instead of a trial token. Verified against
-// https://developer.chrome.com/docs/ai/webmcp on 2026-07-23.
+// gated behind a single testing flag instead of a trial token. Reviewed against
+// https://developer.chrome.com/docs/ai/webmcp on 2026-11-10.
 export const webmcpFlags: ChromeFlag[] = [
   { id: 'enable-webmcp-testing', value: 'Enabled' },
 ]
@@ -108,7 +85,9 @@ export function ApiAvailabilityInfo({ availability }: ApiAvailabilityInfoProps) 
         </span>
         <span>
           {requiresFlags
-            ? 'Needs Chrome flags on localhost.'
+            ? availability.status === 'origin-trial'
+              ? 'Needs a trial token or local testing flag.'
+              : 'Needs Chrome flags on localhost.'
             : 'No Chrome flags required.'}
         </span>
       </p>

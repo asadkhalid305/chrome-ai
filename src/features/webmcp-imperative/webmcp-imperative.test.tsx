@@ -56,8 +56,41 @@ describe('useWebmcpImperative', () => {
     expect(spec?.inputSchema).toEqual(IMPERATIVE_TOOL_CONTRACT.inputSchema)
     expect(spec?.annotations).toEqual({
       readOnlyHint: false,
-      untrustedContentHint: false,
+      untrustedContentHint: true,
     })
+  })
+
+  it('ignores a late rejection from an aborted registration', async () => {
+    const first = createFakeAdapter(true)
+    let rejectRegistration: (reason: unknown) => void = () => {}
+    first.registerTool.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectRegistration = reject
+        }),
+    )
+    const second = createFakeAdapter(true)
+    const { result, rerender } = renderHook(
+      ({ adapter }) => useWebmcpImperative(adapter),
+      { initialProps: { adapter: first.adapter } },
+    )
+    rerender({ adapter: second.adapter })
+    await act(async () => {
+      rejectRegistration(new DOMException('Canceled', 'AbortError'))
+    })
+    expect(result.current.activity).toBe('idle')
+    expect(result.current.lastError).toBeNull()
+  })
+
+  it('does not mutate the list for an already canceled invocation', async () => {
+    const fake = createFakeAdapter(true)
+    const { result } = renderHook(() => useWebmcpImperative(fake.adapter))
+    const controller = new AbortController()
+    controller.abort()
+    await act(async () => {
+      await expect(fake.getSpec()!.execute({ text: 'Late task' }, controller.signal)).rejects.toThrow('Canceled')
+    })
+    expect(result.current.todos).toHaveLength(0)
   })
 
   it('skips registration and reports unavailable when the API is absent', async () => {
@@ -86,7 +119,9 @@ describe('useWebmcpImperative', () => {
 
     let returned: unknown
     await act(async () => {
-      returned = await fake.getSpec()!.execute({ text: 'Buy milk' })
+      returned = await fake
+        .getSpec()!
+        .execute({ text: 'Buy milk' }, new AbortController().signal)
     })
 
     expect(returned).toBe('Added to-do: "Buy milk".')
@@ -106,9 +141,9 @@ describe('useWebmcpImperative', () => {
     await waitFor(() => expect(fake.getSpec()).not.toBeNull())
 
     await act(async () => {
-      await expect(fake.getSpec()!.execute({ text: '   ' })).rejects.toThrow(
-        /non-empty "text" string/,
-      )
+      await expect(
+        fake.getSpec()!.execute({ text: '   ' }, new AbortController().signal),
+      ).resolves.toMatch(/non-empty "text" string/)
     })
 
     expect(result.current.todos).toHaveLength(0)
@@ -116,9 +151,9 @@ describe('useWebmcpImperative', () => {
     expect(result.current.lastError).toMatch(/non-empty "text" string/)
 
     await act(async () => {
-      await expect(fake.getSpec()!.execute({ nope: 1 })).rejects.toThrow(
-        /"text" string field/,
-      )
+      await expect(
+        fake.getSpec()!.execute({ nope: 1 }, new AbortController().signal),
+      ).resolves.toMatch(/"text" string field/)
     })
 
     expect(result.current.todos).toHaveLength(0)

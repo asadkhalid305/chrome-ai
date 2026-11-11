@@ -126,6 +126,7 @@ export function TranslatorDemo({ accent }: { accent: DemoAccent }) {
       <div className="mt-5">
         <DemoOutput
           accent={accent}
+          capability={translator.capability}
           request={translator.request}
           output={translator.output}
           error={translator.error}

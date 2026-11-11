@@ -20,3 +20,7 @@ export const primaryButtonShellClassNames =
 // every demo, and stopping work should not blend into the demo's palette.
 export const cancelButtonClassNames =
   'border-brand-red text-brand-red hover:bg-brand-red/5 rounded-xl border px-4 py-2 text-sm font-bold'
+
+// Editable results inherit the dark output surface, including while disabled.
+export const outputEditorClassNames =
+  'min-h-40 w-full resize-y rounded-lg border border-slate-600 bg-transparent p-3 font-normal text-slate-100 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:cursor-default disabled:opacity-100'

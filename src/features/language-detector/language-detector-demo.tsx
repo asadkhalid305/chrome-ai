@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoSection } from '../../components/demo-section'
-import { OutputPanel } from '../../components/output-panel'
+import { DemoOutput } from '../../components/demo-output'
 import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
 import {
   cancelButtonClassNames,
@@ -97,15 +97,13 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
       </form>
 
       <div className="mt-5">
-        <OutputPanel accent={accent}>
-          {detector.request === 'idle' ? (
-            <p className="text-slate-400">Ranked candidates will appear here.</p>
-          ) : null}
-          {detector.request === 'running' ? <p>Running on your device…</p> : null}
-          {detector.request === 'canceled' ? <p>Request canceled.</p> : null}
-          {detector.request === 'error' ? (
-            <p className="text-brand-red">{detector.error}</p>
-          ) : null}
+        <DemoOutput
+          accent={accent}
+          capability={detector.capability}
+          request={detector.request}
+          error={detector.error}
+          emptyMessage="Ranked candidates will appear here."
+        >
           {detector.request === 'success' ? (
             <ol className="grid gap-3">
               {detector.results.slice(0, 3).map((result, index) => {
@@ -127,7 +125,7 @@ export function LanguageDetectorDemo({ accent }: { accent: DemoAccent }) {
               })}
             </ol>
           ) : null}
-        </OutputPanel>
+        </DemoOutput>
       </div>
       <p className="mt-3 text-sm text-slate-500">
         Confidence spreads when the evidence is thin, not when languages are

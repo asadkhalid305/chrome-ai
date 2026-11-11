@@ -1,15 +1,15 @@
 # WebMCP Environment
 
-Last reviewed: 2026-07-24, against https://developer.chrome.com/docs/ai/webmcp, https://developer.chrome.com/docs/devtools/application/webmcp, and https://developer.chrome.com/blog/new-in-devtools-149.
+Last reviewed: 2026-11-10, against https://developer.chrome.com/docs/ai/webmcp, https://developer.chrome.com/docs/devtools/application/webmcp, and https://developer.chrome.com/blog/new-in-devtools-149.
 
-This document covers the conditions needed to run and verify the WebMCP lessons (`docs/teaching-plan.md` Lessons 8–9), both on localhost and on the eventual deployed Vercel origin. WebMCP is an agentic-web API, not on-device inference, so its environment needs (origin isolation, a permissions policy, an origin-trial token) are different from the built-in-AI lessons and are recorded here rather than in `docs/api-scope.md`.
+This document covers the conditions needed to run and verify the WebMCP lessons (`docs/teaching-plan.md` Lessons 8–9), both on localhost and on the deployed Vercel origin. WebMCP is an agentic-web API, not on-device inference, so its environment needs (origin isolation, a permissions policy, an origin-trial token) are different from the built-in-AI lessons and are recorded here rather than in `docs/api-scope.md`.
 
 ## The two independent gates
 
-Running a WebMCP lesson requires two separate things to be true at once. Neither implies the other:
+App visibility, browser API access, and the inspection interface are separate:
 
 - **`VITE_WEBMCP` app flag** (see `.env.example`) — reveals the WebMCP tab in this app's navigation. Defaults on; set to `false` for a shorter, built-in-AI-only demo.
-- **`chrome://flags/#enable-webmcp-testing` browser flag** — makes `document.modelContext` and the declarative `toolname`/`tooldescription` form attributes exist in the browser at all. Without it, the WebMCP tab renders but every lesson reports its "unavailable" state, and the human-facing form/UI still works normally.
+- **`chrome://flags/#enable-webmcp-testing` browser flag** — enables local testing without a trial token, exposing `document.modelContext` and the declarative `toolname`/`tooldescription` form attributes. Without a testing flag or eligible trial token, the lessons report an unavailable state; the human-facing form/UI still works normally.
 - **`chrome://flags/#devtools-webmcp-support` DevTools flag** — reveals the experimental WebMCP pane in Chrome DevTools so registered tools can be inspected and called manually.
 
 ## Run and verify locally
@@ -31,7 +31,13 @@ WebMCP gates both APIs behind two browser-level checks. Neither needs to be "ena
 
 ### Origin isolation
 
-WebMCP is only available in origin-isolated documents. This is Chrome's default; it is disabled only when a document sends the `Origin-Agent-Cluster: ?0` response header or sets `document.domain`. Neither the Vite dev server nor Vercel's static hosting sends that header, and nothing in this codebase sets `document.domain`. There is nothing to configure locally or in `vercel.json` for this — only something to avoid introducing later.
+This app does not set `document.domain` or send `Origin-Agent-Cluster: ?0`.
+Earlier setup notes described origin isolation as a prerequisite. The current
+Chrome overview documents the tools Permissions Policy but does not repeat that
+requirement; do not treat historical setup notes as a verified current contract.
+Do not add COOP/COEP or other isolation headers without a current requirement and
+an observed browser failure. Origin isolation and cross-origin isolation are
+different concepts.
 
 ### The `tools` permissions policy
 
@@ -45,9 +51,15 @@ The deployment stays a static build with no functions, no backend, and no server
 
 ### Origin-trial token placement
 
-WebMCP ships as an origin trial from Chrome 149. An origin-trial token is issued for one exact origin, so no token can be requested or applied until the final Vercel production subdomain is decided and live — until then, the deployed track runs without a trial token and every lesson reports its "unavailable" capability state in unsupported browsers, the same as any other experimental lesson.
+The public app origin is https://chromeai.asadullahkhalid.com. The checked-in
+`vercel.json` supplies `Permissions-Policy: tools=(self)` but no Origin-Trial
+header. A read-only HTTP response check on 2026-11-10 returned 200 and
+`Permissions-Policy: tools=(self)`, with no Origin-Trial header. A header check
+alone does not exclude a token injected into HTML; check the trial console and
+actual browser availability before claiming deployed trial access. Trial tokens are scoped and expire; a local testing flag is a separate
+way to experiment, not proof of deployed support.
 
-When trial access is granted for that subdomain:
+When trial access is granted for the production origin:
 
 1. Register the exact production origin at the [Chrome origin trials console](https://developer.chrome.com/origintrials) for the WebMCP trial.
 2. Add one entry to the `headers` array in `vercel.json`:
@@ -65,3 +77,20 @@ Origin-trial tokens are not secrets — they are delivered to every visitor's br
 - `docs/api-scope.md` — curriculum status and reviewed API scope.
 - `docs/teaching-plan.md` — WebMCP track visibility and lesson sequencing.
 - `docs/smoke-tests.md` — record of real supported-Chrome verification runs.
+
+## Agent evaluation and trust
+
+Verify tool discovery, successful state changes, invalid arguments, missing
+prerequisites, cancellation, and cleanup separately. Then evaluate paraphrased
+user goals with a named compatible agent. Record its version and permissions;
+a manual DevTools success does not prove an agent will select the tool.
+
+Current security guidance recommends readOnlyHint, untrustedContentHint, and
+consequentialHint as appropriate. They are advisory. Require confirmation in the
+application for consequential actions and enforce authorization on any real
+backend. This demo changes only local page state. Do not add cloud-backed agent
+extensions to the core lesson: they can require keys and transmit prompts.
+
+Sources: https://developer.chrome.com/docs/ai/webmcp/secure-tools,
+https://developer.chrome.com/docs/ai/webmcp/build-tools,
+https://developer.chrome.com/docs/ai/webmcp/evals.

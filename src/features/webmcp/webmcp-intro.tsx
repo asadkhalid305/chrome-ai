@@ -5,7 +5,7 @@ import { softBoxClassNames, type DemoAccent } from '../../theme/accent'
 // Static overview only. WebMCP is an origin-trial agentic-web API, not an
 // on-device inference API, so this surface deliberately creates no session and
 // never touches `document.modelContext` or any WebMCP or built-in-AI global.
-// The concrete Declarative and Imperative demos arrive in later tickets.
+// The neighboring lessons own their registrations.
 export function WebMcpIntro({ accent }: { accent: DemoAccent }) {
   return (
     <DemoSection
@@ -19,9 +19,17 @@ export function WebMcpIntro({ accent }: { accent: DemoAccent }) {
         flags: webmcpFlags,
       }}
       codePath="features/webmcp/webmcp-intro.tsx (static overview — no adapter or hook yet)"
-      lifecycleNote="This overview calls no browser API and creates no session. The Declarative and Imperative demos will each own their own tool registration, permissions, and cleanup."
+      lifecycleNote="This overview calls no browser API and creates no session. The Declarative and Imperative demos each own their own tool registration, permissions, and cleanup."
     >
       <div className="grid gap-4">
+        <p className="text-sm leading-6 text-slate-600">
+          Reviewed 10 November 2026. Tool registration and agent support are
+          separate checks: DevTools can invoke a tool manually even when a
+          particular browser agent cannot use it. Origin trials are temporary
+          experiments. A schema or annotation never replaces authorization.
+          Keep consequential actions visible and require confirmation in the
+          application. Treat tool descriptions, input, and output as untrusted.
+        </p>
         <div className={`rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
           <h3 className="text-sm font-bold text-slate-900">
             Not on-device inference

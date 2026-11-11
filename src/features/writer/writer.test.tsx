@@ -10,11 +10,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { WriterDemo } from './writer-demo'
-import {
-  writerApi,
-  type WriterAdapter,
-  type WriterSession,
-} from './writer-api'
+import { writerApi, type WriterAdapter, type WriterSession } from './writer-api'
 import { useWriter } from './use-writer'
 
 afterEach(() => {
@@ -63,7 +59,9 @@ describe('Writer demo', () => {
     const idea = screen.getByRole('textbox', { name: 'Writing idea' })
     const seededIdea = (idea as HTMLTextAreaElement).value
 
-    await user.click(await screen.findByRole('button', { name: 'Create draft' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Create draft' }),
+    )
 
     expect(idea).toHaveValue(seededIdea)
     const draft = await screen.findByRole('textbox', {
@@ -71,9 +69,7 @@ describe('Writer demo', () => {
     })
     expect(draft).toHaveValue('Join our friendly study session.')
     await user.type(draft, ' Please RSVP.')
-    expect(draft).toHaveValue(
-      'Join our friendly study session. Please RSVP.',
-    )
+    expect(draft).toHaveValue('Join our friendly study session. Please RSVP.')
   })
 
   it('lets the user join an in-progress model download', async () => {
@@ -96,6 +92,64 @@ describe('Writer demo', () => {
     expect(
       await screen.findByDisplayValue('Draft created after preparation.'),
     ).toBeVisible()
+  })
+
+  it('disables the draft and explains preparation and writing until the result is ready', async () => {
+    let finishPreparation: (session: WriterSession) => void = () => {}
+    let finishWriting: (draft: string) => void = () => {}
+    const write = vi.fn(
+      () =>
+        new Promise<string>((resolve) => {
+          finishWriting = resolve
+        }),
+    )
+    vi.stubGlobal('Writer', {
+      availability: vi.fn().mockResolvedValue('downloadable'),
+      create: vi.fn(
+        () =>
+          new Promise<WriterSession>((resolve) => {
+            finishPreparation = resolve
+          }),
+      ),
+    })
+    const user = userEvent.setup()
+    render(<WriterDemo accent="yellow" />)
+    const draft = screen.getByRole('textbox', {
+      name: 'Editable generated draft',
+    })
+    const action = await screen.findByRole('button', {
+      name: 'Download model and write',
+    })
+    const panel = draft.closest('[aria-live="polite"]')
+    expect(panel).toHaveClass('bg-slate-950')
+    expect(draft).toHaveClass('bg-transparent')
+    await user.click(action)
+    expect(draft).toBeDisabled()
+    expect(draft).toHaveClass('disabled:cursor-default')
+    expect(draft.className).not.toContain('cursor-wait')
+    expect(panel).toHaveClass('bg-slate-950')
+    expect(
+      await screen.findByText(
+        'Preparing the on-device model… Work will start automatically.',
+      ),
+    ).toBeVisible()
+    await act(async () => {
+      finishPreparation({ write, destroy: vi.fn() })
+    })
+    expect(
+      await screen.findByText('Running on your device…'),
+    ).toBeVisible()
+    expect(draft).toBeDisabled()
+    await act(async () => {
+      finishWriting('A completed draft.')
+    })
+    expect(draft).toHaveValue('A completed draft.')
+    expect(draft).toBeEnabled()
+    expect(
+      screen.getByText('Result ready. You can now edit the text.'),
+    ).toBeVisible()
+    await user.type(draft, ' Edited.')
+    expect(draft).toHaveValue('A completed draft. Edited.')
   })
 
   it('shares concurrent session preparation instead of creating twice', async () => {

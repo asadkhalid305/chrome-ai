@@ -74,7 +74,7 @@ permissions policy, origin-trial token placement) this track needs.
 
 ### Lesson 10: Production patterns
 
-After the four APIs are understandable independently, add focused examples for:
+After the individual APIs are understandable independently, add focused examples for:
 
 - download progress;
 - streaming and cancellation;
@@ -125,3 +125,12 @@ Use two labels in documentation and the UI:
 - **Production extension:** resilience, validation, streaming, persistence, or optimization added after the core concept.
 
 This separation prevents production hardening from hiding the native API.
+
+## Prompt follow-ups (reviewed 2026-11-10)
+
+The Prompt tab keeps the core example first. Its collapsed Production extensions
+panel mounts one exercise at a time: JSON feedback with a responseConstraint and
+application validation, local image input with image capability declarations,
+and promptStreaming with incremental plain-text output and cancellation.
+Switching exercises or closing the panel destroys the exercise session. A schema
+validates shape; it does not certify the sentiment or summary as correct.

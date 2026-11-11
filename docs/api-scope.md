@@ -1,6 +1,6 @@
 # Chrome AI API Scope
 
-Last reviewed: 2026-07-22.
+Last reviewed: 2026-11-10.
 
 Chrome built-in AI availability changes across browser versions, operating systems, hardware, language combinations, policies, and experimental programs. Treat this document as a curriculum boundary, not as a permanent compatibility matrix.
 
@@ -40,7 +40,7 @@ Status labels below are a reviewed snapshot, not permanent compatibility claims.
 | WebMCP Declarative | Origin trial from Chrome 149 | Expose semantic HTML forms as tools for browser agents | Annotate a visible support-request form |
 | WebMCP Imperative | Origin trial from Chrome 149 | Register schema-driven JavaScript tools for browser agents | Register and execute a local state-management tool |
 
-Chrome's Proofreader implementation returns correction ranges and replacements only. The official API page records the explainer's `includeCorrectionTypes` and `includeCorrectionExplanation` options as unsupported, so a correction carries no category or explanation today (checked 2026-07-28). The lesson says so in the output panel rather than printing empty fields.
+Chrome's Proofreader implementation returns correction ranges and replacements only. The official API page records the explainer's `includeCorrectionTypes` and `includeCorrectionExplanation` options as unsupported, so a correction carries no category or explanation today (checked 2026-11-10). The lesson says so in the output panel rather than printing empty fields.
 
 WebMCP is part of the wider Chrome AI and agentic-web curriculum, but it is not a built-in model API. Keep its adapters, security guidance, and lessons separate from `Translator`, `LanguageModel`, and the other on-device inference APIs.
 
@@ -70,3 +70,26 @@ Chrome's Early Preview Program provides access to in-progress, unreleased APIs a
 Prefer the current official or Chrome-recommended DOM typings when the React project is scaffolded. Do not hand-maintain a large duplicate browser declaration file if an authoritative type package covers the required API surface.
 
 If the browser typings lag an experimental API, add the smallest local declaration beside that API adapter and explain why it exists.
+
+## Reviewed runtime and access boundaries
+
+Stable APIs do not require EPP enrollment or a trial token. Origin trials have
+separate registration, origin scope, and expiry. Local flags are for experiments;
+developer trial does not imply a stable production contract.
+
+Chrome currently documents foundation-model text support for en, es, ja, de,
+and fr from Chrome 149. Translator uses independently checked language pairs.
+Foundation-model requirements include supported desktop OS/Chromebook Plus,
+22 GB free profile-volume storage, and GPU VRAM above 4 GB or a CPU with at least
+16 GB RAM and four cores. Audio prompting requires a GPU. These are eligibility
+requirements, not a download size. Consult get-started before relying on them.
+
+Prompt follow-up examples show JSON Schema with application validation, image
+input with explicitly declared modalities, and streamed text with cancellation.
+The first Prompt example remains text-only. No sampling overrides or cloud
+fallback are used. Web sampling controls retain their separate trial status.
+
+WebMCP now documents object arguments for executeTool; JSON-stringified arguments
+are deprecated from Chrome 155. Cross-origin exposedTo belongs in registration
+options, not the tool definition. Hints communicate intent and never enforce
+confirmation or authorization. Echoed user/agent content is untrusted.

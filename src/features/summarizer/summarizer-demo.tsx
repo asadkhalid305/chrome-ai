@@ -91,6 +91,7 @@ export function SummarizerDemo({ accent }: { accent: DemoAccent }) {
       <div className="mt-5">
         <DemoOutput
           accent={accent}
+          capability={summarizer.capability}
           request={summarizer.request}
           output={summarizer.output}
           error={summarizer.error}

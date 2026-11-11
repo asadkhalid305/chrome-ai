@@ -11,6 +11,7 @@ import {
   textFieldClassNames,
 } from '../../theme/field-styles'
 import { usePrompt } from './use-prompt'
+import { PromptExtensionsDemo } from './prompt-extensions-demo'
 
 // The bat-and-ball puzzle: everyone in the room can follow it, almost everyone
 // answers 10 cents, and the right answer needs an actual step of arithmetic. A
@@ -86,12 +87,14 @@ export function PromptDemo({ accent }: { accent: DemoAccent }) {
       <div className="mt-5">
         <DemoOutput
           accent={accent}
+          capability={promptModel.capability}
           request={promptModel.request}
           output={promptModel.output}
           error={promptModel.error}
           emptyMessage="The model's plain-text answer will appear here."
         />
       </div>
+      <PromptExtensionsDemo accent={accent} />
     </DemoSection>
   )
 }

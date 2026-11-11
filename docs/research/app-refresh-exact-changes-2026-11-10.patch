@@ -1,0 +1,1240 @@
+diff --git a/README.md b/README.md
+index 2f95e75268083223cf472ab74584502d4419c86b..21ac7d626119b190d7dd23b3f368e9e7ae9f329b 100644
+--- a/README.md
++++ b/README.md
+@@ -51,3 +51,15 @@ npm run build
+ ```
+ 
+ Automated tests use deterministic browser adapters; they do not prove that Chrome's native models work. See [the live smoke-test record](docs/smoke-tests.md) for the latest supported-browser run.
++
++## Documentation refresh — 10 November 2026
++
++The Prompt lesson includes optional exercises for validated structured feedback,
++local image input, and streamed text with cancellation. Each exercise owns its
++session and declares its modalities before creation. The default example remains
++a small text prompt.
++
++API and access claims are reviewed snapshots. Stable built-in AI does not require
++EPP membership; experimental APIs and WebMCP have separate trial/local setup.
++See docs/api-scope.md and docs/smoke-tests.md for the distinction between a source
++review, deterministic tests, and real native-browser verification.
+diff --git a/docs/api-scope.md b/docs/api-scope.md
+index 1ec5ef543cb5746024ac59c491648fdd48dceab2..284fc6494a7cbf2cab835330aff22e39440dbef2 100644
+--- a/docs/api-scope.md
++++ b/docs/api-scope.md
+@@ -1,6 +1,6 @@
+ # Chrome AI API Scope
+ 
+-Last reviewed: 2026-07-22.
++Last reviewed: 2026-11-10.
+ 
+ Chrome built-in AI availability changes across browser versions, operating systems, hardware, language combinations, policies, and experimental programs. Treat this document as a curriculum boundary, not as a permanent compatibility matrix.
+ 
+@@ -40,7 +40,7 @@ Status labels below are a reviewed snapshot, not permanent compatibility claims.
+ | WebMCP Declarative | Origin trial from Chrome 149 | Expose semantic HTML forms as tools for browser agents | Annotate a visible support-request form |
+ | WebMCP Imperative | Origin trial from Chrome 149 | Register schema-driven JavaScript tools for browser agents | Register and execute a local state-management tool |
+ 
+-Chrome's Proofreader implementation returns correction ranges and replacements only. The official API page records the explainer's `includeCorrectionTypes` and `includeCorrectionExplanation` options as unsupported, so a correction carries no category or explanation today (checked 2026-07-28). The lesson says so in the output panel rather than printing empty fields.
++Chrome's Proofreader implementation returns correction ranges and replacements only. The official API page records the explainer's `includeCorrectionTypes` and `includeCorrectionExplanation` options as unsupported, so a correction carries no category or explanation today (checked 2026-11-10). The lesson says so in the output panel rather than printing empty fields.
+ 
+ WebMCP is part of the wider Chrome AI and agentic-web curriculum, but it is not a built-in model API. Keep its adapters, security guidance, and lessons separate from `Translator`, `LanguageModel`, and the other on-device inference APIs.
+ 
+@@ -70,3 +70,26 @@ Chrome's Early Preview Program provides access to in-progress, unreleased APIs a
+ Prefer the current official or Chrome-recommended DOM typings when the React project is scaffolded. Do not hand-maintain a large duplicate browser declaration file if an authoritative type package covers the required API surface.
+ 
+ If the browser typings lag an experimental API, add the smallest local declaration beside that API adapter and explain why it exists.
++
++## Reviewed runtime and access boundaries
++
++Stable APIs do not require EPP enrollment or a trial token. Origin trials have
++separate registration, origin scope, and expiry. Local flags are for experiments;
++developer trial does not imply a stable production contract.
++
++Chrome currently documents foundation-model text support for en, es, ja, de,
++and fr from Chrome 149. Translator uses independently checked language pairs.
++Foundation-model requirements include supported desktop OS/Chromebook Plus,
++22 GB free profile-volume storage, and GPU VRAM above 4 GB or a CPU with at least
++16 GB RAM and four cores. Audio prompting requires a GPU. These are eligibility
++requirements, not a download size. Consult get-started before relying on them.
++
++Prompt follow-up examples show JSON Schema with application validation, image
++input with explicitly declared modalities, and streamed text with cancellation.
++The first Prompt example remains text-only. No sampling overrides or cloud
++fallback are used. Web sampling controls retain their separate trial status.
++
++WebMCP now documents object arguments for executeTool; JSON-stringified arguments
++are deprecated from Chrome 155. Cross-origin exposedTo belongs in registration
++options, not the tool definition. Hints communicate intent and never enforce
++confirmation or authorization. Echoed user/agent content is untrusted.
+diff --git a/docs/smoke-tests.md b/docs/smoke-tests.md
+index ddfb7c27bbe30cbd76740774d021f12c7aaef954..a116d760301704574ee0f08cc1f5ede5523e42c7 100644
+--- a/docs/smoke-tests.md
++++ b/docs/smoke-tests.md
+@@ -45,3 +45,39 @@ A real enabled-Chrome smoke test remains intentionally pending. When suitable
+ trial or Early Preview Program access is available, record the Chrome version,
+ operating system, enabled flags or trial token, initial capability state, and a
+ non-empty or structured result for each production adapter here.
++
++## 2026-11-10 — Documentation refresh and Prompt extensions
++
++- URL: http://127.0.0.1:5173/#playground/prompt
++- Browser: desktop Google Chrome, user agent Chrome/156.0.0.0 on Macintosh.
++  The reduced UA reports Mac OS X 10_15_7; this is not evidence of the actual OS
++  version or hardware eligibility. No flags, permissions, or extensions were
++  changed for this run. Existing profile flags/trial enrollment were not audited.
++- Prompt text: English; availability reported ready/available.
++- Structured extension: ran through the React form with the default workshop
++  feedback; returned mixed sentiment and a non-empty summary. Application JSON
++  validation succeeded.
++- Streaming extension: ran through the React form; completed with non-empty
++  text. A second invocation was canceled and visibly reported Request canceled,
++  preserving incomplete output as partial text.
++- Image extension adapter: imported the production adapter in DevTools, checked
++  image availability, and created a native session. A generated local 200×200 red
++  canvas blob prompted the answer Red. The session was destroyed in finally.
++  This verifies native adapter inference, not the OS file-picker flow.
++- WebMCP imperative: discovered addTodo with document.modelContext.getTools and
++  invoked executeTool with an object argument. The local list visibly gained
++  an agent-labelled item and displayed the same returned confirmation.
++- Native verification exposed a stale registration rejection during effect
++  cleanup. Aborted registrations are now ignored; reload showed idle without
++  the spurious error, and the native tool invocation succeeded.
++
++Deterministic tests cover malformed structured output, image declarations and
++argument forwarding, streaming cancellation, session destruction, and aborted
++WebMCP registration. They do not measure model quality or agent tool selection.
++The declarative workflow and the other native model lessons were not rerun in
++this refresh. Their earlier records above retain their original scope/date.
++A real autonomous-agent evaluation remains separate from manual DevTools calls.
++
++The public origin returned HTTP 200 and tools=(self) on 2026-11-10, without an
++Origin-Trial response header. No deployment was performed; production trial
++console enrollment and any HTML-provided token remain unverified.
+diff --git a/docs/teaching-plan.md b/docs/teaching-plan.md
+index e261debf44519df99022e54ff14d7ecda1134e15..67d1a4a0ab2679dc05a2ba94421a31d3e536ae0d 100644
+--- a/docs/teaching-plan.md
++++ b/docs/teaching-plan.md
+@@ -74,7 +74,7 @@ permissions policy, origin-trial token placement) this track needs.
+ 
+ ### Lesson 10: Production patterns
+ 
+-After the four APIs are understandable independently, add focused examples for:
++After the individual APIs are understandable independently, add focused examples for:
+ 
+ - download progress;
+ - streaming and cancellation;
+@@ -125,3 +125,12 @@ Use two labels in documentation and the UI:
+ - **Production extension:** resilience, validation, streaming, persistence, or optimization added after the core concept.
+ 
+ This separation prevents production hardening from hiding the native API.
++
++## Prompt follow-ups (reviewed 2026-11-10)
++
++The Prompt tab keeps the core example first. Its collapsed Production extensions
++panel mounts one exercise at a time: JSON feedback with a responseConstraint and
++application validation, local image input with image capability declarations,
++and promptStreaming with incremental plain-text output and cancellation.
++Switching exercises or closing the panel destroys the exercise session. A schema
++validates shape; it does not certify the sentiment or summary as correct.
+diff --git a/docs/webmcp-environment.md b/docs/webmcp-environment.md
+index 20d1a909779f482f19eba0eff683b075f3190636..e4ba3d423a2389a3290bb473d8768429b49c0d75 100644
+--- a/docs/webmcp-environment.md
++++ b/docs/webmcp-environment.md
+@@ -1,15 +1,15 @@
+ # WebMCP Environment
+ 
+-Last reviewed: 2026-07-24, against https://developer.chrome.com/docs/ai/webmcp, https://developer.chrome.com/docs/devtools/application/webmcp, and https://developer.chrome.com/blog/new-in-devtools-149.
++Last reviewed: 2026-11-10, against https://developer.chrome.com/docs/ai/webmcp, https://developer.chrome.com/docs/devtools/application/webmcp, and https://developer.chrome.com/blog/new-in-devtools-149.
+ 
+-This document covers the conditions needed to run and verify the WebMCP lessons (`docs/teaching-plan.md` Lessons 8–9), both on localhost and on the eventual deployed Vercel origin. WebMCP is an agentic-web API, not on-device inference, so its environment needs (origin isolation, a permissions policy, an origin-trial token) are different from the built-in-AI lessons and are recorded here rather than in `docs/api-scope.md`.
++This document covers the conditions needed to run and verify the WebMCP lessons (`docs/teaching-plan.md` Lessons 8–9), both on localhost and on the deployed Vercel origin. WebMCP is an agentic-web API, not on-device inference, so its environment needs (origin isolation, a permissions policy, an origin-trial token) are different from the built-in-AI lessons and are recorded here rather than in `docs/api-scope.md`.
+ 
+ ## The two independent gates
+ 
+-Running a WebMCP lesson requires two separate things to be true at once. Neither implies the other:
++App visibility, browser API access, and the inspection interface are separate:
+ 
+ - **`VITE_WEBMCP` app flag** (see `.env.example`) — reveals the WebMCP tab in this app's navigation. Defaults on; set to `false` for a shorter, built-in-AI-only demo.
+-- **`chrome://flags/#enable-webmcp-testing` browser flag** — makes `document.modelContext` and the declarative `toolname`/`tooldescription` form attributes exist in the browser at all. Without it, the WebMCP tab renders but every lesson reports its "unavailable" state, and the human-facing form/UI still works normally.
++- **`chrome://flags/#enable-webmcp-testing` browser flag** — enables local testing without a trial token, exposing `document.modelContext` and the declarative `toolname`/`tooldescription` form attributes exist in the browser at all. Without it, the WebMCP tab renders but every lesson reports its "unavailable" state, and the human-facing form/UI still works normally.
+ - **`chrome://flags/#devtools-webmcp-support` DevTools flag** — reveals the experimental WebMCP pane in Chrome DevTools so registered tools can be inspected and called manually.
+ 
+ ## Run and verify locally
+@@ -31,7 +31,13 @@ WebMCP gates both APIs behind two browser-level checks. Neither needs to be "ena
+ 
+ ### Origin isolation
+ 
+-WebMCP is only available in origin-isolated documents. This is Chrome's default; it is disabled only when a document sends the `Origin-Agent-Cluster: ?0` response header or sets `document.domain`. Neither the Vite dev server nor Vercel's static hosting sends that header, and nothing in this codebase sets `document.domain`. There is nothing to configure locally or in `vercel.json` for this — only something to avoid introducing later.
++This app does not set `document.domain` or send `Origin-Agent-Cluster: ?0`.
++Earlier setup notes described origin isolation as a prerequisite. The current
++Chrome overview documents the tools Permissions Policy but does not repeat that
++requirement; do not treat historical setup notes as a verified current contract.
++Do not add COOP/COEP or other isolation headers without a current requirement and
++an observed browser failure. Origin isolation and cross-origin isolation are
++different concepts.
+ 
+ ### The `tools` permissions policy
+ 
+@@ -45,9 +51,15 @@ The deployment stays a static build with no functions, no backend, and no server
+ 
+ ### Origin-trial token placement
+ 
+-WebMCP ships as an origin trial from Chrome 149. An origin-trial token is issued for one exact origin, so no token can be requested or applied until the final Vercel production subdomain is decided and live — until then, the deployed track runs without a trial token and every lesson reports its "unavailable" capability state in unsupported browsers, the same as any other experimental lesson.
++The public app origin is https://chromeai.asadullahkhalid.com. The checked-in
++`vercel.json` supplies `Permissions-Policy: tools=(self)` but no Origin-Trial
++header. A read-only HTTP response check on 2026-11-10 returned 200 and
++`Permissions-Policy: tools=(self)`, with no Origin-Trial header. A header check
++alone does not exclude a token injected into HTML; check the trial console and
++actual browser availability before claiming deployed trial access. Trial tokens are scoped and expire; a local testing flag is a separate
++way to experiment, not proof of deployed support.
+ 
+-When trial access is granted for that subdomain:
++When trial access is granted for the production origin:
+ 
+ 1. Register the exact production origin at the [Chrome origin trials console](https://developer.chrome.com/origintrials) for the WebMCP trial.
+ 2. Add one entry to the `headers` array in `vercel.json`:
+@@ -65,3 +77,20 @@ Origin-trial tokens are not secrets — they are delivered to every visitor's br
+ - `docs/api-scope.md` — curriculum status and reviewed API scope.
+ - `docs/teaching-plan.md` — WebMCP track visibility and lesson sequencing.
+ - `docs/smoke-tests.md` — record of real supported-Chrome verification runs.
++
++## Agent evaluation and trust
++
++Verify tool discovery, successful state changes, invalid arguments, missing
++prerequisites, cancellation, and cleanup separately. Then evaluate paraphrased
++user goals with a named compatible agent. Record its version and permissions;
++a manual DevTools success does not prove an agent will select the tool.
++
++Current security guidance recommends readOnlyHint, untrustedContentHint, and
++consequentialHint as appropriate. They are advisory. Require confirmation in the
++application for consequential actions and enforce authorization on any real
++backend. This demo changes only local page state. Do not add cloud-backed agent
++extensions to the core lesson: they can require keys and transmit prompts.
++
++Sources: https://developer.chrome.com/docs/ai/webmcp/secure-tools,
++https://developer.chrome.com/docs/ai/webmcp/build-tools,
++https://developer.chrome.com/docs/ai/webmcp/evals.
+diff --git a/src/components/api-availability.tsx b/src/components/api-availability.tsx
+index b7f6e417cb6a9527f273447a559266dfb2552a8c..99410fe3a602dfc8d321285dea65110cbf9d40f2 100644
+--- a/src/components/api-availability.tsx
++++ b/src/components/api-availability.tsx
+@@ -20,36 +20,13 @@ export interface ApiAvailability {
+   flags?: ChromeFlag[]
+ }
+ 
+-// Writer and Rewriter ship as a joint developer trial and share the Gemini Nano
+-// base flags. Each also has its own API flag in chrome://flags.
+-const geminiNanoBaseFlags: ChromeFlag[] = [
+-  {
+-    id: 'optimization-guide-on-device-model',
+-    // BypassPerfRequirement is the localhost escape hatch when Enabled still
+-    // leaves availability() at "unavailable" on machines under Chrome's
+-    // hardware gate.
+-    value: 'Enabled or Enabled BypassPerfRequirement',
+-  },
+-  {
+-    id: 'prompt-api-for-gemini-nano-multimodal-input',
+-    value: 'Enabled or Enabled Multilingual',
+-  },
+-]
+-
++// Reviewed against the Writer and Rewriter localhost guides on 2026-11-10.
+ export const writerFlags: ChromeFlag[] = [
+-  ...geminiNanoBaseFlags,
+-  {
+-    id: 'writer-api-for-gemini-nano',
+-    value: 'Enabled or Enabled Multilingual',
+-  },
++  { id: 'writer-api', value: 'Enabled or Enabled Multilingual' },
+ ]
+ 
+ export const rewriterFlags: ChromeFlag[] = [
+-  ...geminiNanoBaseFlags,
+-  {
+-    id: 'rewriter-api-for-gemini-nano',
+-    value: 'Enabled or Enabled Multilingual',
+-  },
++  { id: 'rewriter-api', value: 'Enabled or Enabled Multilingual' },
+ ]
+ 
+ // Kept as an alias so older references stay readable; prefer writerFlags /
+@@ -61,8 +38,8 @@ export const proofreaderFlags: ChromeFlag[] = [
+ ]
+ 
+ // WebMCP ships as an origin trial from Chrome 149. For local development it is
+-// gated behind a single testing flag instead of a trial token. Verified against
+-// https://developer.chrome.com/docs/ai/webmcp on 2026-07-23.
++// gated behind a single testing flag instead of a trial token. Reviewed against
++// https://developer.chrome.com/docs/ai/webmcp on 2026-11-10.
+ export const webmcpFlags: ChromeFlag[] = [
+   { id: 'enable-webmcp-testing', value: 'Enabled' },
+ ]
+@@ -108,7 +85,9 @@ export function ApiAvailabilityInfo({ availability }: ApiAvailabilityInfoProps)
+         </span>
+         <span>
+           {requiresFlags
+-            ? 'Needs Chrome flags on localhost.'
++            ? availability.status === 'origin-trial'
++              ? 'Needs a trial token or local testing flag.'
++              : 'Needs Chrome flags on localhost.'
+             : 'No Chrome flags required.'}
+         </span>
+       </p>
+diff --git a/src/docs/documentation-content.ts b/src/docs/documentation-content.ts
+index 4c39c0d27fc658b7c027f21dae346a77f741280b..e85f79ffe9fd82aea59f17176d2b1668341b257b 100644
+--- a/src/docs/documentation-content.ts
++++ b/src/docs/documentation-content.ts
+@@ -159,6 +159,13 @@ export const documentationArticles: DocumentationArticle[] = [
+           'That changes the architecture, but it does not remove product responsibility. A browser model is still generative, its output remains untrusted, and availability depends on the user’s browser, device, policy, language pair, and model state.',
+         ],
+       },
++      {
++        heading: 'Real products and experimental tools',
++        paragraphs: [
++          'Google has published built-in AI examples from Drupal (SEO tags), Yahoo! Japan (comment moderation), and Trip.com (travel overviews). These are attributed examples of product use, not adoption statistics or a guarantee that every device supports the APIs.',
++          'WebMCP remains an origin-trial experiment. A deployed tool, manual DevTools invocation, and a successful interaction with a particular agent are different kinds of evidence. Verify the complete user journey with the agent you plan to demonstrate.',
++        ],
++      },
+       {
+         heading: 'What this playground teaches',
+         bullets: [
+@@ -176,7 +183,7 @@ export const documentationArticles: DocumentationArticle[] = [
+         ],
+       },
+     ],
+-    sources: [builtInOverview, builtInStart, builtInDosAndDonts],
++    sources: [builtInOverview, builtInStart, builtInDosAndDonts, { label: 'Google-published product examples', url: 'https://developer.chrome.com/blog/build-new-features-using-built-in-ai-in-chrome-io2026' }],
+   },
+   {
+     id: 'requirements',
+@@ -191,24 +198,32 @@ export const documentationArticles: DocumentationArticle[] = [
+         bullets: [
+           'Translator, Language Detector, and Summarizer are stable from Chrome 138 on supported desktop environments.',
+           'The Prompt API is stable on the web from Chrome 148 and in Chrome extensions from Chrome 138.',
+-          'Translator and Language Detector use expert models for their focused tasks; the other generative APIs use Chrome’s built-in foundation model.',
++          'Translator and Language Detector use expert models for their focused tasks; the generative APIs use browser-managed language models that Chrome may update.',
+         ],
+       },
+       {
+         heading: 'Model readiness',
+         paragraphs: [
+           'Each lesson checks availability before creating a session. A model can be ready, downloadable, downloading, or unavailable. The first user-triggered run may therefore begin a download rather than return an immediate result.',
+-          'Keep enough free storage, stay on a supported desktop operating system, and do not treat mobile support as implied.',
++          'Foundation-model APIs require Windows 10/11, macOS 13+, Linux, or supported Chromebook Plus devices. Chrome currently lists 22 GB free profile-volume storage, GPU VRAM above 4 GB or a CPU with at least 16 GB RAM and four cores. Audio input requires a GPU. Mobile is not supported. The storage requirement is not the model download size.',
+         ],
+       },
+       {
+         heading: 'Experimental surfaces',
+         bullets: [
+           'Writer, Rewriter, and Proofreader remain trial APIs and require their documented local flags.',
+-          'WebMCP local testing requires its WebMCP flag; its DevTools panel currently requires the separate DevTools support flag.',
++          'WebMCP needs an eligible origin-trial token or the local testing flag. Inspect tools using the DevTools Application → WebMCP panel; check the current DevTools instructions for experimental panel setup.',
+           'Experimental contracts and availability can change. Every guide shows the date its claims were reviewed.',
+         ],
+       },
++      {
++        heading: 'Languages, downloads, and access programs',
++        paragraphs: [
++          'From Chrome 149, the documented foundation-model text languages are English, Spanish, Japanese, German, and French. These lessons use English deliberately; translation uses its own language-pair models. Always check the requested options at runtime.',
++          'The first download needs user activation and an unmetered connection. Prepared models can run offline; assets, downloads, and model updates can still use the network. Chrome may remove a model when storage falls below its threshold.',
++          'Stable APIs need no Early Preview Program enrollment. Origin trials require their own registration and time-limited token. EPP gives access to earlier ideas; a developer trial is not a stable release guarantee.',
++        ],
++      },
+     ],
+     sources: [builtInOverview, builtInStart, webmcpOverview, webmcpDevtools149],
+   },
+@@ -227,7 +242,7 @@ export const documentationArticles: DocumentationArticle[] = [
+           'Identify unknown input language with Language Detector.',
+           'Condense longer content with Summarizer.',
+           'Draft new content with Writer and transform existing content with Rewriter.',
+-          'Return corrections, categories, and explanations with Proofreader.',
++          'Return correction ranges and replacements with Proofreader; Chrome does not implement correction categories or explanations.',
+         ],
+       },
+       {
+@@ -400,7 +415,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/translator-api',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'language-detector',
+@@ -477,7 +492,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/language-detection',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'summarizer',
+@@ -561,7 +576,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/summarizer-api',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'prompt',
+@@ -587,14 +602,14 @@ export const apiGuides: ApiGuide[] = [
+       'Assuming requested JSON text has been validated against a schema.',
+     ],
+     playground:
+-      'The demo owns one conversational session with a fixed system instruction, supports cancellation, and renders the answer as plain text.',
++      'The core demo owns a conversational session and renders plain text. Open Production extensions for independently owned sessions demonstrating validated JSON, a local image, or streamed text with cancellation.',
+     observe: [
+       'Specific constraints produce more inspectable answers.',
+       'Conversation context can influence later requests in the same mounted demo.',
+       'Small local models can miss constraints or invent details.',
+     ],
+     limitations: [
+-      'The core lesson does not expose grounding, cloning, token counters, or response constraints.',
++      'The core lesson does not expose grounding, cloning, or token counters. Structured output in the follow-up validates shape, not factual correctness.',
+       'Knowledge can be incomplete or stale; the model is not a source of truth.',
+     ],
+     lifecycle:
+@@ -650,7 +665,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/structured-output-for-prompt-api',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'writer',
+@@ -741,7 +756,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/writer-api',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'rewriter',
+@@ -825,7 +840,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/rewriter-api',
+       },
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'proofreader',
+@@ -856,7 +871,7 @@ export const apiGuides: ApiGuide[] = [
+       'A correction can have an empty range, which means text is missing rather than wrong.',
+     ],
+     limitations: [
+-      'Chrome does not implement the specified includeCorrectionTypes and includeCorrectionExplanations options yet, so categories and explanations are absent.',
++      'Chrome does not implement the specified includeCorrectionTypes and includeCorrectionExplanation options yet, so categories and explanations are absent.',
+       'The API focuses on proofreading rather than broad rewriting.',
+       'Suggestions still require user review.',
+     ],
+@@ -910,7 +925,7 @@ export const apiGuides: ApiGuide[] = [
+         url: 'https://developer.chrome.com/docs/ai/proofreader-api',
+       },
+     ],
+-    reviewedOn: '2026-07-28',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'webmcp',
+@@ -967,7 +982,7 @@ export const apiGuides: ApiGuide[] = [
+       webmcpSecurity,
+       webmcpDevtools,
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'webmcp-declarative',
+@@ -1079,7 +1094,7 @@ export const apiGuides: ApiGuide[] = [
+       webmcpDevtools,
+       webmcpDevtools149,
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+   {
+     id: 'webmcp-imperative',
+@@ -1154,7 +1169,7 @@ export const apiGuides: ApiGuide[] = [
+       webmcpDevtools,
+       webmcpDevtools149,
+     ],
+-    reviewedOn: '2026-07-24',
++    reviewedOn: '2026-11-10',
+   },
+ ]
+ 
+diff --git a/src/features/prompt/prompt-demo.tsx b/src/features/prompt/prompt-demo.tsx
+index 76afcd48f055ecba07cbd1836454cf24c2ce30b1..3a26fe11320017e40ff04e2da1b0531e47cd83dd 100644
+--- a/src/features/prompt/prompt-demo.tsx
++++ b/src/features/prompt/prompt-demo.tsx
+@@ -11,6 +11,7 @@ import {
+   textFieldClassNames,
+ } from '../../theme/field-styles'
+ import { usePrompt } from './use-prompt'
++import { PromptExtensionsDemo } from './prompt-extensions-demo'
+ 
+ // The bat-and-ball puzzle: everyone in the room can follow it, almost everyone
+ // answers 10 cents, and the right answer needs an actual step of arithmetic. A
+@@ -92,6 +93,7 @@ export function PromptDemo({ accent }: { accent: DemoAccent }) {
+           emptyMessage="The model's plain-text answer will appear here."
+         />
+       </div>
++      <PromptExtensionsDemo accent={accent} />
+     </DemoSection>
+   )
+ }
+diff --git a/src/features/proofreader/proofreader-demo.tsx b/src/features/proofreader/proofreader-demo.tsx
+index 52c767950239e46598419a74bfd9b3483b7ea358..06c43962504f28db273c6bfc9a25834c4fcd05f3 100644
+--- a/src/features/proofreader/proofreader-demo.tsx
++++ b/src/features/proofreader/proofreader-demo.tsx
+@@ -39,7 +39,7 @@ export function ProofreaderDemo({ accent }: { accent: DemoAccent }) {
+       description="See where Chrome would fix English grammar, spelling, and punctuation. Each correction is a character range in the text you submitted, so nothing is rewritten behind your back."
+       availability={{
+         status: 'developer-trial',
+-        summary: 'Developer trial in Chrome 141–145.',
++        summary: 'Developer trial. Previous origin trial: Chrome 141–145.',
+         flags: proofreaderFlags,
+       }}
+       codePath="proofreader-api.ts → use-proofreader.ts → proofreader-demo.tsx"
+diff --git a/src/features/rewriter/rewriter-demo.tsx b/src/features/rewriter/rewriter-demo.tsx
+index 06ba8bc6da519ae363aac3f456a8142dab3677c8..aebe6e2d78f64b74bf0d78cfc241df517a2fc9b0 100644
+--- a/src/features/rewriter/rewriter-demo.tsx
++++ b/src/features/rewriter/rewriter-demo.tsx
+@@ -17,7 +17,7 @@ import { useRewriter } from './use-rewriter'
+ // Informal register plus checkable facts makes every option visibly different:
+ // the formal rewrite has something to lift, the shorter one something to cut,
+ // and all four have a date, a time, a room, a seat count, and a version to keep.
+-const sampleText = `hey all — quick one before the weekend: the browser AI workshop is on Thursday the 14th at 18:30 in the small meeting room on floor 3, and it would be a shame if nobody showed up since we only managed to get 12 seats. bring a laptop with Chrome 141 or newer if you have one, otherwise just pair with someone. no prep needed, we'll do everything live.`
++const sampleText = `hey all — quick one before the weekend: the browser AI workshop is on Thursday the 14th at 18:30 in the small meeting room on floor 3, and it would be a shame if nobody showed up since we only managed to get 12 seats. bring a laptop with supported desktop Chrome with the experimental APIs enabled if you have one, otherwise just pair with someone. no prep needed, we'll do everything live.`
+ 
+ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
+   const [input, setInput] = useState(sampleText)
+@@ -37,7 +37,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
+       description="Transform existing English text by one visible tone or length choice while preserving the original."
+       availability={{
+         status: 'developer-trial',
+-        summary: 'Developer trial in Chrome 137–148.',
++        summary: 'Developer trial. Previous origin trial: Chrome 137–148.',
+         flags: rewriterFlags,
+       }}
+       codePath="rewriter-api.ts → use-rewriter.ts → rewriter-demo.tsx"
+diff --git a/src/features/webmcp-imperative/use-webmcp-imperative.ts b/src/features/webmcp-imperative/use-webmcp-imperative.ts
+index 1751171d95a2ad0af477647c2d78d46a90cbafbd..538ebabd156918ac7b727b6d653bf43a8c9bcd2d 100644
+--- a/src/features/webmcp-imperative/use-webmcp-imperative.ts
++++ b/src/features/webmcp-imperative/use-webmcp-imperative.ts
+@@ -96,16 +96,17 @@ export function useWebmcpImperative(
+     // every state setter it closes over has a stable identity, and we always
+     // use the functional form of setTodos so the closure never reads a stale
+     // `todos` value.
+-    const execute = async (input: unknown): Promise<string> => {
++    const execute = async (input: unknown, signal: AbortSignal): Promise<string> => {
++      if (signal.aborted) throw new DOMException('Canceled', 'AbortError')
+       // Agent input crosses a trust boundary. Reject anything that does not
+-      // match the schema with a clear error string — the browser hands it back
+-      // to the agent, so a good message is a correction cue for the next turn.
++      // match the schema with a recovery result. Chrome can redact thrown error
++      // details, so return expected validation failures to guide the agent.
+       if (typeof input !== 'object' || input === null || !('text' in input)) {
+         const message = `${TOOL_NAME} requires an object with a "text" string field.`
+         setLastError(message)
+         setLastResult(null)
+         setActivity('error')
+-        throw new Error(message)
++        return message
+       }
+       const rawText = (input as { text: unknown }).text
+       if (typeof rawText !== 'string' || rawText.trim().length === 0) {
+@@ -113,7 +114,7 @@ export function useWebmcpImperative(
+         setLastError(message)
+         setLastResult(null)
+         setActivity('error')
+-        throw new Error(message)
++        return message
+       }
+ 
+       setActivity('running')
+@@ -140,10 +141,9 @@ export function useWebmcpImperative(
+       execute,
+       annotations: {
+         // The tool mutates page state, so it is not read-only. Its return value
+-        // is generated by this page, not fetched from elsewhere, so it is not
+-        // "untrusted content" in the WebMCP sense.
++        // echoes agent-supplied text, so label that content untrusted.
+         readOnlyHint: false,
+-        untrustedContentHint: false,
++        untrustedContentHint: true,
+       },
+     }
+ 
+@@ -151,6 +151,7 @@ export function useWebmcpImperative(
+     // (e.g. the `tools` permissions policy blocked it); surface that as the
+     // error activity so a reader can see why nothing happened.
+     adapter.registerTool(spec, controller.signal).catch((err: unknown) => {
++      if (controller.signal.aborted) return
+       const message = err instanceof Error ? err.message : String(err)
+       setLastError(message)
+       setActivity('error')
+diff --git a/src/features/webmcp-imperative/webmcp-imperative-demo.tsx b/src/features/webmcp-imperative/webmcp-imperative-demo.tsx
+index f9677bba726bc02f14174c1051a215e60a310627..7ca975a578f6ab018d3b87ea2d7f1abbe784e0ce 100644
+--- a/src/features/webmcp-imperative/webmcp-imperative-demo.tsx
++++ b/src/features/webmcp-imperative/webmcp-imperative-demo.tsx
+@@ -36,7 +36,7 @@ const supportBanner: Record<
+   },
+   supported: {
+     tone: 'text-brand-green',
+-    text: 'This browser exposes document.modelContext, so the addTodo tool is registered. A person can still use the list directly; an agent can also call the tool to add items.',
++    text: 'This browser exposes document.modelContext, and can register the addTodo tool; check Tool activity below for registration errors. A person can still use the list directly; an agent can also call the tool to add items.',
+   },
+   unavailable: {
+     tone: 'text-slate-600',
+@@ -231,8 +231,8 @@ export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
+             <p className="mt-3 text-xs text-slate-500">
+               The browser parses the agent&apos;s arguments against this schema
+               before calling{' '}
+-              <span className="font-mono text-[11px]">execute</span>. Invalid
+-              input never reaches this page&apos;s state.
++              <span className="font-mono text-[11px]">execute</span>. The function
++              validates input again before changing the list.
+             </p>
+           </div>
+ 
+@@ -290,7 +290,7 @@ export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
+               {imperative.activity === 'error' ? (
+                 <div className="text-slate-700">
+                   <p className="text-brand-red font-semibold">
+-                    execute() rejected:
++                    Tool error:
+                   </p>
+                   <p className="mt-1 font-mono text-xs leading-5 text-slate-800">
+                     {imperative.lastError}
+diff --git a/src/features/webmcp-imperative/webmcp-imperative.d.ts b/src/features/webmcp-imperative/webmcp-imperative.d.ts
+index 14a637fad20306fc63159a06aaf1c9fbb5e52044..0ad4ca15ad2a1d1b1fa711d7cbb42940f257ce44 100644
+--- a/src/features/webmcp-imperative/webmcp-imperative.d.ts
++++ b/src/features/webmcp-imperative/webmcp-imperative.d.ts
+@@ -1,10 +1,7 @@
+ // Minimal local declarations for the WebMCP Imperative API (origin trial from
+ // Chrome 149). The installed DOM typings (`@types/dom-chromium-ai`) cover the
+ // built-in model APIs but not WebMCP, so we declare only the members this
+-// lesson touches. The global was renamed from `navigator.modelContext` to
+-// `document.modelContext` in Chrome 150; we type only the new name here so the
+-// reader is never tempted to reach for the deprecated one. Verified against
+-// https://developer.chrome.com/docs/ai/webmcp/imperative-api on 2026-07-24.
++// lesson touches. Reviewed against the official Imperative API on 2026-11-10.
+ export {}
+ 
+ declare global {
+@@ -13,6 +10,7 @@ declare global {
+     // `readOnlyHint` is false when the tool mutates observable state.
+     // `untrustedContentHint` is true when the tool returns content that came
+     // from an outside source (e.g. a fetched web page).
++    consequentialHint?: boolean
+     readOnlyHint?: boolean
+     untrustedContentHint?: boolean
+   }
+@@ -35,15 +33,14 @@ declare global {
+     // parsed object. The returned value is serialized back to the agent as the
+     // tool result. Typed as `unknown` because the agent's input crosses a trust
+     // boundary — the lesson code must validate it before use.
+-    execute: (input: unknown) => Promise<unknown> | unknown
++    execute: (input: unknown, signal: AbortSignal) => Promise<unknown> | unknown
+     annotations?: WebmcpToolAnnotations
+-    // Explicitly listed cross-origin documents that may see and call this tool.
+-    // Omitted here because the lesson is same-origin only.
+-    exposedTo?: readonly string[]
+   }
+ 
+   interface WebmcpRegisterToolOptions {
+-    // Aborting the signal unregisters the tool. There is no `unregisterTool()`.
++    // Cross-origin exposure is explicit and belongs to registration options.
++    exposedTo?: readonly string[]
++    // Aborting the signal unregisters the tool.
+     signal?: AbortSignal
+   }
+ 
+diff --git a/src/features/webmcp-imperative/webmcp-imperative.test.tsx b/src/features/webmcp-imperative/webmcp-imperative.test.tsx
+index b27fadf6a18a2a1e8004d93495b8b4ca3e0edb10..fad5340ca593862b8bc37af5266f0d463399e1fe 100644
+--- a/src/features/webmcp-imperative/webmcp-imperative.test.tsx
++++ b/src/features/webmcp-imperative/webmcp-imperative.test.tsx
+@@ -56,10 +56,43 @@ describe('useWebmcpImperative', () => {
+     expect(spec?.inputSchema).toEqual(IMPERATIVE_TOOL_CONTRACT.inputSchema)
+     expect(spec?.annotations).toEqual({
+       readOnlyHint: false,
+-      untrustedContentHint: false,
++      untrustedContentHint: true,
+     })
+   })
+ 
++  it('ignores a late rejection from an aborted registration', async () => {
++    const first = createFakeAdapter(true)
++    let rejectRegistration: (reason: unknown) => void = () => {}
++    first.registerTool.mockImplementationOnce(
++      () =>
++        new Promise((_resolve, reject) => {
++          rejectRegistration = reject
++        }),
++    )
++    const second = createFakeAdapter(true)
++    const { result, rerender } = renderHook(
++      ({ adapter }) => useWebmcpImperative(adapter),
++      { initialProps: { adapter: first.adapter } },
++    )
++    rerender({ adapter: second.adapter })
++    await act(async () => {
++      rejectRegistration(new DOMException('Canceled', 'AbortError'))
++    })
++    expect(result.current.activity).toBe('idle')
++    expect(result.current.lastError).toBeNull()
++  })
++
++  it('does not mutate the list for an already canceled invocation', async () => {
++    const fake = createFakeAdapter(true)
++    const { result } = renderHook(() => useWebmcpImperative(fake.adapter))
++    const controller = new AbortController()
++    controller.abort()
++    await act(async () => {
++      await expect(fake.getSpec()!.execute({ text: 'Late task' }, controller.signal)).rejects.toThrow('Canceled')
++    })
++    expect(result.current.todos).toHaveLength(0)
++  })
++
+   it('skips registration and reports unavailable when the API is absent', async () => {
+     const fake = createFakeAdapter(false)
+     const { result } = renderHook(() => useWebmcpImperative(fake.adapter))
+@@ -86,7 +119,9 @@ describe('useWebmcpImperative', () => {
+ 
+     let returned: unknown
+     await act(async () => {
+-      returned = await fake.getSpec()!.execute({ text: 'Buy milk' })
++      returned = await fake
++        .getSpec()!
++        .execute({ text: 'Buy milk' }, new AbortController().signal)
+     })
+ 
+     expect(returned).toBe('Added to-do: "Buy milk".')
+@@ -106,9 +141,9 @@ describe('useWebmcpImperative', () => {
+     await waitFor(() => expect(fake.getSpec()).not.toBeNull())
+ 
+     await act(async () => {
+-      await expect(fake.getSpec()!.execute({ text: '   ' })).rejects.toThrow(
+-        /non-empty "text" string/,
+-      )
++      await expect(
++        fake.getSpec()!.execute({ text: '   ' }, new AbortController().signal),
++      ).resolves.toMatch(/non-empty "text" string/)
+     })
+ 
+     expect(result.current.todos).toHaveLength(0)
+@@ -116,9 +151,9 @@ describe('useWebmcpImperative', () => {
+     expect(result.current.lastError).toMatch(/non-empty "text" string/)
+ 
+     await act(async () => {
+-      await expect(fake.getSpec()!.execute({ nope: 1 })).rejects.toThrow(
+-        /"text" string field/,
+-      )
++      await expect(
++        fake.getSpec()!.execute({ nope: 1 }, new AbortController().signal),
++      ).resolves.toMatch(/"text" string field/)
+     })
+ 
+     expect(result.current.todos).toHaveLength(0)
+diff --git a/src/features/webmcp/webmcp-intro.tsx b/src/features/webmcp/webmcp-intro.tsx
+index b67d0063ea6fb61cafbcc75be162a371177127c1..90937512739e50725a9b432cb0e9563676b62117 100644
+--- a/src/features/webmcp/webmcp-intro.tsx
++++ b/src/features/webmcp/webmcp-intro.tsx
+@@ -5,7 +5,7 @@ import { softBoxClassNames, type DemoAccent } from '../../theme/accent'
+ // Static overview only. WebMCP is an origin-trial agentic-web API, not an
+ // on-device inference API, so this surface deliberately creates no session and
+ // never touches `document.modelContext` or any WebMCP or built-in-AI global.
+-// The concrete Declarative and Imperative demos arrive in later tickets.
++// The neighboring lessons own their registrations.
+ export function WebMcpIntro({ accent }: { accent: DemoAccent }) {
+   return (
+     <DemoSection
+@@ -19,9 +19,17 @@ export function WebMcpIntro({ accent }: { accent: DemoAccent }) {
+         flags: webmcpFlags,
+       }}
+       codePath="features/webmcp/webmcp-intro.tsx (static overview — no adapter or hook yet)"
+-      lifecycleNote="This overview calls no browser API and creates no session. The Declarative and Imperative demos will each own their own tool registration, permissions, and cleanup."
++      lifecycleNote="This overview calls no browser API and creates no session. The Declarative and Imperative demos each own their own tool registration, permissions, and cleanup."
+     >
+       <div className="grid gap-4">
++        <p className="text-sm leading-6 text-slate-600">
++          Reviewed 10 November 2026. Tool registration and agent support are
++          separate checks: DevTools can invoke a tool manually even when a
++          particular browser agent cannot use it. Origin trials are temporary
++          experiments. A schema or annotation never replaces authorization.
++          Keep consequential actions visible and require confirmation in the
++          application. Treat tool descriptions, input, and output as untrusted.
++        </p>
+         <div className={`rounded-2xl border p-4 ${softBoxClassNames[accent]}`}>
+           <h3 className="text-sm font-bold text-slate-900">
+             Not on-device inference
+diff --git a/src/features/writer/writer-demo.tsx b/src/features/writer/writer-demo.tsx
+index 0b93a23d68a37e3f93c63af5fec1ce16bf943df8..2f5f2361057faf1b84332e9d3b37c186f61f13b4 100644
+--- a/src/features/writer/writer-demo.tsx
++++ b/src/features/writer/writer-demo.tsx
+@@ -21,7 +21,7 @@ import { useWriter } from './use-writer'
+ // deliberately open so the learner can see whether the draft invents a date.
+ const sampleIdea =
+   'Announce an internal pilot of the on-device draft assistant and ask the design and support teams to join it.'
+-const sampleContext = `The pilot runs from 3 to 14 August. It needs Chrome 141 or newer on a laptop; there is no mobile version yet. Drafts are generated on the device, so nothing is sent to a server. Each team gets two 30-minute slots, booked in the shared calendar. Feedback goes in the #draft-pilot channel by 15 August. Pricing and the public launch date are still undecided.`
++const sampleContext = `The pilot runs from 3 to 14 August. It needs supported desktop Chrome with the experimental Writer API enabled. Drafts are generated on the device, so nothing is sent to a server. Each team gets two 30-minute slots, booked in the shared calendar. Feedback goes in the #draft-pilot channel by 15 August. Pricing and the public launch date are still undecided.`
+ 
+ export function WriterDemo({ accent }: { accent: DemoAccent }) {
+   const [idea, setIdea] = useState(sampleIdea)
+@@ -41,7 +41,7 @@ export function WriterDemo({ accent }: { accent: DemoAccent }) {
+       description="Create a new, editable English draft from one focused idea and optional context."
+       availability={{
+         status: 'developer-trial',
+-        summary: 'Developer trial in Chrome 137–148.',
++        summary: 'Developer trial. Previous origin trial: Chrome 137–148.',
+         flags: writerFlags,
+       }}
+       codePath="writer-api.ts → use-writer.ts → writer-demo.tsx"
+diff --git a/src/features/prompt/prompt-extensions-api.ts b/src/features/prompt/prompt-extensions-api.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..c1513ba2f86167982b6a9f1e9345245c19358d5d
+--- /dev/null
++++ b/src/features/prompt/prompt-extensions-api.ts
+@@ -0,0 +1,49 @@
++import {
++  readBrowserApi,
++  withDownloadMonitor,
++} from '../../chrome-ai/browser-globals'
++
++export type PromptExtension = 'structured' | 'image' | 'stream'
++export type ExtensionSession = Pick<
++  LanguageModel,
++  'prompt' | 'promptStreaming' | 'destroy'
++>
++
++// Image capability must be checked with the same declarations used at creation.
++export function extensionOptions(
++  mode: PromptExtension,
++): LanguageModelCreateCoreOptions {
++  return {
++    expectedInputs:
++      mode === 'image'
++        ? [{ type: 'text', languages: ['en'] }, { type: 'image' }]
++        : [{ type: 'text', languages: ['en'] }],
++    expectedOutputs: [{ type: 'text', languages: ['en'] }],
++  }
++}
++
++export interface PromptExtensionsAdapter {
++  availability(mode: PromptExtension): Promise<Availability>
++  create(
++    mode: PromptExtension,
++    progress: (value: number) => void,
++    signal?: AbortSignal,
++  ): Promise<ExtensionSession>
++}
++
++export const promptExtensionsApi: PromptExtensionsAdapter = {
++  async availability(mode) {
++    const factory = readBrowserApi<typeof LanguageModel>('LanguageModel')
++    return factory
++      ? factory.availability(extensionOptions(mode))
++      : 'unavailable'
++  },
++  async create(mode, progress, signal) {
++    const factory = readBrowserApi<typeof LanguageModel>('LanguageModel')
++    if (!factory)
++      throw new Error('The Prompt API is not available in this browser.')
++    return factory.create(
++      withDownloadMonitor({ ...extensionOptions(mode), signal }, progress),
++    )
++  },
++}
+diff --git a/src/features/prompt/prompt-extensions-demo.tsx b/src/features/prompt/prompt-extensions-demo.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..f53e8dac6dc1badf4aee2f6b827d34dc8a23780f
+--- /dev/null
++++ b/src/features/prompt/prompt-extensions-demo.tsx
+@@ -0,0 +1,150 @@
++import { useState } from 'react'
++import { CapabilityStatus } from '../../components/capability-status'
++import { DemoOutput } from '../../components/demo-output'
++import { primaryButtonClassNames, type DemoAccent } from '../../theme/accent'
++import {
++  cancelButtonClassNames,
++  fieldLabelClassNames,
++  primaryButtonShellClassNames,
++  textFieldClassNames,
++} from '../../theme/field-styles'
++import type { PromptExtension } from './prompt-extensions-api'
++import { usePromptExtension } from './use-prompt-extension'
++
++function ExtensionExercise({
++  mode,
++  accent,
++}: {
++  mode: PromptExtension
++  accent: DemoAccent
++}) {
++  const [input, setInput] = useState(
++    mode === 'structured'
++      ? 'The workshop examples were useful, but the model download took too long.'
++      : mode === 'image'
++        ? 'Describe this image in one sentence in English. Do not guess details you cannot see.'
++        : 'Explain in three short paragraphs how a browser can prepare and reuse a local model.',
++  )
++  const [image, setImage] = useState<File | null>(null)
++  const model = usePromptExtension(mode)
++  const canRun =
++    model.request !== 'running' &&
++    ['ready', 'downloadable', 'downloading'].includes(model.capability)
++  return (
++    <div className="mt-4 grid gap-4">
++      <CapabilityStatus
++        capability={model.capability}
++        downloadProgress={model.downloadProgress}
++      />
++      <form
++        className="grid gap-4"
++        onSubmit={(event) => {
++          event.preventDefault()
++          void model.run(input, image)
++        }}
++      >
++        <label className={fieldLabelClassNames}>
++          Extension prompt
++          <textarea
++            className={textFieldClassNames}
++            value={input}
++            onChange={(event) => setInput(event.target.value)}
++          />
++        </label>
++        {mode === 'image' ? (
++          <label className={fieldLabelClassNames}>
++            Local image
++            <input
++              type="file"
++              accept="image/*"
++              onChange={(event) => setImage(event.target.files?.[0] ?? null)}
++            />
++          </label>
++        ) : null}
++        <p className="text-sm text-slate-600">
++          {mode === 'structured'
++            ? 'The JSON Schema allows positive, negative, or mixed sentiment and a summary. Application validation rejects malformed responses; a valid shape does not prove a correct classification.'
++            : mode === 'image'
++              ? 'The image is passed directly to Chrome. Capability is checked with image input declared. Review the generated description for accuracy.'
++              : 'Chunks appear as Chrome produces them. Cancel aborts the native request; partial output is incomplete.'}
++        </p>
++        <div className="flex gap-3">
++          <button
++            type="submit"
++            className={`${primaryButtonClassNames[accent]} ${primaryButtonShellClassNames}`}
++            disabled={!canRun || !input.trim() || (mode === 'image' && !image)}
++          >
++            Run extension
++          </button>
++          {model.request === 'running' ? (
++            <button
++              type="button"
++              className={cancelButtonClassNames}
++              onClick={model.cancel}
++            >
++              Cancel extension
++            </button>
++          ) : null}
++        </div>
++      </form>
++      {mode === 'stream' && model.partial && model.request !== 'success' ? (
++        <pre
++          className="whitespace-pre-wrap font-sans"
++          aria-label="Partial model output"
++        >
++          {model.partial}
++        </pre>
++      ) : null}
++      <DemoOutput
++        accent={accent}
++        request={model.request}
++        output={model.output}
++        error={model.error}
++        emptyMessage="Run the selected extension to see its result."
++      />
++    </div>
++  )
++}
++
++export function PromptExtensionsDemo({ accent }: { accent: DemoAccent }) {
++  const [open, setOpen] = useState(false)
++  const [mode, setMode] = useState<PromptExtension>('structured')
++  return (
++    <details
++      className="mt-6 rounded-xl border border-slate-200 p-4"
++      onToggle={(event) => setOpen(event.currentTarget.open)}
++    >
++      <summary className="cursor-pointer font-semibold">
++        Production extensions: structured output, image input, streaming
++      </summary>
++      <p className="mt-3 text-sm text-slate-600">
++        Reviewed 10 November 2026. Each exercise owns and destroys its own
++        session. Changing exercises discards its conversation. No experimental
++        sampling controls are used.{' '}
++        <a
++          className="underline"
++          href="https://developer.chrome.com/docs/ai/prompt-api"
++          target="_blank"
++          rel="noreferrer"
++        >
++          Official Prompt API guide
++        </a>
++      </p>
++      <label className={`${fieldLabelClassNames} mt-4`}>
++        Prompt extension
++        <select
++          className={textFieldClassNames}
++          value={mode}
++          onChange={(event) => setMode(event.target.value as PromptExtension)}
++        >
++          <option value="structured">Validated structured feedback</option>
++          <option value="image">Image description</option>
++          <option value="stream">Streaming and cancellation</option>
++        </select>
++      </label>
++      {open ? (
++        <ExtensionExercise key={mode} mode={mode} accent={accent} />
++      ) : null}
++    </details>
++  )
++}
+diff --git a/src/features/prompt/prompt-extensions.test.tsx b/src/features/prompt/prompt-extensions.test.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..18d9fa2ae0907deda2c840e31fbd64416e2e17b3
+--- /dev/null
++++ b/src/features/prompt/prompt-extensions.test.tsx
+@@ -0,0 +1,119 @@
++import { act, renderHook, waitFor } from '@testing-library/react'
++import { afterEach, describe, expect, it, vi } from 'vitest'
++import {
++  promptExtensionsApi,
++  type ExtensionSession,
++  type PromptExtensionsAdapter,
++} from './prompt-extensions-api'
++import { parseFeedback } from './structured-feedback'
++import { usePromptExtension } from './use-prompt-extension'
++
++afterEach(() => vi.unstubAllGlobals())
++
++function fakeAdapter(
++  model: Partial<ExtensionSession>,
++): PromptExtensionsAdapter {
++  return {
++    availability: vi.fn().mockResolvedValue('available'),
++    create: vi.fn().mockResolvedValue({ destroy: vi.fn(), ...model }),
++  }
++}
++
++describe('Prompt production extensions', () => {
++  it('rejects malformed structured responses and unexpected fields', () => {
++    for (const text of [
++      'bad JSON',
++      'null',
++      '[]',
++      '{"sentiment":["positive"],"summary":"x"}',
++      '{"sentiment":"positive"}',
++      '{"sentiment":"unknown","summary":"x"}',
++      '{"sentiment":"mixed","summary":"x","extra":true}',
++    ]) {
++      expect(() => parseFeedback(text)).toThrow()
++    }
++    expect(
++      parseFeedback('{"sentiment":"mixed","summary":"Useful but slow"}')
++        .sentiment,
++    ).toBe('mixed')
++  })
++
++  it('checks the same image modalities at availability and creation', async () => {
++    const availability = vi.fn().mockResolvedValue('available')
++    const create = vi.fn().mockResolvedValue({ destroy: vi.fn() })
++    vi.stubGlobal('LanguageModel', { availability, create })
++    await promptExtensionsApi.availability('image')
++    await promptExtensionsApi.create('image', vi.fn())
++    const options = availability.mock.calls[0][0]
++    expect(options.expectedInputs).toContainEqual({ type: 'image' })
++    expect(create).toHaveBeenCalledWith(expect.objectContaining(options))
++  })
++
++  it('surfaces structured validation failure and destroys its session', async () => {
++    const destroy = vi.fn()
++    const prompt = vi.fn().mockResolvedValue('{"sentiment":"positive"}')
++    const adapter = fakeAdapter({ prompt, destroy })
++    const { result, unmount } = renderHook(() =>
++      usePromptExtension('structured', adapter),
++    )
++    await waitFor(() => expect(result.current.capability).toBe('ready'))
++    await act(() => result.current.run('feedback', null))
++    expect(result.current.request).toBe('error')
++    expect(prompt).toHaveBeenCalledWith(
++      expect.any(String),
++      expect.objectContaining({
++        responseConstraint: expect.any(Object),
++        signal: expect.any(AbortSignal),
++      }),
++    )
++    unmount()
++    expect(destroy).toHaveBeenCalledOnce()
++  })
++
++  it('streams partial text, forwards cancellation, and ignores chunks after abort', async () => {
++    let release: () => void = () => {}
++    const promptStreaming = vi.fn(
++      (_input: LanguageModelPrompt, options?: LanguageModelPromptOptions) =>
++        new ReadableStream<string>({
++          async start(controller) {
++            controller.enqueue('First ')
++            await new Promise<void>((resolve) => {
++              release = resolve
++            })
++            expect(options?.signal?.aborted).toBe(true)
++            controller.enqueue('late chunk')
++            controller.close()
++          },
++        }),
++    )
++    const adapter = fakeAdapter({ promptStreaming })
++    const { result } = renderHook(() => usePromptExtension('stream', adapter))
++    await waitFor(() => expect(result.current.capability).toBe('ready'))
++    let pending: Promise<void>
++    act(() => {
++      pending = result.current.run('Explain', null)
++    })
++    await waitFor(() => expect(result.current.partial).toBe('First '))
++    act(() => {
++      result.current.cancel()
++      release()
++    })
++    await act(() => pending!)
++    expect(result.current.request).toBe('canceled')
++    expect(result.current.partial).toBe('First ')
++  })
++
++  it('passes the selected image directly to the native prompt', async () => {
++    const prompt = vi.fn().mockResolvedValue('A diagram')
++    const adapter = fakeAdapter({ prompt })
++    const { result } = renderHook(() => usePromptExtension('image', adapter))
++    await waitFor(() => expect(result.current.capability).toBe('ready'))
++    const image = new File(['pixels'], 'diagram.png', { type: 'image/png' })
++    await act(() => result.current.run('Describe', image))
++    expect(prompt.mock.calls[0][0][0].content[1]).toEqual({
++      type: 'image',
++      value: image,
++    })
++    expect(result.current.output).toBe('A diagram')
++  })
++})
+diff --git a/src/features/prompt/structured-feedback.ts b/src/features/prompt/structured-feedback.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..117f09fca7d6e3b791565ddbb92374b91a27a71d
+--- /dev/null
++++ b/src/features/prompt/structured-feedback.ts
+@@ -0,0 +1,28 @@
++export const feedbackSchema = {
++  type: 'object',
++  properties: {
++    sentiment: { type: 'string', enum: ['positive', 'negative', 'mixed'] },
++    summary: { type: 'string' },
++  },
++  required: ['sentiment', 'summary'],
++  additionalProperties: false,
++} as const
++
++// A constrained response is still untrusted: validate the parsed value before use.
++export function parseFeedback(text: string) {
++  const value: unknown = JSON.parse(text)
++  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
++    throw new Error('Expected a feedback object.')
++  }
++  const record = value as Record<string, unknown>
++  if (
++    typeof record.sentiment !== 'string' ||
++    !['positive', 'negative', 'mixed'].includes(record.sentiment) ||
++    typeof record.summary !== 'string' ||
++    !record.summary.trim() ||
++    Object.keys(record).some((key) => key !== 'sentiment' && key !== 'summary')
++  ) {
++    throw new Error('The model response did not match the feedback schema.')
++  }
++  return { sentiment: record.sentiment, summary: record.summary }
++}
+diff --git a/src/features/prompt/use-prompt-extension.ts b/src/features/prompt/use-prompt-extension.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..7c1efc95b7cd9618b0fac5ff8bc698433dfb49df
+--- /dev/null
++++ b/src/features/prompt/use-prompt-extension.ts
+@@ -0,0 +1,66 @@
++import { useState } from 'react'
++import { useChromeAiSession } from '../../chrome-ai/use-chrome-ai-session'
++import {
++  promptExtensionsApi,
++  type ExtensionSession,
++  type PromptExtension,
++  type PromptExtensionsAdapter,
++} from './prompt-extensions-api'
++import { feedbackSchema, parseFeedback } from './structured-feedback'
++
++export function usePromptExtension(
++  mode: PromptExtension,
++  adapter: PromptExtensionsAdapter = promptExtensionsApi,
++) {
++  const [partial, setPartial] = useState('')
++  const session = useChromeAiSession<ExtensionSession, string>({
++    availability: () => adapter.availability(mode),
++    create: (progress, signal) => adapter.create(mode, progress, signal),
++  })
++
++  async function run(input: string, image: File | null) {
++    setPartial('')
++    await session.run(async (model, signal) => {
++      if (mode === 'structured') {
++        const result = await model.prompt(
++          `Classify this feedback and summarize it briefly in English:\n${input}`,
++          {
++            signal,
++            responseConstraint: feedbackSchema,
++          },
++        )
++        return JSON.stringify(parseFeedback(result), null, 2)
++      }
++      if (mode === 'image') {
++        if (!image || !image.type.startsWith('image/'))
++          throw new Error('Choose an image file first.')
++        return model.prompt(
++          [
++            {
++              role: 'user',
++              content: [
++                { type: 'text', value: input },
++                { type: 'image', value: image },
++              ],
++            },
++          ],
++          { signal },
++        )
++      }
++      let output = ''
++      for await (const chunk of model.promptStreaming(input, { signal })) {
++        if (signal.aborted) throw new DOMException('Canceled', 'AbortError')
++        output += chunk
++        setPartial(output)
++      }
++      return output
++    })
++  }
++  return {
++    ...session.state,
++    output: session.result ?? '',
++    partial,
++    run,
++    cancel: session.cancel,
++  }
++}

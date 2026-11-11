@@ -160,6 +160,13 @@ export const documentationArticles: DocumentationArticle[] = [
         ],
       },
       {
+        heading: 'Real products and experimental tools',
+        paragraphs: [
+          'Google has published built-in AI examples from Drupal (SEO tags), Yahoo! Japan (comment moderation), and Trip.com (travel overviews). These are attributed examples of product use, not adoption statistics or a guarantee that every device supports the APIs.',
+          'WebMCP remains an origin-trial experiment. A deployed tool, manual DevTools invocation, and a successful interaction with a particular agent are different kinds of evidence. Verify the complete user journey with the agent you plan to demonstrate.',
+        ],
+      },
+      {
         heading: 'What this playground teaches',
         bullets: [
           'Task APIs for translation, detection, summarization, writing, rewriting, and proofreading.',
@@ -176,7 +183,7 @@ export const documentationArticles: DocumentationArticle[] = [
         ],
       },
     ],
-    sources: [builtInOverview, builtInStart, builtInDosAndDonts],
+    sources: [builtInOverview, builtInStart, builtInDosAndDonts, { label: 'Google-published product examples', url: 'https://developer.chrome.com/blog/build-new-features-using-built-in-ai-in-chrome-io2026' }],
   },
   {
     id: 'requirements',
@@ -191,22 +198,30 @@ export const documentationArticles: DocumentationArticle[] = [
         bullets: [
           'Translator, Language Detector, and Summarizer are stable from Chrome 138 on supported desktop environments.',
           'The Prompt API is stable on the web from Chrome 148 and in Chrome extensions from Chrome 138.',
-          'Translator and Language Detector use expert models for their focused tasks; the other generative APIs use Chrome’s built-in foundation model.',
+          'Translator and Language Detector use expert models for their focused tasks; the generative APIs use browser-managed language models that Chrome may update.',
         ],
       },
       {
         heading: 'Model readiness',
         paragraphs: [
           'Each lesson checks availability before creating a session. A model can be ready, downloadable, downloading, or unavailable. The first user-triggered run may therefore begin a download rather than return an immediate result.',
-          'Keep enough free storage, stay on a supported desktop operating system, and do not treat mobile support as implied.',
+          'Foundation-model APIs require Windows 10/11, macOS 13+, Linux, or supported Chromebook Plus devices. Chrome currently lists 22 GB free profile-volume storage, GPU VRAM above 4 GB or a CPU with at least 16 GB RAM and four cores. Audio input requires a GPU. Mobile is not supported. The storage requirement is not the model download size.',
         ],
       },
       {
         heading: 'Experimental surfaces',
         bullets: [
           'Writer, Rewriter, and Proofreader remain trial APIs and require their documented local flags.',
-          'WebMCP local testing requires its WebMCP flag; its DevTools panel currently requires the separate DevTools support flag.',
+          'WebMCP needs an eligible origin-trial token or the local testing flag. Inspect tools using the DevTools Application → WebMCP panel; check the current DevTools instructions for experimental panel setup.',
           'Experimental contracts and availability can change. Every guide shows the date its claims were reviewed.',
+        ],
+      },
+      {
+        heading: 'Languages, downloads, and access programs',
+        paragraphs: [
+          'From Chrome 149, the documented foundation-model text languages are English, Spanish, Japanese, German, and French. These lessons use English deliberately; translation uses its own language-pair models. Always check the requested options at runtime.',
+          'The first download needs user activation and an unmetered connection. Prepared models can run offline; assets, downloads, and model updates can still use the network. Chrome may remove a model when storage falls below its threshold.',
+          'Stable APIs need no Early Preview Program enrollment. Origin trials require their own registration and time-limited token. EPP gives access to earlier ideas; a developer trial is not a stable release guarantee.',
         ],
       },
     ],
@@ -227,7 +242,7 @@ export const documentationArticles: DocumentationArticle[] = [
           'Identify unknown input language with Language Detector.',
           'Condense longer content with Summarizer.',
           'Draft new content with Writer and transform existing content with Rewriter.',
-          'Return corrections, categories, and explanations with Proofreader.',
+          'Return correction ranges and replacements with Proofreader; Chrome does not implement correction categories or explanations.',
         ],
       },
       {
@@ -400,7 +415,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/translator-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'language-detector',
@@ -477,7 +492,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/language-detection',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'summarizer',
@@ -561,7 +576,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/summarizer-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'prompt',
@@ -587,14 +602,14 @@ export const apiGuides: ApiGuide[] = [
       'Assuming requested JSON text has been validated against a schema.',
     ],
     playground:
-      'The demo owns one conversational session with a fixed system instruction, supports cancellation, and renders the answer as plain text.',
+      'The core demo owns a conversational session and renders plain text. Open Production extensions for independently owned sessions demonstrating validated JSON, a local image, or streamed text with cancellation.',
     observe: [
       'Specific constraints produce more inspectable answers.',
       'Conversation context can influence later requests in the same mounted demo.',
       'Small local models can miss constraints or invent details.',
     ],
     limitations: [
-      'The core lesson does not expose grounding, cloning, token counters, or response constraints.',
+      'The core lesson does not expose grounding, cloning, or token counters. Structured output in the follow-up validates shape, not factual correctness.',
       'Knowledge can be incomplete or stale; the model is not a source of truth.',
     ],
     lifecycle:
@@ -650,7 +665,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/structured-output-for-prompt-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'writer',
@@ -741,7 +756,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/writer-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'rewriter',
@@ -825,7 +840,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/rewriter-api',
       },
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'proofreader',
@@ -856,7 +871,7 @@ export const apiGuides: ApiGuide[] = [
       'A correction can have an empty range, which means text is missing rather than wrong.',
     ],
     limitations: [
-      'Chrome does not implement the specified includeCorrectionTypes and includeCorrectionExplanations options yet, so categories and explanations are absent.',
+      'Chrome does not implement the specified includeCorrectionTypes and includeCorrectionExplanation options yet, so categories and explanations are absent.',
       'The API focuses on proofreading rather than broad rewriting.',
       'Suggestions still require user review.',
     ],
@@ -910,7 +925,7 @@ export const apiGuides: ApiGuide[] = [
         url: 'https://developer.chrome.com/docs/ai/proofreader-api',
       },
     ],
-    reviewedOn: '2026-07-28',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'webmcp',
@@ -967,7 +982,7 @@ export const apiGuides: ApiGuide[] = [
       webmcpSecurity,
       webmcpDevtools,
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'webmcp-declarative',
@@ -1079,7 +1094,7 @@ export const apiGuides: ApiGuide[] = [
       webmcpDevtools,
       webmcpDevtools149,
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
   {
     id: 'webmcp-imperative',
@@ -1154,7 +1169,7 @@ export const apiGuides: ApiGuide[] = [
       webmcpDevtools,
       webmcpDevtools149,
     ],
-    reviewedOn: '2026-07-24',
+    reviewedOn: '2026-11-10',
   },
 ]
 

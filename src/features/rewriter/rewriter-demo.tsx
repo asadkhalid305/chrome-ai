@@ -17,7 +17,7 @@ import { useRewriter } from './use-rewriter'
 // Informal register plus checkable facts makes every option visibly different:
 // the formal rewrite has something to lift, the shorter one something to cut,
 // and all four have a date, a time, a room, a seat count, and a version to keep.
-const sampleText = `hey all — quick one before the weekend: the browser AI workshop is on Thursday the 14th at 18:30 in the small meeting room on floor 3, and it would be a shame if nobody showed up since we only managed to get 12 seats. bring a laptop with Chrome 141 or newer if you have one, otherwise just pair with someone. no prep needed, we'll do everything live.`
+const sampleText = `hey all — quick one before the weekend: the browser AI workshop is on Thursday the 14th at 18:30 in the small meeting room on floor 3, and it would be a shame if nobody showed up since we only managed to get 12 seats. bring a laptop with supported desktop Chrome with the experimental APIs enabled if you have one, otherwise just pair with someone. no prep needed, we'll do everything live.`
 
 export function RewriterDemo({ accent }: { accent: DemoAccent }) {
   const [input, setInput] = useState(sampleText)
@@ -37,7 +37,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
       description="Transform existing English text by one visible tone or length choice while preserving the original."
       availability={{
         status: 'developer-trial',
-        summary: 'Developer trial in Chrome 137–148.',
+        summary: 'Developer trial. Previous origin trial: Chrome 137–148.',
         flags: rewriterFlags,
       }}
       codePath="rewriter-api.ts → use-rewriter.ts → rewriter-demo.tsx"
@@ -104,6 +104,7 @@ export function RewriterDemo({ accent }: { accent: DemoAccent }) {
       <div className="mt-5">
         <DemoOutput
           accent={accent}
+          capability={rewriter.capability}
           request={rewriter.request}
           output={rewriter.output}
           error={rewriter.error}

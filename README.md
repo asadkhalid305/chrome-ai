@@ -51,3 +51,15 @@ npm run build
 ```
 
 Automated tests use deterministic browser adapters; they do not prove that Chrome's native models work. See [the live smoke-test record](docs/smoke-tests.md) for the latest supported-browser run.
+
+## Documentation refresh — 10 November 2026
+
+The Prompt lesson includes optional exercises for validated structured feedback,
+local image input, and streamed text with cancellation. Each exercise owns its
+session and declares its modalities before creation. The default example remains
+a small text prompt.
+
+API and access claims are reviewed snapshots. Stable built-in AI does not require
+EPP membership; experimental APIs and WebMCP have separate trial/local setup.
+See docs/api-scope.md and docs/smoke-tests.md for the distinction between a source
+review, deterministic tests, and real native-browser verification.

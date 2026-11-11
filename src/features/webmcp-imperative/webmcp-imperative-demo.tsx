@@ -36,7 +36,7 @@ const supportBanner: Record<
   },
   supported: {
     tone: 'text-brand-green',
-    text: 'This browser exposes document.modelContext, so the addTodo tool is registered. A person can still use the list directly; an agent can also call the tool to add items.',
+    text: 'This browser exposes document.modelContext, and can register the addTodo tool; check Tool activity below for registration errors. A person can still use the list directly; an agent can also call the tool to add items.',
   },
   unavailable: {
     tone: 'text-slate-600',
@@ -231,8 +231,8 @@ export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
             <p className="mt-3 text-xs text-slate-500">
               The browser parses the agent&apos;s arguments against this schema
               before calling{' '}
-              <span className="font-mono text-[11px]">execute</span>. Invalid
-              input never reaches this page&apos;s state.
+              <span className="font-mono text-[11px]">execute</span>. The function
+              validates input again before changing the list.
             </p>
           </div>
 
@@ -290,7 +290,7 @@ export function WebmcpImperativeDemo({ accent }: { accent: DemoAccent }) {
               {imperative.activity === 'error' ? (
                 <div className="text-slate-700">
                   <p className="text-brand-red font-semibold">
-                    execute() rejected:
+                    Tool error:
                   </p>
                   <p className="mt-1 font-mono text-xs leading-5 text-slate-800">
                     {imperative.lastError}
