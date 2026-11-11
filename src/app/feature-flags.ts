@@ -13,4 +13,7 @@ export const revealChromeByDefault =
 export const webmcpTrackEnabled = import.meta.env.VITE_WEBMCP !== 'false'
 
 // A separate command selects the workshop without changing local talk settings.
-export const workshopEnabled = import.meta.env.MODE === 'workshop'
+export const workshopSolutionsEnabled =
+  import.meta.env.MODE === 'workshop-solutions'
+export const workshopEnabled =
+  import.meta.env.MODE === 'workshop' || workshopSolutionsEnabled

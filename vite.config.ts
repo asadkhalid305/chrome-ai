@@ -1,8 +1,23 @@
+import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // Select complete native implementations without copying over learner edits.
+  resolve: {
+    alias:
+      mode === 'workshop-solutions'
+        ? [
+            {
+              find: /^\.\.\/exercises\/(summarizer|translator|prompt)$/,
+              replacement: `${fileURLToPath(
+                new URL('./src/workshop/solutions', import.meta.url),
+              )}/$1.ts`,
+            },
+          ]
+        : [],
+  },
   plugins: [react(), tailwindcss()],
   test: {
     environment: 'jsdom',
@@ -16,4 +31,4 @@ export default defineConfig({
       VITE_WEBMCP: 'true',
     },
   },
-})
+}))

@@ -71,10 +71,34 @@ npm run check:exercises -- -t "Prompt streaming"
 These checks run **your exercise code** against simulated Chrome APIs: they check
 configuration, input/output forwarding, and cleanup, plus download progress or
 streamed updates where applicable. They intentionally fail while TODOs remain.
-Run `npm run check:exercises` without a filter once all five choices are complete.
+Run `npm run check:exercises` without a filter to check all five choices.
+
+To run the regular tests **and all exercise checks** together:
+
+```sh
+npm run test:all
+```
+
+This runs the regular suite first, then the exercise checks if that suite passes.
+The combined command intentionally fails until all five exercises are completed,
+even when the reference solutions and UI tests pass.
 
 The checks do not run a real model or evaluate its wording. Also verify the UI in
 Chrome: expect a useful, non-empty result, not an exact sentence.
+
+## Preview the completed app
+
+```sh
+npm run workshop:solutions
+```
+
+This serves the same workshop UI using `src/workshop/solutions/`, including
+Prompt text, image, and streaming. Exercise files stay untouched. The page shows
+"Solution preview" and the source path. Use the URL printed by Vite; if your
+exercise server is still running, Vite uses another available port.
+
+Native AI still requires a compatible Chrome/device and any initial model download.
+Run `npm run workshop` to return to the exercises.
 
 ## If something does not work
 
@@ -83,8 +107,8 @@ Chrome: expect a useful, non-empty result, not an exact sentence.
   requested configuration cannot run on that browser/device.
 - Compare your file with the matching reference: [Summarizer](src/workshop/solutions/summarizer.ts),
   [Translator](src/workshop/solutions/translator.ts), or [Prompt](src/workshop/solutions/prompt.ts).
-  Check options, awaited calls, abort signals, and cleanup. You can copy a reference
-  into its matching exercise file to try the complete implementation in the same UI.
+  Check options, awaited calls, abort signals, and cleanup. Use `npm run workshop:solutions` to try the complete implementation without
+  replacing your exercise code.
 - The UI passes the image File directly to Chrome. No server upload or API key is needed.
 
 ## Other commands

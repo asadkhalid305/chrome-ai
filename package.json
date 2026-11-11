@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "workshop": "vite --mode workshop",
+    "workshop:solutions": "vite --mode workshop-solutions",
     "build:workshop": "tsc -b && vite build --mode workshop",
     "build": "tsc -b && vite build",
     "test": "vitest run",
+    "test:all": "npm test && npm run check:exercises",
     "check:exercises": "vitest run --mode exercise-check src/workshop/tests/native-api.test.ts",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false"

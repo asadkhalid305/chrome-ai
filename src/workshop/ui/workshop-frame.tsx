@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { workshopSolutionsEnabled } from '../../app/feature-flags'
 import type { DemoState } from '../../chrome-ai/shared-types'
 import { CapabilityStatus } from '../../components/capability-status'
 import { DemoOutput } from '../../components/demo-output'
@@ -22,6 +23,7 @@ export function WorkshopFrame({
   model: DemoState & { output: string; partialOutput?: string }
   children: ReactNode
 }) {
+  const folder = workshopSolutionsEnabled ? 'solutions' : 'exercises'
   return (
     <DemoSection
       accent={accent}
@@ -32,21 +34,34 @@ export function WorkshopFrame({
         status: 'stable',
         summary: 'Check availability on this device before creating a session.',
       }}
-      codePath={`src/workshop/exercises/${id}.ts`}
+      codePath={`src/workshop/${folder}/${id}.ts`}
       lifecycleNote="The exercise creates a native session for each request and destroys it in finally. The UI aborts work when you leave this tab."
     >
       <aside className="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-        <p className="font-semibold">Open this file and complete TODOs 1–5:</p>
-        <p className="mt-2 break-all font-mono text-xs">{`src/workshop/exercises/${id}.ts`}</p>
-        <p>
-          Choose one exercise, work alone or pair, and take about 10 minutes. No
-          UI changes needed. Read README.md for setup, hints, and the solution
-          reference.
+        <p className="font-semibold">
+          {workshopSolutionsEnabled
+            ? 'Solution preview: running the completed implementation.'
+            : 'Open this file and complete TODOs 1–5:'}
         </p>
-        <p>
-          The starter deliberately stops at missing code. After implementing
-          availability, reload this page to check again.
-        </p>
+        <p className="mt-2 break-all font-mono text-xs">{`src/workshop/${folder}/${id}.ts`}</p>
+        {workshopSolutionsEnabled ? (
+          <p>
+            Try the form below. Your exercise files are untouched. Use npm run
+            workshop to return to the starter exercises.
+          </p>
+        ) : (
+          <>
+            <p>
+              Choose one exercise, work alone or pair, and take about 10
+              minutes. No UI changes needed. Read README.md for setup, hints,
+              and solutions.
+            </p>
+            <p>
+              The starter deliberately stops at missing code. After implementing
+              availability, reload this page to check again.
+            </p>
+          </>
+        )}
         <a
           className="underline"
           href={`https://developer.chrome.com/docs/ai/${

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { workshopSolutionsEnabled } from '../../app/feature-flags'
 import {
   accentSoftFillClassNames,
   accentTextClassNames,
@@ -122,18 +123,20 @@ function PromptExercise({
       accent={accent}
       model={model}
     >
-      <p className="mt-4 text-sm text-slate-700">
-        Functions to implement:{' '}
-        <code>
-          {mode === 'image'
-            ? 'imageAvailability + runImageExercise'
-            : mode === 'streaming'
-            ? 'streamingAvailability + runStreamingExercise'
-            : 'availability + runExercise'}
-        </code>
-        . Each choice has separate options and five TODOs in prompt.ts. Choose
-        one or work through all three.
-      </p>
+      {!workshopSolutionsEnabled ? (
+        <p className="mt-4 text-sm text-slate-700">
+          Functions to implement:{' '}
+          <code>
+            {mode === 'image'
+              ? 'imageAvailability + runImageExercise'
+              : mode === 'streaming'
+              ? 'streamingAvailability + runStreamingExercise'
+              : 'availability + runExercise'}
+          </code>
+          . Each choice has separate options and five TODOs in prompt.ts. Choose
+          one or work through all three.
+        </p>
+      ) : null}
       <form
         className="mt-5 grid gap-4"
         onSubmit={(event) => {
