@@ -67,7 +67,13 @@ export function parseAppRoute(
     return { surface: 'playground', demoId: id as DemoId }
   }
 
-  return { surface: 'playground', demoId: 'translator' }
+  const firstVisibleDemo = [...visibleDemoIds].find((id) =>
+    knownDemoIds.has(id),
+  )
+  return {
+    surface: 'playground',
+    demoId: (firstVisibleDemo as DemoId | undefined) ?? 'translator',
+  }
 }
 
 export function playgroundHash(demoId: DemoId) {

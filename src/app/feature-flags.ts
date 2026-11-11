@@ -11,3 +11,6 @@ export const revealChromeByDefault =
 // WebMCP is a separate origin-trial track. Turning it off hides the whole
 // track, including its documentation deep links.
 export const webmcpTrackEnabled = import.meta.env.VITE_WEBMCP !== 'false'
+
+// A separate command selects the workshop without changing local talk settings.
+export const workshopEnabled = import.meta.env.MODE === 'workshop'

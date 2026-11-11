@@ -10,8 +10,11 @@ import { WebmcpDeclarativeDemo } from '../features/webmcp-declarative/webmcp-dec
 import { WebmcpImperativeDemo } from '../features/webmcp-imperative/webmcp-imperative-demo'
 import { WebMcpIntro } from '../features/webmcp/webmcp-intro'
 import { WriterDemo } from '../features/writer/writer-demo'
+import { SummarizerWorkshop } from '../workshop/ui/summarizer-workshop'
+import { TranslatorWorkshop } from '../workshop/ui/translator-workshop'
+import { PromptWorkshop } from '../workshop/ui/prompt-workshop'
 import { accentForPosition, type DemoAccent } from '../theme/accent'
-import { webmcpTrackEnabled } from './feature-flags'
+import { webmcpTrackEnabled, workshopEnabled } from './feature-flags'
 import type { DemoId } from './navigation'
 
 export interface Demo {
@@ -106,8 +109,33 @@ export function accentForDemoId(demoId: DemoId): DemoAccent {
   return accentByDemoId.get(demoId) ?? 'blue'
 }
 
+const workshopDemos: DemoDefinition[] = [
+  {
+    id: 'summarizer',
+    label: 'Summarizer',
+    component: SummarizerWorkshop,
+    status: 'stable',
+  },
+  {
+    id: 'translator',
+    label: 'Translator',
+    component: TranslatorWorkshop,
+    status: 'stable',
+  },
+  {
+    id: 'prompt',
+    label: 'Prompt',
+    component: PromptWorkshop,
+    status: 'stable',
+  },
+]
+
 export const visibleDemos: Demo[] = (
-  webmcpTrackEnabled ? [...apiDemos, ...webmcpDemos] : apiDemos
+  workshopEnabled
+    ? workshopDemos
+    : webmcpTrackEnabled
+      ? [...apiDemos, ...webmcpDemos]
+      : apiDemos
 ).map((demo) => ({ ...demo, accent: accentForDemoId(demo.id) }))
 
 export const visibleDemoIds = new Set<string>(

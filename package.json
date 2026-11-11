@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "workshop": "vite --mode workshop",
+    "build:workshop": "tsc -b && vite build --mode workshop",
     "build": "tsc -b && vite build",
     "test": "vitest run",
+    "check:exercises": "vitest run --mode exercise-check src/workshop/tests/native-api.test.ts",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false"
   },
