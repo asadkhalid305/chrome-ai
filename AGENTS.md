@@ -4,6 +4,7 @@ This repository teaches Chrome built-in AI APIs through small, runnable React ex
 
 ## Always-On Rules
 
+- Name new Git branches `<type>/<short-kebab-case-description>` (for example, `feat/translator-selection` or `docs/git-conventions`). Do not use the `codex/` prefix. Use Conventional Commits for commit messages and PR titles; read `.agents/skills/git-conventions/SKILL.md` before creating branches, commits, or pull requests.
 - Keep every example local-first. Do not add a backend, API key, cloud-model fallback, authentication, database, or analytics without explicit direction.
 - Optimize for a beginner reading one feature at a time. Prefer direct code and descriptive names over clever abstractions.
 - Separate browser API access, React lifecycle logic, and presentation. A component or hook must have one clear reason to change.
@@ -24,6 +25,7 @@ This repository teaches Chrome built-in AI APIs through small, runnable React ex
 
 ## Skill Routing
 
+- `git-conventions`: choose branch names, write Conventional Commits and PR titles, and prepare focused GitHub pull requests.
 - `chrome-ai-engineering`: implement or refactor demos, adapters, hooks, components, and educational explanations.
 - `chrome-ai-testing`: add or run unit, component, fixture, and supported-browser verification.
 - `vercel-react-best-practices`: apply Vercel's React performance guidance while writing or reviewing React code.
